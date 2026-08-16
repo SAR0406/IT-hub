@@ -129,9 +129,13 @@ export function Navbar({ profile }: { profile: Profile | null }) {
               <button
                 type="button"
                 onClick={async () => {
-                  const { createClient } = await import("@/lib/supabase/client");
-                  const supabase = createClient();
-                  await supabase.auth.signOut();
+                  try {
+                    const { createClient } = await import("@/lib/supabase/client");
+                    const supabase = createClient();
+                    await supabase.auth.signOut();
+                  } catch {
+                    // Auth service unreachable — sign out locally anyway.
+                  }
                   setMenuOpen(false);
                   router.push("/login");
                   router.refresh();

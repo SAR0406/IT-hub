@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { AdminNav } from "@/components/AdminNav";
 import { LogoutButton } from "@/components/LogoutButton";
-import { requireAdmin } from "@/lib/auth";
+import { getSessionProfile, requireAdmin } from "@/lib/auth";
+import { AdminLogin } from "./AdminLogin";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -10,6 +11,13 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
+  // Guests see the admin sign-in form right on /admin. Students are
+  // flagged and redirected by requireAdmin below.
+  const profile = await getSessionProfile();
+  if (!profile) {
+    return <AdminLogin />;
+  }
+
   const ctx = await requireAdmin();
 
   return (

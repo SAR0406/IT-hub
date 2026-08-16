@@ -26,7 +26,15 @@ export function LoginForm() {
     setError(null);
     setLoading(true);
 
-    const supabase = createClient();
+    let supabase;
+    try {
+      supabase = createClient();
+    } catch {
+      setError("This site isn't connected to its account service yet. Try again later.");
+      setLoading(false);
+      return;
+    }
+
     const { error: signInError } = await supabase.auth.signInWithPassword({
       email: email.trim(),
       password,
@@ -39,8 +47,7 @@ export function LoginForm() {
       return;
     }
 
-    // Accounts awaiting teacher approval can authenticate but not sign in.
-    // Tell the student why instead of silently bouncing them back here.
+    // Paused accounts can authenticate but not use the hub — say so clearly.
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -51,7 +58,7 @@ export function LoginForm() {
         .eq("id", user.id)
         .maybeSingle();
       if (profileRow && !profileRow.is_active) {
-        setError("Your account is waiting for your teacher to activate it. Try again once it’s approved.");
+        setError("This account isn’t active. Ask your teacher if you believe this is a mistake.");
         setLoading(false);
         return;
       }
@@ -113,8 +120,7 @@ export function LoginForm() {
             Sign in
           </h2>
           <p className="mt-2 text-sm text-mist">
-            Accounts are created by your teacher — or request one below and wait for
-            approval.
+            New here? Create an account in under a minute — no approvals needed.
           </p>
 
           <form onSubmit={handleSubmit} className="mt-8 space-y-5">
@@ -171,7 +177,7 @@ export function LoginForm() {
           <p className="mt-6 text-center text-sm text-mist">
             Need an account?{" "}
             <Link href="/register" className="font-semibold text-brand hover:text-brand-strong">
-              Request access
+              Create one — it&rsquo;s free
             </Link>
           </p>
 

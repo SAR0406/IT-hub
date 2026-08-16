@@ -37,8 +37,8 @@ export type StudentResult = { ok: true } | { ok: false; error: string };
 
 /**
  * Creates the auth user (service role) plus the profile row. Admin-created
- * students are active immediately; self-registrations stay inactive until
- * the teacher approves them from the students panel.
+ * students and self-registrations are active immediately — sign up, sign in,
+ * use.
  */
 async function createAuthAccount(input: StudentInput, isActive: boolean): Promise<StudentResult> {
   if (!serviceRoleAvailable()) {
@@ -94,9 +94,9 @@ export async function createStudent(input: StudentInput): Promise<StudentResult>
   return createAuthAccount(input, true);
 }
 
-/** Self-service sign-up: the account exists but stays inactive until the teacher approves it. */
+/** Self-service sign-up: active immediately, no teacher approval needed. */
 export async function registerStudent(input: StudentInput): Promise<StudentResult> {
-  return createAuthAccount(input, false);
+  return createAuthAccount(input, true);
 }
 
 export async function updateStudent(

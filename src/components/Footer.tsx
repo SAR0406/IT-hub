@@ -32,7 +32,7 @@ export function Footer() {
             Sign in
           </Link>
           <Link href="/register" className="font-medium text-slate-300 transition-colors hover:text-blush">
-            Request access
+            Sign up
           </Link>
         </nav>
       </div>

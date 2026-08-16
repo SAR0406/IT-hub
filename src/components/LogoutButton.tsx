@@ -8,8 +8,12 @@ export function LogoutButton() {
   const router = useRouter();
 
   async function handleLogout() {
-    const supabase = createClient();
-    await supabase.auth.signOut();
+    try {
+      const supabase = createClient();
+      await supabase.auth.signOut();
+    } catch {
+      // Auth service unreachable — sign out locally anyway.
+    }
     router.push("/login");
     router.refresh();
   }

@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 import { passwordChecks, validatePassword } from "@/lib/password";
 
 const PASSWORD_RULES = [
@@ -11,6 +13,7 @@ const PASSWORD_RULES = [
 ];
 
 export function RegisterForm() {
+  const router = useRouter();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [className, setClassName] = useState("");
@@ -49,6 +52,22 @@ export function RegisterForm() {
         setLoading(false);
         return;
       }
+
+      // Account created — sign them straight in so it's truly "sign up and use".
+      try {
+        const supabase = createClient();
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email: email.trim(),
+          password,
+        });
+        if (!signInError) {
+          router.push("/chapters");
+          router.refresh();
+          return;
+        }
+      } catch {
+        // Auth service unreachable (e.g. env not configured yet) — fall through.
+      }
       setDone(true);
     } catch {
       setError("Could not reach the server. Please try again.");
@@ -72,17 +91,17 @@ export function RegisterForm() {
             </svg>
           </span>
           <h1 className="mt-5 font-display text-2xl font-bold tracking-tight text-ink">
-            Request sent
+            Account created
           </h1>
           <p className="mt-3 text-sm leading-relaxed text-mist">
-            Your account is waiting for your teacher to activate it. You&rsquo;ll be
-            able to sign in once it&rsquo;s approved — usually within a day.
+            You&rsquo;re all set. We couldn&rsquo;t sign you in automatically, so
+            just sign in with your new details to start studying.
           </p>
           <Link
             href="/login"
             className="mt-7 inline-flex h-11 items-center justify-center rounded-lg bg-brand px-7 text-sm font-semibold text-white transition-colors hover:bg-brand-strong"
           >
-            Back to sign in
+            Sign in now
           </Link>
         </div>
       </div>
@@ -102,16 +121,16 @@ export function RegisterForm() {
               ~/it-hub-11/register
             </p>
             <h1 className="mt-10 font-display text-3xl font-bold leading-tight tracking-tight">
-              Request access to your study hub.
+              Your study hub, your account.
             </h1>
             <p className="mt-4 text-sm leading-relaxed text-slate-400">
-              Your teacher approves every account. Fill in your details, then wait for
-              activation before your first sign-in.
+              Create your account in under a minute — no approvals, no waiting.
+              You&rsquo;re in the moment you hit the button.
             </p>
           </div>
           <div className="font-mono text-[13px] leading-7 text-slate-500">
-            <p><span className="text-emerald-400">$</span> it-hub --request-access</p>
-            <p className="pl-4 text-slate-400">waiting for teacher approval…</p>
+            <p><span className="text-emerald-400">$</span> it-hub --signup</p>
+            <p className="pl-4 text-emerald-400">account created — signing you in…</p>
             <p className="mt-3"><span className="text-emerald-400">$</span> cd chapters/rdbms</p>
             <p className="pl-4 text-slate-400">6 resources available</p>
           </div>
@@ -122,14 +141,14 @@ export function RegisterForm() {
           <div className="md:hidden">
             <p className="font-mono text-sm text-brand">~/it-hub-11/register</p>
             <h1 className="mt-2 font-display text-2xl font-bold tracking-tight text-ink">
-              Request access
+              Sign up
             </h1>
           </div>
           <h2 className="hidden font-display text-2xl font-bold tracking-tight text-ink md:block">
-            Request access
+            Sign up
           </h2>
           <p className="mt-2 text-sm text-mist">
-            New accounts are activated by your teacher before they can sign in.
+            Create your account — it takes under a minute.
           </p>
 
           <form onSubmit={handleSubmit} className="mt-8 space-y-5">
@@ -239,7 +258,7 @@ export function RegisterForm() {
               disabled={loading}
               className="flex h-11 w-full items-center justify-center rounded-lg bg-brand text-sm font-semibold text-white transition-colors hover:bg-brand-strong disabled:opacity-60"
             >
-              {loading ? "Sending request…" : "Request access"}
+              {loading ? "Creating your account…" : "Create account"}
             </button>
           </form>
 
