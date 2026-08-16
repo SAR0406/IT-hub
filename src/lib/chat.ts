@@ -11,6 +11,13 @@ export const CHAT_ROOMS = [
 
 export type ChatRoomSlug = (typeof CHAT_ROOMS)[number]["slug"];
 
+/** Dedicated room where the AI assistant answers. Excluded from CHAT_ROOMS so
+ * plain /api/chat messages can't be posted there — only /api/ai/chat writes it. */
+export const AI_ROOM = { slug: "ai", label: "Ask AI" } as const;
+
+/** Fixed id of the "AI Assistant" bot profile (seeded in the database). */
+export const AI_BOT_ID = "00000000-0000-4000-8000-00000000a1a1";
+
 export type ChatMessage = {
   id: number;
   room: string;

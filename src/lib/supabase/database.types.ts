@@ -46,6 +46,44 @@ export type Database = {
           },
         ]
       }
+      ai_usage: {
+        Row: {
+          action: string
+          completion_tokens: number
+          created_at: string
+          id: number
+          model: string
+          prompt_tokens: number
+          user_id: string
+        }
+        Insert: {
+          action: string
+          completion_tokens?: number
+          created_at?: string
+          id?: never
+          model: string
+          prompt_tokens?: number
+          user_id: string
+        }
+        Update: {
+          action?: string
+          completion_tokens?: number
+          created_at?: string
+          id?: never
+          model?: string
+          prompt_tokens?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_usage_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       announcements: {
         Row: {
           body: string
@@ -64,6 +102,30 @@ export type Database = {
           created_at?: string
           id?: string
           title?: string
+        }
+        Relationships: []
+      }
+      app_settings: {
+        Row: {
+          ai_daily_cap: number
+          ai_enabled: boolean
+          ai_model: string
+          id: number
+          updated_at: string
+        }
+        Insert: {
+          ai_daily_cap?: number
+          ai_enabled?: boolean
+          ai_model?: string
+          id?: number
+          updated_at?: string
+        }
+        Update: {
+          ai_daily_cap?: number
+          ai_enabled?: boolean
+          ai_model?: string
+          id?: number
+          updated_at?: string
         }
         Relationships: []
       }
@@ -323,6 +385,17 @@ resources: {
         Returns: number
       }
       flag_failed_logins: { Args: { p_email: string }; Returns: undefined }
+      insert_ai_message: {
+        Args: { p_room: string; p_content: string; p_bot_id: string }
+        Returns: {
+          content: string
+          created_at: string
+          id: number
+          room: string
+          sender_name: string
+          user_id: string
+        }[]
+      }
       is_admin: { Args: never; Returns: boolean }
       recent_flag_exists: {
         Args: { p_type: string; p_user_id: string; p_window: string }

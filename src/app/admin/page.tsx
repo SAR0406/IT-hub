@@ -2,6 +2,9 @@ import Link from "next/link";
 import { getDashboardStats } from "@/lib/stats";
 import { FLAG_STATUS_LABELS, FLAG_TYPE_LABELS } from "@/lib/types";
 import { formatRelativeDate } from "@/lib/format";
+import { getAiSettings } from "@/lib/ai/settings";
+import { createClient } from "@/lib/supabase/server";
+import { AiSettingsCard } from "@/components/AiSettingsCard";
 
 const SEVERITY_DOT: Record<string, string> = {
   low: "bg-sky-400",
@@ -11,6 +14,8 @@ const SEVERITY_DOT: Record<string, string> = {
 
 export default async function AdminDashboardPage() {
   const stats = await getDashboardStats();
+  const supabase = await createClient();
+  const aiSettings = await getAiSettings(supabase);
   const maxDaily = Math.max(...stats.dailyDownloads.map((d) => d.count), 1);
 
   return (
@@ -111,7 +116,11 @@ export default async function AdminDashboardPage() {
         </section>
       </div>
 
-      {/* Recent open flags */}
+      {/* AI settings + recent flags */}
+      <section className="mt-6 rounded-2xl border border-zinc-200 bg-white p-6">
+        <AiSettingsCard initial={aiSettings} />
+      </section>
+
       <section className="mt-6 rounded-2xl border border-zinc-200 bg-white p-6">
         <div className="flex items-center justify-between">
           <h2 className="font-mono text-xs font-bold uppercase tracking-widest text-slate-400">

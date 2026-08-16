@@ -67,14 +67,18 @@ Raw data exists today (activity logs, quiz attempts, flags, downloads).
 | Student counts, active students, progress, quiz scores | V3 |
 | Weak-topic / class-average analysis | V3 |
 | Assignment tracking (late/missing) | V3 (needs submissions, §17) |
-| AI usage statistics | CUT (no AI) |
+| AI usage statistics | V3 (usage rows logged per call today) |
 
 ## 6. AI tutor / "Ask the Archive"
 
 | Feature | Status |
 |---|---|
 | Full AI tutor with teaching modes, mark-based answers, follow-ups | CUT |
-| AI embedded in chapters, ChatGPT-style assistant | CUT |
+| **Ask AI chat room** (NVIDIA NIM GPT-OSS-120B, per-student daily cap, admin kill switch, moderation) | SHIPPED |
+| **AI with tools**: syllabus lookup, archive search, file links in chat, quiz info | SHIPPED |
+| **Teacher tools**: AI student-record lookup (admin only) | SHIPPED |
+| AI quiz generator for teachers | V2 |
+| Websearch tool | V3 (needs free search API — NVIDIA web-search NIM first, Tavily fallback) |
 | Narrow V2 vision: upload PDF → index → ask → answer from that PDF | V3 |
 | Source references / citations under answers | V3 (with the above) |
 
@@ -226,7 +230,7 @@ Motivated by the actual school situation. Do this before any simulator work.
 
 ## 25. Cut list (final)
 
-- Full AI tutor / ChatGPT-style assistant / AI teaching modes
+- ChatGPT-style global AI tutor with teaching modes (the Ask AI room covers the need)
 - Gamification: XP, badges, leaderboards, class ranking
 - Notification system, advanced CMS, adaptive learning, complex approval flows
 - Java in-browser compiler (V3 revisit, not committed)
@@ -245,6 +249,13 @@ Motivated by the actual school situation. Do this before any simulator work.
 4. **V2 — small wins**: teacher-verified badges, replace material, timed quizzes,
    bandwidth calculators, scenario quizzes (reuse quiz system). — verified badges + timed
    quizzes DONE; replace-material, calculators, scenario quizzes still open.
+5. **AI — Ask AI room**: NVIDIA NIM GPT-OSS-120B, tools (syllabus, archive, files in chat,
+   quiz info, teacher student records), per-student daily cap, admin kill switch. — DONE
+6. **AI — teacher quiz generator**: structured MCQs from unit/topic/difficulty → existing
+   editor + validation. Needs NVIDIA_API_KEY.
+7. **AI — websearch tool**: NVIDIA web-search NIM first (free), Tavily free tier fallback.
+8. **V2 — student records page**: /admin/students/[id] with activity, attempts, flags,
+   downloads (data exists; AI tool already has the query).
 
 Rule for anything after that: one feature at a time, marked V2 or higher in this
 doc before a line of code is written.
