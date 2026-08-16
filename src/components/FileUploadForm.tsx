@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { UploadIcon } from "@/components/icons";
 import { UNITS } from "@/lib/syllabus";
@@ -11,7 +12,8 @@ type Status =
   | { state: "success"; message: string }
   | { state: "error"; message: string };
 
-export function FileUploadForm({ onUploaded }: { onUploaded: () => void }) {
+export function FileUploadForm() {
+  const router = useRouter();
   const [unitSlug, setUnitSlug] = useState(UNITS[0].slug);
   const [topicSlug, setTopicSlug] = useState("");
   const [title, setTitle] = useState("");
@@ -63,7 +65,7 @@ export function FileUploadForm({ onUploaded }: { onUploaded: () => void }) {
 
       setStatus({ state: "success", message: `“${title}” uploaded successfully.` });
       resetForm();
-      onUploaded();
+      router.refresh();
     } catch {
       setStatus({
         state: "error",

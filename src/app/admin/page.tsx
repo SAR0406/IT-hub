@@ -30,7 +30,7 @@ export default async function AdminPage() {
       </div>
 
       <section className="mb-10">
-        <FileUploadForm onUploaded={() => {}} />
+        <FileUploadForm />
       </section>
 
       <section>

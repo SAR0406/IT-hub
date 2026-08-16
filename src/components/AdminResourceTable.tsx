@@ -14,10 +14,12 @@ type DeleteState =
 
 export function AdminResourceTable({ initial }: { initial: ResourceWithLabels[] }) {
   const router = useRouter();
-  const [resources, setResources] = useState(initial);
+  const [deletedIds, setDeletedIds] = useState<string[]>([]);
   const [pendingDelete, setPendingDelete] = useState<DeleteState>(null);
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const resources = initial.filter((resource) => !deletedIds.includes(resource.id));
 
   async function confirmDelete() {
     if (!pendingDelete) return;
@@ -32,7 +34,7 @@ export function AdminResourceTable({ initial }: { initial: ResourceWithLabels[] 
         const data = (await response.json().catch(() => null)) as { error?: string } | null;
         throw new Error(data?.error ?? "Delete failed.");
       }
-      setResources((list) => list.filter((r) => r.id !== pendingDelete.id));
+      setDeletedIds((ids) => [...ids, pendingDelete.id]);
       router.refresh();
     } catch (err) {
       setError((err as Error).message);

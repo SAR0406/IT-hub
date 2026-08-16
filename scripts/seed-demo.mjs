@@ -68,7 +68,7 @@ const DEMOS = [
   },
 ];
 
-const { data: session, error: loginError } = await supabase.auth.signInWithPassword({
+const { error: loginError } = await supabase.auth.signInWithPassword({
   email: adminEmail,
   password: adminPassword,
 });
