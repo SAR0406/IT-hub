@@ -1,8 +1,13 @@
 import type { Metadata } from "next";
-import { Geist_Mono, Inter, Space_Grotesk } from "next/font/google";
-import { Footer } from "@/components/Footer";
-import { Navbar } from "@/components/Navbar";
-import { ActivityTracker } from "@/components/ActivityTracker";
+import {
+  Geist,
+  Geist_Mono,
+  IBM_Plex_Mono,
+  Instrument_Serif,
+  Inter,
+  Space_Grotesk,
+} from "next/font/google";
+import { AppChrome } from "@/components/AppChrome";
 import { getSessionProfile } from "@/lib/auth";
 import "./globals.css";
 
@@ -21,6 +26,24 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const geist = Geist({
+  variable: "--font-geist",
+  subsets: ["latin"],
+});
+
+const instrumentSerif = Instrument_Serif({
+  variable: "--font-instrument-serif",
+  weight: "400",
+  style: ["normal", "italic"],
+  subsets: ["latin"],
+});
+
+const ibmPlexMono = IBM_Plex_Mono({
+  variable: "--font-ibm-plex-mono",
+  weight: ["400", "500", "600"],
+  subsets: ["latin"],
+});
+
 export const metadata: Metadata = {
   title: {
     default: "IT Hub 11 — Class 11 Information Technology",
@@ -36,13 +59,11 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${spaceGrotesk.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${inter.variable} ${spaceGrotesk.variable} ${geistMono.variable} ${geist.variable} ${instrumentSerif.variable} ${ibmPlexMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
-        <Navbar profile={profile} />
+        <AppChrome profile={profile} />
         <main className="flex-1">{children}</main>
-        <Footer />
-        {profile && <ActivityTracker />}
       </body>
     </html>
   );

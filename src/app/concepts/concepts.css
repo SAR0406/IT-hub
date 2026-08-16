@@ -1,0 +1,69 @@
+/*
+ * Shared design tokens for the three homepage art-direction studies
+ * ("IT—11 / THE LIVING TEXTBOOK" palette, brief §18 — Study Room /
+ * Weird Technology). Scoped to /concepts; the main site keeps its own theme.
+ *
+ *   Paper   #F1EBDD   Ink    #171512   Moss  #A8B86B
+ *   Violet  #8475B8   Coral  #D97861   Yellow #E8C95A
+ *   Plum    #372B42   Cyan   #84BAB5
+ *
+ * Typography: Instrument Serif (display) / Geist (interface) /
+ * IBM Plex Mono (technical).
+ */
+@theme {
+  --color-paper: #f1ebdd;
+  --color-paper-deep: #e7dfca;
+  --color-ink: #171512;
+  --color-ink-soft: #4a463c;
+  --color-moss: #a8b86b;
+  --color-violet: #8475b8;
+  --color-coral: #d97861;
+  --color-yellow: #e8c95a;
+  --color-plum: #372b42;
+  --color-plum-deep: #241c2c;
+  --color-cyan: #84bab5;
+
+  --font-dserif: var(--font-instrument-serif), Georgia, "Times New Roman", serif;
+  --font-dsans: var(--font-geist), system-ui, sans-serif;
+  --font-dmono: var(--font-ibm-plex-mono), ui-monospace, "Courier New", monospace;
+}
+
+/* Hand-drawn pencil highlight behind a span of text. */
+.pencil-hl {
+  background: linear-gradient(
+    104deg,
+    transparent 0.5%,
+    rgba(232, 201, 90, 0.65) 2.5%,
+    rgba(232, 201, 90, 0.65) 96%,
+    transparent 98%
+  );
+  padding: 0 0.35em;
+  margin: 0 -0.1em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+/* Serif italic "hand annotation" note. */
+.handnote {
+  font-family: var(--font-dserif);
+  font-style: italic;
+  letter-spacing: 0.01em;
+}
+
+/* Dotted leader line for TOC-style rows (like a table of contents). */
+.toc-leader {
+  flex: 1;
+  border-bottom: 1.5px dotted rgba(23, 21, 18, 0.45);
+  margin: 0 0.6em;
+  transform: translateY(-0.25em);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise-in,
+  .rise-in-1,
+  .rise-in-2,
+  .rise-in-3,
+  .rise-in-4 {
+    animation: none;
+  }
+}

@@ -1,0 +1,115 @@
+/* Concept C — The Technical Scrapbook.
+ * Photocopied field notes: blueprint grid, crop marks, tape, stamps,
+ * spec-sheet unit plates with per-unit circuit diagrams, cut lines. */
+
+.tsb {
+  position: relative;
+}
+
+/* faint blueprint grid over the whole sheet */
+.tsb-grid {
+  background-image:
+    linear-gradient(rgba(132, 186, 181, 0.16) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(132, 186, 181, 0.16) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+}
+
+/* crop marks */
+.tsb-crop {
+  position: fixed;
+  width: 18px;
+  height: 18px;
+  border: 0 solid #171512;
+  z-index: 40;
+  pointer-events: none;
+}
+.tsb-crop-tl {
+  top: 10px;
+  left: 10px;
+  border-top-width: 2px;
+  border-left-width: 2px;
+}
+.tsb-crop-tr {
+  top: 10px;
+  right: 10px;
+  border-top-width: 2px;
+  border-right-width: 2px;
+}
+.tsb-crop-bl {
+  bottom: 10px;
+  left: 10px;
+  border-bottom-width: 2px;
+  border-left-width: 2px;
+}
+.tsb-crop-br {
+  bottom: 10px;
+  right: 10px;
+  border-bottom-width: 2px;
+  border-right-width: 2px;
+}
+
+/* hero em accent */
+.tsb-em {
+  color: #8475b8;
+}
+
+/* rubber stamps */
+.tsb-stamp {
+  font-family: var(--font-dmono);
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  border: 2px solid #171512;
+  padding: 0.35rem 0.7rem;
+}
+.tsb-stamp-draft {
+  transform: rotate(-6deg);
+  color: #d97861;
+  border-color: #d97861;
+  align-self: flex-start;
+}
+.tsb-stamp-appr {
+  transform: rotate(4deg);
+  color: #372b42;
+  border-color: #372b42;
+  align-self: flex-end;
+}
+
+/* tape on the header plate */
+.tsb-tape {
+  width: 7rem;
+  height: 1.5rem;
+  background: rgba(232, 201, 90, 0.6);
+  border-left: 1px solid rgba(23, 21, 18, 0.25);
+  border-right: 1px solid rgba(23, 21, 18, 0.25);
+  transform: rotate(-3deg);
+}
+
+/* cut lines */
+.tsb-cut {
+  border-top: 2px dashed rgba(23, 21, 18, 0.35);
+  text-align: right;
+  padding-top: 0.25rem;
+}
+
+/* unit plates */
+.tsb-plate {
+  box-shadow: 5px 5px 0 rgba(23, 21, 18, 0.1);
+}
+.tsb-plate:hover {
+  box-shadow: 7px 7px 0 rgba(23, 21, 18, 0.18);
+}
+
+.tsb-circuit {
+  color: #372b42;
+  opacity: 0.85;
+  transition: opacity 0.15s ease;
+}
+.tsb-plate:hover .tsb-circuit {
+  opacity: 1;
+}
+
+.tsb-noteplate {
+  box-shadow: 4px 4px 0 rgba(23, 21, 18, 0.08);
+}

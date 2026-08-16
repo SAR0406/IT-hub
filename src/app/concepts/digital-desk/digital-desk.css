@@ -1,0 +1,69 @@
+/* Concept B — The Digital Desk.
+ * The homepage is a workspace: an overhead desk with a notebook, a fanned
+ * stack of unit cards, sticky notes, a pencil and a USB stick. Objects are
+ * slightly rotated, taped down, hoverable and clickable. */
+
+.dd-surface {
+  background:
+    radial-gradient(120% 90% at 50% 0%, rgba(23, 21, 18, 0.05), transparent 60%),
+    #f1ebdd;
+}
+
+/* notebook "em" accent word */
+.dd-em {
+  color: #8475b8;
+}
+
+/* pencil highlight on ledger marks */
+.dd-mark {
+  position: relative;
+}
+.dd-mark::after {
+  content: "";
+  position: absolute;
+  left: -0.15em;
+  right: -0.15em;
+  bottom: 0.05em;
+  height: 0.42em;
+  background: rgba(232, 201, 90, 0.7);
+  z-index: -1;
+}
+
+/* translucent tape strips */
+.dd-tape {
+  width: 6.5rem;
+  height: 1.4rem;
+  border-left: 1px solid rgba(23, 21, 18, 0.25);
+  border-right: 1px solid rgba(23, 21, 18, 0.25);
+}
+.dd-tape-yellow {
+  background: rgba(232, 201, 90, 0.55);
+  transform: rotate(-6deg);
+}
+.dd-tape-moss {
+  background: rgba(168, 184, 107, 0.6);
+}
+
+/* cards hover straighten up */
+.dd-card {
+  transform-origin: 50% 115%; /* fan from the bottom, like cards in a hand */
+}
+.dd-card:hover {
+  z-index: 30 !important;
+}
+
+/* desk panel blip */
+.dd-blip {
+  animation: dd-blip 2.2s steps(1) infinite;
+}
+@keyframes dd-blip {
+  0%, 70% { opacity: 1; }
+  75%, 100% { opacity: 0.25; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dd-blip,
+  .caret {
+    animation: none;
+  }
+}
