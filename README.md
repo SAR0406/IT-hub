@@ -2,12 +2,14 @@
 
 One reliable place for Class 11 CBSE Information Technology (Code 402) students to find,
 open and download their study material — notes, worksheets, question papers and practicals —
-organised exactly like the official syllabus.
+organised exactly like the official syllabus. On top of the archive sit quizzes (admin-built
+MCQs with scoring and review), a real-time class chat (rooms per unit, teacher moderation)
+and a browser-based SQL Lab for the RDBMS unit.
 
-Students sign in with the account their teacher creates. Every meaningful action is
-tracked — downloads, searches, sign-ins — and the admin panel reviews automatically-raised
-misbehavior flags (banned search terms, download bursts, repeated failed logins, admin-area
-probes) and manages students and material.
+Students sign up instantly with their email. Every meaningful action is tracked — downloads,
+searches, sign-ins, quiz attempts — and the admin panel reviews automatically-raised
+misbehavior flags (banned words in search/chat, download bursts, repeated failed logins,
+admin-area probes) and manages students, material, quizzes and announcements.
 
 ## Tech stack
 
@@ -73,11 +75,23 @@ is server-only — never expose it, never commit it. `.env.local` is gitignored.
   Students read only their own row; admins read all.
 - `activity_logs` — immutable audit trail: `page_view`, `search`, `resource_open`,
   `resource_download`, `login_success`, `login_failed`, `resource_upload`,
-  `resource_delete`, `admin_action`, `unauthorized_admin_attempt`. Guests may only insert
-  `login_failed` rows (for brute-force detection). Admins read all.
+  `resource_delete`, `admin_action`, `quiz_start`, `quiz_submit`,
+  `unauthorized_admin_attempt`. Guests may only insert `login_failed` rows (for brute-force
+  detection). Admins read all.
 - `misbehavior_flags` — raised automatically: `banned_search`, `rapid_downloads`,
-  `failed_login`, `unauthorized_admin`, with severity and `open`/`reviewed`/`dismissed`
-  status. Admins read and review; students can only raise their own.
+  `failed_login`, `unauthorized_admin`, `chat_inappropriate`, with severity and
+  `open`/`reviewed`/`dismissed` status. Admins read and review; students can only raise
+  their own.
+- `announcements` — teacher notices, shown at the top of the student dashboard.
+- `quizzes` / `quiz_attempts` — admin-built MCQ quizzes (questions stored as JSONB, answers
+  revealed only to the server) with per-student attempt history and best scores.
+- `chat_messages` — real-time class chat (rooms: `general` + one per unit). RLS: signed-in
+  users read/insert; only admins delete. Added to the `supabase_realtime` publication, so
+  new messages stream to the browser over WebSockets. The send API rate-limits (1 per 5s),
+  blocks the banned-word list and raises a `chat_inappropriate` flag on violations.
+
+The SQL Lab (`/lab/sql`) never touches the database: it runs a full Postgres inside the
+student's browser via **PGlite** (WebAssembly).
 
 `is_admin()` is a SECURITY DEFINER helper (checks role + `is_active`), so RLS never
 recurses. The four rule functions (`count_recent_actions`, `count_recent_failed_logins`,
@@ -127,9 +141,9 @@ resources/
 ### Accounts
 
 - **Admin** — create via Supabase dashboard: **Authentication → Users → Add user**,
-  then add a matching row in `profiles` with `role = 'admin'`. Signs in at `/login`.
-- **Students** — created from the admin panel (Students page). No open registration:
-  accounts come from the teacher. Pausing an account blocks sign-in immediately.
+  then add a matching row in `profiles` with `role = 'admin'`. Signs in at `/admin`.
+- **Students** — sign up themselves at `/register` (instant activation, auto sign-in).
+  Pausing an account (admin panel) blocks sign-in immediately.
 
 Demo accounts (from `20260816_seed_demo_students.sql`, password `student@123`):
 `aarav.sharma@ithub11.in`, `priya.patel@ithub11.in`, `rohan.mehta@ithub11.in`,
@@ -205,6 +219,8 @@ scripts/seed-demo.mjs     # V1 demo resource seed
 
 ## Roadmap
 
-- **V3** — AI tutor grounded in uploaded notes, full-text PDF search, browser-based SQL
-  (PGlite) and Java practice.
-- **V4** — Teacher analytics beyond flags, assignments, student progress, exam mode.
+Tracked in detail in `SCOPE.md` (every feature marked SHIPPED / V1 / V2 / V3 / CUT).
+
+- **V2** — Bookless mode (download unit bundles for offline/low-internet use), teacher-verified
+  badges, timed quizzes, bandwidth calculators, scenario quizzes.
+- **V3** — AI tutor grounded in uploaded notes, full-text PDF search, Java playground.

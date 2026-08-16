@@ -79,6 +79,11 @@
   --brand-strong: #3730a3;
   --brand-soft: #e0e7ff;
 }
+.accent-scope-sky {
+  --brand: #0369a1;
+  --brand-strong: #075985;
+  --brand-soft: #e0f2fe;
+}
 
 /* slate-500 fails WCAG AA on paper (4.35:1); nudge it to the AA-safe family */
 @theme {

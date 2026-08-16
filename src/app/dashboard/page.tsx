@@ -27,6 +27,7 @@ const NAV_ITEMS = [
   { href: "/dashboard", label: "Dashboard", soon: false },
   { href: "/chapters", label: "Chapters", soon: false },
   { href: "/quizzes", label: "Quizzes", soon: false },
+  { href: "/lab/sql", label: "SQL Lab", soon: false },
   { href: "/search", label: "Search", soon: false },
   { href: "/chat", label: "Chat", soon: false },
 ];

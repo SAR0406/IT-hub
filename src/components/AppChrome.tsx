@@ -38,6 +38,8 @@ export function AppChrome({
           ? "accent-scope-emerald"
           : pathname.startsWith("/admin")
             ? "accent-scope-indigo"
+            : pathname.startsWith("/lab")
+            ? "accent-scope-sky"
             : pathname === "/login" || pathname === "/register"
               ? "accent-scope-blue"
               : "";

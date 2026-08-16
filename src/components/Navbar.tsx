@@ -11,6 +11,7 @@ const NAV_LINKS = [
   { href: "/", label: "Home" },
   { href: "/chapters", label: "Chapters" },
   { href: "/quizzes", label: "Quizzes" },
+  { href: "/lab/sql", label: "SQL Lab" },
   { href: "/search", label: "Search" },
   { href: "/chat", label: "Chat" },
   { href: "/about", label: "About" },
