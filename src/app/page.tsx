@@ -45,14 +45,14 @@ const STEPS = [
   {
     icon: PaperSketch,
     chip: "bg-sun/30",
-    title: "Request access",
-    text: "Sign up with your name and class — it takes a minute.",
+    title: "Create your account",
+    text: "Sign up with your name and class — it takes under a minute.",
   },
   {
     icon: CheckSketch,
     chip: "bg-mint/30",
-    title: "Teacher approves",
-    text: "Your account is activated from the admin panel — usually within a day.",
+    title: "You’re in — instantly",
+    text: "No approvals, no waiting. Your account works the moment you create it.",
   },
   {
     icon: BookSketch,

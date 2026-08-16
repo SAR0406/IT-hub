@@ -61,9 +61,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${inter.variable} ${spaceGrotesk.variable} ${geistMono.variable} ${geist.variable} ${instrumentSerif.variable} ${ibmPlexMono.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col">
-        <AppChrome profile={profile} />
-        <main className="flex-1">{children}</main>
+      <body className="flex min-h-full flex-col antialiased">
+        <AppChrome profile={profile}>{children}</AppChrome>
       </body>
     </html>
   );

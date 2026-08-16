@@ -295,113 +295,115 @@ export function CheckSketch(props: SketchProps) {
 
 /* --------------------------------- scenes --------------------------------- */
 
-/** Hero scene — student at a laptop, coffee at hand, ideas floating around. */
+/** Hero scene — a student at their desk with laptop, books, coffee and ideas. */
 export function HeroSketch(props: SketchProps) {
   return (
     <svg {...sketchBase(props, "0 0 360 300")}>
+      {/* Floor shadow */}
+      <ellipse cx="180" cy="280" rx="132" ry="7" fill={INK} opacity="0.05" />
+
+      {/* Wall clock */}
+      <circle cx="54" cy="52" r="19" fill="#ffffff" stroke={INK} strokeWidth="2.4" />
+      <path d="M54 52 L 54 41 M54 52 L 62 56" stroke={INK} strokeWidth="2.4" strokeLinecap="round" />
+      <circle cx="54" cy="52" r="2.2" fill={INK} />
+      <path d="M54 35 v 3 M54 66 v 3 M37 52 h 3 M68 52 h 3" stroke={INK} strokeWidth="1.6" strokeLinecap="round" />
+
+      {/* Student — behind the laptop */}
+      <path
+        d="M146 132 q -6 44 6 86 h 56 q 12 -42 6 -86 q -17 12 -34 12 q -17 0 -34 -12 z"
+        fill={BLUSH}
+        fillOpacity="0.45"
+        stroke={INK}
+        strokeWidth="2.4"
+        strokeLinejoin="round"
+      />
+      <path d="M150 136 q 10 48 4 80 M210 136 q -10 48 -4 80" stroke={INK} strokeWidth="2.4" strokeLinecap="round" fill="none" />
+      <circle cx="180" cy="98" r="27" fill={BLUSH} stroke={INK} strokeWidth="2.4" />
+      <path
+        d="M153 94 a 27 27 0 0 1 54 0 q -4 -14 -16 -17 a 20 20 0 0 0 -6 -12 q 0 10 -8 13 q -4 -7 -10 -9 q 8 7 4 13 q -10 -1 -18 0 z"
+        fill={INK}
+        stroke={INK}
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+      />
+      <circle cx="170" cy="97" r="2.3" fill={INK} />
+      <circle cx="190" cy="97" r="2.3" fill={INK} />
+      <path d="M170 110 q 10 8 20 0" stroke={INK} strokeWidth="2.4" strokeLinecap="round" fill="none" />
+      <circle cx="163" cy="105" r="3.2" fill="#ec4899" fillOpacity="0.35" />
+      <circle cx="197" cy="105" r="3.2" fill="#ec4899" fillOpacity="0.35" />
+
+      {/* Laptop */}
+      <path d="M134 150 L 226 150 L 232 218 L 128 218 Z" fill={SKY} stroke={INK} strokeWidth="2.4" strokeLinejoin="round" />
+      <path
+        d="M142 178 l 16 13 l 20 -24 l 15 17 l 19 -13 l 16 9"
+        stroke="#0891b2"
+        strokeWidth="3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path d="M142 202 h 52" stroke="#db2777" strokeWidth="3" strokeLinecap="round" />
+      <path d="M142 213 h 38" stroke={INK} strokeWidth="2" strokeLinecap="round" opacity="0.3" />
+      <path d="M120 218 L 240 218 L 236 232 L 124 232 Z" fill={PAPER} stroke={INK} strokeWidth="2.4" strokeLinejoin="round" />
+      <path d="M132 225 h 96" stroke={INK} strokeWidth="1.6" strokeLinecap="round" opacity="0.6" />
+      <path d="M170 218 v -6" stroke={INK} strokeWidth="2.4" strokeLinecap="round" />
+
       {/* Desk */}
-      <path d="M18 236 C 60 228, 150 228, 200 236" stroke={INK} strokeWidth="3" strokeLinecap="round" />
-      <path d="M46 236 L 38 268" stroke={INK} strokeWidth="3" strokeLinecap="round" />
-      <path d="M174 236 L 182 268" stroke={INK} strokeWidth="3" strokeLinecap="round" />
+      <path d="M14 232 q 80 -6 166 -2 q 86 4 166 2" stroke={INK} strokeWidth="3" strokeLinecap="round" fill="none" />
+      <path d="M20 242 h 320" stroke={INK} strokeWidth="2.2" strokeLinecap="round" opacity="0.85" />
+      <path d="M52 242 l -6 28 M308 242 l 6 28" stroke={INK} strokeWidth="3" strokeLinecap="round" />
+      <path d="M40 270 h 14 M308 270 h 14" stroke={INK} strokeWidth="3" strokeLinecap="round" />
+
+      {/* Books */}
+      <path d="M34 226 h 48 q 4 4 0 8 h -48 q -4 -4 0 -8 z" fill={AQUA} stroke={INK} strokeWidth="2" strokeLinejoin="round" />
+      <g transform="rotate(-4 52 216)">
+        <path d="M28 212 h 48 q 4 4 0 8 h -48 q -4 -4 0 -8 z" fill={SUN} stroke={INK} strokeWidth="2" strokeLinejoin="round" />
+      </g>
+      <g transform="rotate(3 62 202)">
+        <path d="M38 198 h 48 q 4 4 0 8 h -48 q -4 -4 0 -8 z" fill={MINT} stroke={INK} strokeWidth="2" strokeLinejoin="round" />
+      </g>
+      <path d="M60 198 v 10 l -3.5 -3.5 l -3.5 3.5 v -10 z" fill={BLUSH} stroke={INK} strokeWidth="1.4" strokeLinejoin="round" />
 
       {/* Coffee mug */}
       <path
-        d="M52 186 h 34 v 26 a 8 8 0 0 1 -8 8 h -18 a 8 8 0 0 1 -8 -8 z"
+        d="M262 202 h 34 v 22 a 9 9 0 0 1 -9 9 h -16 a 9 9 0 0 1 -9 -9 z"
         fill={SUN}
         stroke={INK}
-        strokeWidth="2.5"
+        strokeWidth="2.4"
         strokeLinejoin="round"
       />
-      <path d="M86 192 h 12 a 6 6 0 0 1 0 12 h -10" stroke={INK} strokeWidth="2.5" strokeLinecap="round" />
-      <path d="M60 176 c 3 -6 -3 -10 0 -16 M72 176 c 3 -6 -3 -10 0 -16" stroke={INK} strokeWidth="2.5" strokeLinecap="round" />
+      <path d="M296 210 h 10 a 8 8 0 0 1 0 16 h -8" stroke={INK} strokeWidth="2.4" strokeLinecap="round" fill="none" />
+      <path d="M270 194 q 6 -6 0 -12 q -6 -6 0 -12 M284 194 q 6 -6 0 -12" stroke={INK} strokeWidth="2.2" strokeLinecap="round" fill="none" />
 
-      {/* Laptop */}
-      <path d="M108 140 L 216 146 L 212 182 L 104 176 Z" fill={SKY} stroke={INK} strokeWidth="2.5" strokeLinejoin="round" />
-      <path d="M126 156 l 12 10 l 14 -16 l 16 20 l 18 -14 l 12 8" stroke="#0891b2" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-      <path
-        d="M104 176 C 140 186, 180 186, 212 182 L 206 190 C 174 194, 138 194, 112 184 Z"
-        fill={PAPER}
-        stroke={INK}
-        strokeWidth="2.5"
-        strokeLinejoin="round"
-      />
-
-      {/* Student */}
-      <circle cx="266" cy="126" r="26" fill={BLUSH} stroke={INK} strokeWidth="2.5" />
-      <path d="M244 112 c 0 -16 18 -22 30 -12 c -4 -2 -12 -2 -16 2" fill={INK} stroke={INK} strokeWidth="2" strokeLinecap="round" />
-      <circle cx="258" cy="124" r="2.4" fill={INK} />
-      <circle cx="274" cy="124" r="2.4" fill={INK} />
-      <path d="M258 138 q 8 8 16 0" stroke={INK} strokeWidth="2.5" strokeLinecap="round" fill="none" />
-      <path
-        d="M242 158 c -4 26 2 44 6 58 h 36 c 4 -14 10 -32 6 -58 c -8 6 -16 6 -24 4 c -8 2 -16 2 -24 -4 z"
-        fill={BLUSH}
-        stroke={INK}
-        strokeWidth="2.5"
-        strokeLinejoin="round"
-      />
-      <path d="M246 178 c -10 8 -14 18 -16 28" stroke={INK} strokeWidth="2.5" strokeLinecap="round" fill="none" />
-      <path d="M280 178 c 6 4 10 10 12 18 c -14 4 -26 6 -36 8" stroke={INK} strokeWidth="2.5" strokeLinecap="round" fill="none" />
+      {/* Plant */}
+      <path d="M316 246 h 34 l -6 16 h -22 z" fill={BLUSH} stroke={INK} strokeWidth="2.4" strokeLinejoin="round" />
+      <path d="M333 246 q -4 -22 6 -38 q 8 16 2 38" fill={MINT} stroke={INK} strokeWidth="2.2" strokeLinecap="round" />
+      <path d="M333 246 q 2 -24 -6 -34 q -6 14 -2 34" fill={MINT} stroke={INK} strokeWidth="2.2" strokeLinecap="round" />
+      <path d="M333 238 q 3 -12 -2 -16 q -2 8 0 12" fill={MINT} stroke={INK} strokeWidth="2" strokeLinecap="round" />
 
       {/* Speech bubble */}
       <path
-        d="M196 44 C 196 34 204 27 215 27 H 282 C 293 27 301 34 301 44 V 78 C 301 88 293 95 282 95 H 246 L 230 108 L 233 95 H 215 C 204 95 196 88 196 78 Z"
+        d="M210 38 c 0 -11 9 -19 21 -19 h 78 c 12 0 21 8 21 19 v 28 c 0 11 -9 19 -21 19 h -56 l -12 15 v -15 h -10 c -12 0 -21 -8 -21 -19 z"
         fill="#ffffff"
         stroke={INK}
-        strokeWidth="2.5"
+        strokeWidth="2.4"
         strokeLinejoin="round"
       />
-      <text x="215" y="62" className="font-mono" fontSize="15" fontWeight="600" fill={INK}>
-        SQL done!
+      <text
+        x="222"
+        y="63"
+        fontSize="12.5"
+        fontWeight="700"
+        fill={INK}
+        style={{ fontFamily: "var(--font-geist-mono), ui-monospace, monospace" }}
+      >
+        <tspan fill="#db2777">6/6 </tspan>
+        units done!
       </text>
-      <path d="M239 96 l -4 10 l 10 -8" stroke={INK} strokeWidth="2.5" strokeLinejoin="round" fill="none" />
-
-      {/* Floating book */}
-      <g transform="rotate(-8 66 52)">
-        <path d="M46 30 q 10 -6 20 0 l 0 34 q -10 -6 -20 0 z" fill={AQUA} stroke={INK} strokeWidth="2.5" strokeLinejoin="round" />
-        <path d="M66 30 q 10 -6 20 0 l 0 34 q -10 -6 -20 0 z" fill={MINT} stroke={INK} strokeWidth="2.5" strokeLinejoin="round" />
-        <path
-          d="M50 36 q 6 -3 12 0 M50 42 q 6 -3 12 0 M70 36 q 6 -3 12 0 M70 42 q 6 -3 12 0"
-          stroke={INK}
-          strokeWidth="2"
-          strokeLinecap="round"
-        />
-      </g>
-
-      {/* Graduation cap */}
-      <g transform="rotate(8 316 30)">
-        <path d="M304 18 L 316 23 L 328 18 L 316 13 Z" fill={AQUA} stroke={INK} strokeWidth="2.2" strokeLinejoin="round" />
-        <path d="M307 24 V 27.4 C 307 29.4 311.5 30.6 316 30.6 C 320.5 30.6 325 29.4 325 27.4 V 24" stroke={INK} strokeWidth="2.2" strokeLinecap="round" fill="none" />
-        <path d="M328 23 V 28.4" stroke={INK} strokeWidth="2.2" strokeLinecap="round" />
-        <circle cx="326.8" cy="29.8" r="1.4" fill={SUN} stroke={INK} strokeWidth="1.6" />
-      </g>
-
-      {/* Lightbulb */}
-      <g transform="rotate(10 300 150)">
-        <circle cx="300" cy="140" r="15" fill={SUN} stroke={INK} strokeWidth="2.5" />
-        <path d="M300 155 l 0 5 M294 163 h 12" stroke={INK} strokeWidth="2.5" strokeLinecap="round" />
-        <path d="M281 132 l -7 -5 M319 132 l 7 -5 M277 145 l -9 2 M323 145 l 9 2" stroke={INK} strokeWidth="2.5" strokeLinecap="round" />
-        <path d="M293 136 q 3 -4 7 0 M293 144 q 3 -4 7 0" stroke={INK} strokeWidth="2.5" strokeLinecap="round" />
-      </g>
-
-      {/* Pencil */}
-      <g transform="rotate(24 330 235)">
-        <path d="M322 230 h 8 v 2.6 h -8 z" fill={BLUSH} stroke={INK} strokeWidth="2" strokeLinejoin="round" />
-        <path d="M322 232.6 h 8 v 7.4 h -8 z" fill={SUN} stroke={INK} strokeWidth="2.2" strokeLinejoin="round" />
-        <path d="M322.4 240 h 7.2 l -3.6 5.4 z" fill="#fcd9b8" stroke={INK} strokeWidth="2.2" strokeLinejoin="round" />
-      </g>
-
-      {/* Plant */}
-      <g transform="rotate(-6 320 250)">
-        <path d="M302 262 h 36 l -6 16 h -24 z" fill={BLUSH} stroke={INK} strokeWidth="2.5" strokeLinejoin="round" />
-        <path d="M320 262 c 0 -10 6 -18 12 -24 c -2 10 -4 20 -8 26" fill={MINT} stroke={INK} strokeWidth="2.5" strokeLinecap="round" />
-        <path d="M320 262 c 0 -12 -8 -20 -16 -26 c 4 10 8 20 12 28" fill={MINT} stroke={INK} strokeWidth="2.5" strokeLinecap="round" />
-        <path d="M320 250 c 0 -8 2 -12 6 -16 c 0 8 -2 14 -6 20" fill={MINT} stroke={INK} strokeWidth="2.5" strokeLinecap="round" />
-      </g>
 
       {/* Sparkles */}
-      <path d="M52 130 l 2.2 4.6 l 4.8 2 l -4.8 2 l -2.2 4.6 l -2.2 -4.6 l -4.8 -2 l 4.8 -2 Z" fill={SUN} stroke={INK} strokeWidth="1.6" strokeLinejoin="round" />
-      <path d="M140 40 l 1.7 3.6 l 3.8 1.6 l -3.8 1.6 l -1.7 3.6 l -1.7 -3.6 l -3.8 -1.6 l 3.8 -1.6 Z" fill={BLUSH} stroke={INK} strokeWidth="1.6" strokeLinejoin="round" />
-      <path d="M336 120 l 1.5 3.2 l 3.4 1.4 l -3.4 1.4 l -1.5 3.2 l -1.5 -3.2 l -3.4 -1.4 l 3.4 -1.4 Z" fill={MINT} stroke={INK} strokeWidth="1.6" strokeLinejoin="round" />
+      <path d="M120 44 l 2.2 4.6 4.8 2 -4.8 2 -2.2 4.6 -2.2 -4.6 -4.8 -2 4.8 -2 z" fill={SUN} stroke={INK} strokeWidth="1.5" strokeLinejoin="round" />
+      <path d="M300 120 l 1.9 4 4.2 1.8 -4.2 1.8 -1.9 4 -1.9 -4 -4.2 -1.8 4.2 -1.8 z" fill={BLUSH} stroke={INK} strokeWidth="1.5" strokeLinejoin="round" />
+      <path d="M152 192 l 1.6 3.4 3.6 1.5 -3.6 1.5 -1.6 3.4 -1.6 -3.4 -3.6 -1.5 3.6 -1.5 z" fill={MINT} stroke={INK} strokeWidth="1.5" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -410,43 +412,102 @@ export function HeroSketch(props: SketchProps) {
 export function TeacherSketch(props: SketchProps) {
   return (
     <svg {...sketchBase(props, "0 0 320 260")}>
+      {/* Floor + shadow */}
+      <path d="M16 218 q 70 -4 144 -2 q 72 2 144 2" stroke={INK} strokeWidth="3" strokeLinecap="round" fill="none" />
+      <ellipse cx="246" cy="220" rx="72" ry="6" fill={INK} opacity="0.05" />
+
       {/* Blackboard */}
-      <rect x="22" y="24" width="190" height="140" rx="6" fill={INK} stroke={INK} strokeWidth="3" />
-      <path d="M30 32 h 174 M30 156 h 174" stroke="#334155" strokeWidth="1.6" />
-      <text x="40" y="66" className="font-mono" fontSize="18" fill="#e2e8f0">select *</text>
-      <text x="40" y="92" className="font-mono" fontSize="18" fill="#e2e8f0">from syllabus</text>
-      <text x="40" y="118" className="font-mono" fontSize="18" fill="#f4a4d4">where exam;</text>
-      <path d="M160 48 c 8 0 14 6 14 13 c 0 9 -8 14 -16 11" fill="none" stroke={SUN} strokeWidth="2.4" strokeLinecap="round" />
-      <path d="M160 48 l 4 24 M160 48 l -8 22 M160 48 l 12 16" stroke={BLUSH} strokeWidth="2.2" strokeLinecap="round" />
+      <rect x="24" y="24" width="196" height="146" rx="8" fill={INK} stroke={INK} strokeWidth="3" />
+      <path d="M32 32 h 180 M32 162 h 180" stroke="#334155" strokeWidth="1.4" />
+      <text
+        x="38"
+        y="70"
+        fontSize="17"
+        fontWeight="500"
+        fill="#e2e8f0"
+        style={{ fontFamily: "var(--font-geist-mono), ui-monospace, monospace" }}
+      >
+        select *
+      </text>
+      <text
+        x="38"
+        y="98"
+        fontSize="17"
+        fontWeight="500"
+        fill="#e2e8f0"
+        style={{ fontFamily: "var(--font-geist-mono), ui-monospace, monospace" }}
+      >
+        from syllabus
+      </text>
+      <text
+        x="38"
+        y="126"
+        fontSize="17"
+        fontWeight="500"
+        fill={BLUSH}
+        style={{ fontFamily: "var(--font-geist-mono), ui-monospace, monospace" }}
+      >
+        where exam;
+      </text>
+      <path
+        d="M38 138 q 10 5 20 0 q 10 -5 20 0 q 10 5 20 0 q 10 -5 20 0"
+        stroke={BLUSH}
+        strokeWidth="2.2"
+        strokeLinecap="round"
+        fill="none"
+      />
+
+      {/* Sun doodle on the board */}
+      <circle cx="188" cy="58" r="11" stroke={SUN} strokeWidth="2.4" fill="none" />
+      <path
+        d="M188 40 v -6 M188 76 v 6 M170 58 h -6 M206 58 h 6 M175 45 l -5 -4 M201 45 l 5 -4 M175 71 l -5 4 M201 71 l 5 4"
+        stroke={SUN}
+        strokeWidth="2.2"
+        strokeLinecap="round"
+      />
+
       {/* Chalk tray */}
-      <path d="M26 170 H 208" stroke={INK} strokeWidth="3" strokeLinecap="round" />
-      <path d="M56 164 v 6 M66 163 v 6 M76 165 v 6" stroke="#f1f5f9" strokeWidth="2.4" strokeLinecap="round" />
+      <path d="M28 176 h 188" stroke={INK} strokeWidth="3" strokeLinecap="round" />
+      <path d="M52 170 v 6 M64 169 v 6 M76 171 v 6" stroke="#f1f5f9" strokeWidth="2.4" strokeLinecap="round" />
 
       {/* Teacher */}
-      <circle cx="248" cy="86" r="24" fill={AQUA} stroke={INK} strokeWidth="2.5" />
-      <path d="M228 74 c 0 -15 16 -20 27 -11 c -4 -2 -11 -2 -15 2" fill={INK} stroke={INK} strokeWidth="2" strokeLinecap="round" />
-      <circle cx="241" cy="84" r="2.2" fill={INK} />
-      <circle cx="256" cy="84" r="2.2" fill={INK} />
-      <path d="M241 96 q 7 7 14 0" stroke={INK} strokeWidth="2.5" strokeLinecap="round" fill="none" />
       <path
-        d="M225 116 c -3 22 2 38 5 50 h 36 c 3 -12 8 -28 5 -50 c -8 5 -15 5 -23 3 c -8 2 -15 2 -23 -3 z"
+        d="M232 128 q -4 40 4 88 h 40 q 8 -48 4 -88 q -12 8 -24 8 q -12 0 -24 -8 z"
         fill={AQUA}
         stroke={INK}
-        strokeWidth="2.5"
+        strokeWidth="2.4"
         strokeLinejoin="round"
       />
-      {/* Pointer arm */}
-      <path d="M228 130 c -12 4 -18 2 -24 -2" stroke={INK} strokeWidth="2.5" strokeLinecap="round" fill="none" />
-      <path d="M204 128 L 128 96" stroke={INK} strokeWidth="2.5" strokeLinecap="round" />
-      <path d="M120 93 l 8 3 l 0 -8 z" fill={BLUSH} stroke={INK} strokeWidth="2" strokeLinejoin="round" />
+      <path d="M242 216 v 4 M268 216 v 4" stroke={INK} strokeWidth="2.6" strokeLinecap="round" />
+      <circle cx="256" cy="100" r="23" fill={AQUA} stroke={INK} strokeWidth="2.4" />
+      <path
+        d="M233 96 a 23 23 0 0 1 46 0 q -3 -12 -13 -15 a 17 17 0 0 0 -4 -10 q 1 9 -6 11 q -3 -6 -9 -7 q 6 6 2 11 q -9 -1 -16 0 z"
+        fill={INK}
+        stroke={INK}
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+      />
+      <circle cx="249" cy="98" r="2.2" fill={INK} />
+      <circle cx="263" cy="98" r="2.2" fill={INK} />
+      <path d="M249 110 q 7 7 14 0" stroke={INK} strokeWidth="2.4" strokeLinecap="round" fill="none" />
+      <circle cx="242" cy="106" r="3" fill="#ec4899" fillOpacity="0.3" />
+      <circle cx="270" cy="106" r="3" fill="#ec4899" fillOpacity="0.3" />
+
+      {/* Arms + pointer */}
+      <path d="M236 132 q 12 14 18 24" stroke={INK} strokeWidth="2.6" strokeLinecap="round" fill="none" />
+      <path d="M272 134 q 14 8 18 22" stroke={INK} strokeWidth="2.6" strokeLinecap="round" fill="none" />
+      <path d="M258 156 L 150 84" stroke={INK} strokeWidth="2.6" strokeLinecap="round" />
+      <path d="M146 81 l 6 3 l -2 -7 z" fill={BLUSH} stroke={INK} strokeWidth="1.6" strokeLinejoin="round" />
+
+      {/* Plant */}
+      <path d="M296 200 h 16 l -3.5 16 h -9 z" fill={BLUSH} stroke={INK} strokeWidth="2.2" strokeLinejoin="round" />
+      <path d="M304 200 q -2 -14 4 -22 q 5 10 1 22" fill={MINT} stroke={INK} strokeWidth="2" strokeLinecap="round" />
+      <path d="M304 200 q 2 -16 -3 -20 q -4 9 -1 20" fill={MINT} stroke={INK} strokeWidth="2" strokeLinecap="round" />
 
       {/* Floating bits */}
-      <path d="M52 44 l 2 4.2 l 4.4 1.8 l -4.4 1.8 l -2 4.2 l -2 -4.2 l -4.4 -1.8 l 4.4 -1.8 Z" fill={SUN} stroke={INK} strokeWidth="1.6" strokeLinejoin="round" />
-      <path d="M292 44 l 1.8 3.8 l 4 1.6 l -4 1.6 l -1.8 3.8 l -1.8 -3.8 l -4 -1.6 l 4 -1.6 Z" fill={MINT} stroke={INK} strokeWidth="1.6" strokeLinejoin="round" />
-      <path d="M284 128 c 0 -4 3 -7 7 -7 c 0 4 -3 7 -7 7 Z" fill={SUN} stroke={INK} strokeWidth="1.8" strokeLinejoin="round" />
-      <path d="M284 128 l -4 10 M284 128 l 4 10" stroke={INK} strokeWidth="1.8" strokeLinecap="round" />
-      <path d="M36 208 l 2 4 l 4 1.6 l -4 1.6 l -2 4 l -2 -4 l -4 -1.6 l 4 -1.6 Z" fill={BLUSH} stroke={INK} strokeWidth="1.6" strokeLinejoin="round" />
-      <path d="M280 208 c 0 -5 3.6 -8.6 8.6 -8.6 c 0 5 -3.6 8.6 -8.6 8.6 Z" fill={AQUA} stroke={INK} strokeWidth="1.8" strokeLinejoin="round" />
+      <path d="M44 196 l 2 4.2 4.4 1.8 -4.4 1.8 -2 4.2 -2 -4.2 -4.4 -1.8 4.4 -1.8 z" fill={BLUSH} stroke={INK} strokeWidth="1.6" strokeLinejoin="round" />
+      <path d="M288 58 l 1.7 3.6 3.8 1.6 -3.8 1.6 -1.7 3.6 -1.7 -3.6 -3.8 -1.6 3.8 -1.6 z" fill={MINT} stroke={INK} strokeWidth="1.6" strokeLinejoin="round" />
+      <path d="M302 128 l 1.4 3 3.2 1.3 -3.2 1.3 -1.4 3 -1.4 -3 -3.2 -1.3 3.2 -1.3 z" fill={SUN} stroke={INK} strokeWidth="1.6" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -475,9 +536,10 @@ export function FloatPlant(props: SketchProps) {
   return (
     <svg {...sketchBase(props, "0 0 24 24")}>
       <path d="M6 16 h 12 l -2.2 5 h -7.6 z" fill={BLUSH} stroke={INK} strokeWidth="1.8" strokeLinejoin="round" />
-      <path d="M12 16 c 0 -5 3 -8 6 -11 c -1 5 -2 9 -4 12" fill={MINT} stroke={INK} strokeWidth="1.8" strokeLinecap="round" />
-      <path d="M12 16 c 0 -6 -4 -9 -8 -11 c 2 5 4 9 6 13" fill={MINT} stroke={INK} strokeWidth="1.8" strokeLinecap="round" />
-      <path d="M12 12.5 c 0 -3 1.5 -5 3.5 -7 c -0.5 3 -1.5 6 -3 8" fill={MINT} stroke={INK} strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M5 16 h 14" stroke={INK} strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M12 16 q -4 -9 1 -13 q 5 7 1 13" fill={MINT} stroke={INK} strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M12 16 q 4 -9 -1 -13 q -5 7 -1 13" fill={MINT} stroke={INK} strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M12 16 q 0 -7 -3 -9 q -1 6 3 9" fill={MINT} stroke={INK} strokeWidth="1.8" strokeLinecap="round" />
     </svg>
   );
 }
@@ -488,12 +550,14 @@ export function TestimonialAvatar(props: SketchProps) {
     <svg {...sketchBase(props, "0 0 64 64")}>
       <circle cx="32" cy="32" r="28" fill={BLUSH} opacity="0.35" stroke={INK} strokeWidth="2.5" />
       <circle cx="32" cy="30" r="13" fill={BLUSH} stroke={INK} strokeWidth="2.5" />
-      <path d="M23 24 c 2 -8 12 -10 18 -4 c -3 -1 -8 -1 -11 1" fill={INK} stroke={INK} strokeWidth="1.5" strokeLinecap="round" />
-      <circle cx="27" cy="30" r="1.8" fill={INK} />
-      <circle cx="37" cy="30" r="1.8" fill={INK} />
-      <path d="M27 36 q 5 5 10 0" stroke={INK} strokeWidth="2.5" strokeLinecap="round" fill="none" />
-      <circle cx="21" cy="36" r="2.6" fill={BLUSH} opacity="0.7" />
-      <circle cx="43" cy="36" r="2.6" fill={BLUSH} opacity="0.7" />
+      <path d="M19 30 a 13 13 0 0 1 26 0 z" fill={BLUSH} stroke={INK} strokeWidth="2.5" strokeLinejoin="round" />
+      <path d="M17 30 h 30 v 3.2 h -30 z" fill={INK} stroke={INK} strokeWidth="1.6" strokeLinejoin="round" />
+      <circle cx="32" cy="17" r="3.4" fill={SUN} stroke={INK} strokeWidth="1.8" />
+      <circle cx="27.5" cy="30" r="1.8" fill={INK} />
+      <circle cx="36.5" cy="30" r="1.8" fill={INK} />
+      <path d="M27.5 36 q 4.5 4.5 9 0" stroke={INK} strokeWidth="2.5" strokeLinecap="round" fill="none" />
+      <circle cx="24" cy="34" r="2.4" fill="#ec4899" fillOpacity="0.4" />
+      <circle cx="40" cy="34" r="2.4" fill="#ec4899" fillOpacity="0.4" />
     </svg>
   );
 }
