@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
@@ -38,6 +39,24 @@ export function LoginForm() {
       return;
     }
 
+    // Accounts awaiting teacher approval can authenticate but not sign in.
+    // Tell the student why instead of silently bouncing them back here.
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (user) {
+      const { data: profileRow } = await supabase
+        .from("profiles")
+        .select("role, is_active")
+        .eq("id", user.id)
+        .maybeSingle();
+      if (profileRow && !profileRow.is_active) {
+        setError("Your account is waiting for your teacher to activate it. Try again once it’s approved.");
+        setLoading(false);
+        return;
+      }
+    }
+
     track("login_success");
 
     // Route by role: admins land on the panel, students on the content.
@@ -59,9 +78,9 @@ export function LoginForm() {
         {/* Brand panel */}
         <div className="grid-bg relative hidden flex-col justify-between bg-ink p-10 text-white md:flex">
           <div>
-            <p className="flex items-center gap-2 font-mono text-sm text-indigo-300">
+            <p className="flex items-center gap-2 font-mono text-sm text-blush">
               <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/10 font-bold">
-                &gt;_
+                11
               </span>
               ~/it-hub-11/auth
             </p>
@@ -85,7 +104,7 @@ export function LoginForm() {
         {/* Form */}
         <div className="p-8 sm:p-10">
           <div className="md:hidden">
-            <p className="font-mono text-sm text-indigo-500">~/it-hub-11/auth</p>
+            <p className="font-mono text-sm text-brand">~/it-hub-11/auth</p>
             <h1 className="mt-2 font-display text-2xl font-bold tracking-tight text-ink">
               Sign in to IT Hub 11
             </h1>
@@ -93,8 +112,9 @@ export function LoginForm() {
           <h2 className="hidden font-display text-2xl font-bold tracking-tight text-ink md:block">
             Sign in
           </h2>
-          <p className="mt-2 text-sm text-slate-500">
-            Accounts are created by your teacher. No self-registration.
+          <p className="mt-2 text-sm text-mist">
+            Accounts are created by your teacher — or request one below and wait for
+            approval.
           </p>
 
           <form onSubmit={handleSubmit} className="mt-8 space-y-5">
@@ -144,7 +164,14 @@ export function LoginForm() {
             </button>
           </form>
 
-          <p className="mt-8 border-t border-zinc-100 pt-5 font-mono text-xs leading-6 text-slate-400">
+          <p className="mt-6 text-center text-sm text-mist">
+            Need an account?{" "}
+            <Link href="/register" className="font-semibold text-brand hover:text-brand-strong">
+              Request access
+            </Link>
+          </p>
+
+          <p className="mt-6 border-t border-zinc-100 pt-5 font-mono text-xs leading-6 text-slate-400">
             <span className="text-slate-500">$</span> who can access the admin panel?{" "}
             <span className="text-slate-300">teacher only</span>
           </p>

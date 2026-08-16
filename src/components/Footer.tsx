@@ -31,6 +31,9 @@ export function Footer() {
           <Link href="/login" className="font-medium text-slate-300 transition-colors hover:text-blush">
             Sign in
           </Link>
+          <Link href="/register" className="font-medium text-slate-300 transition-colors hover:text-blush">
+            Request access
+          </Link>
         </nav>
       </div>
       <div className="border-t border-white/10">
