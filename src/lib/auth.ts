@@ -28,6 +28,9 @@ export async function getProfileForUser(
  * when signed in. Never redirects.
  */
 export async function getSessionProfile(): Promise<Profile | null> {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    return null;
+  }
   const supabase = await createClient();
   const {
     data: { user },
