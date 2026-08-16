@@ -50,12 +50,20 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Class name is too long." }, { status: 400 });
   }
 
-  const result = await registerStudent({
-    fullName,
-    email,
-    password,
-    className: typeof className === "string" ? className : null,
-  });
+  let result;
+  try {
+    result = await registerStudent({
+      fullName,
+      email,
+      password,
+      className: typeof className === "string" ? className : null,
+    });
+  } catch {
+    return NextResponse.json(
+      { error: "The account could not be created right now. Please try again." },
+      { status: 500 }
+    );
+  }
 
   if (!result.ok) {
     return NextResponse.json({ error: result.error }, { status: 400 });

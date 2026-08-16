@@ -13,7 +13,9 @@ import type { Profile } from "@/lib/types";
  */
 
 export function serviceRoleAvailable(): boolean {
-  return Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY);
+  return Boolean(
+    process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY
+  );
 }
 
 function serviceRoleClient() {
@@ -43,7 +45,7 @@ async function createAuthAccount(input: StudentInput, isActive: boolean): Promis
     return {
       ok: false,
       error:
-        "The admin key (SUPABASE_SERVICE_ROLE_KEY) is not configured, so accounts cannot be created yet. Add it to .env.local — see the README.",
+        "Server credentials are not fully configured (NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in Vercel → Environment Variables), so accounts cannot be created yet.",
     };
   }
 
