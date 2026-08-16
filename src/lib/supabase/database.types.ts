@@ -67,6 +67,41 @@ export type Database = {
         }
         Relationships: []
       }
+      chat_messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: number
+          room: string
+          sender_name: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: never
+          room: string
+          sender_name: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: never
+          room?: string
+          sender_name?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_messages_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       misbehavior_flags: {
         Row: {
           created_at: string
@@ -264,7 +299,7 @@ export type Database = {
           resource_type?: string
           title?: string
           topic_slug?: string | null
-          unit_slug?: string
+          unit_slug: string
         }
         Relationships: []
       }

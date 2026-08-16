@@ -37,9 +37,23 @@ export function Footer() {
         </nav>
       </div>
       <div className="border-t border-white/10">
-        <p className="mx-auto flex max-w-6xl items-center gap-2 px-4 py-4 font-mono text-[11px] text-slate-400 sm:px-6">
-          <span className="text-blush">~/it-hub-11</span> — built for the classroom
-        </p>
+        <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-4 font-mono text-[11px] text-slate-400 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+          <p className="flex items-center gap-2">
+            <span className="text-blush">~/it-hub-11</span> — built for the classroom
+          </p>
+          <p className="flex items-center gap-1.5">
+            <span className="text-blush">~ by sarthak</span>
+            <span aria-hidden>/</span>
+            <a
+              href="https://github.com/sar0406"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-slate-400 transition-colors hover:text-blush"
+            >
+              github.com/sar0406
+            </a>
+          </p>
+        </div>
       </div>
     </footer>
   );

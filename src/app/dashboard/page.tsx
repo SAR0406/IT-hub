@@ -28,6 +28,7 @@ const NAV_ITEMS = [
   { href: "/chapters", label: "Chapters", soon: false },
   { href: "/quizzes", label: "Quizzes", soon: false },
   { href: "/search", label: "Search", soon: false },
+  { href: "/chat", label: "Chat", soon: false },
 ];
 
 export default async function DashboardPage() {

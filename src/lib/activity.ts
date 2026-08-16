@@ -15,7 +15,7 @@ import type { ActivityAction, ActivityLog, FlagSeverity, FlagType } from "@/lib/
  *   unauthorized_admin     — student reached an admin-only area
  */
 
-const BANNED_TERMS = [
+export const BANNED_TERMS = [
   "idiot",
   "stupid",
   "dumb",
@@ -97,7 +97,7 @@ async function flagExists(
   return data === true;
 }
 
-async function raiseFlag(
+export async function raiseFlag(
   supabase: SupabaseClient,
   userId: string | null,
   type: FlagType,

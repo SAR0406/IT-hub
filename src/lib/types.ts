@@ -91,7 +91,8 @@ export type FlagType =
   | "banned_search"
   | "rapid_downloads"
   | "failed_login"
-  | "unauthorized_admin";
+  | "unauthorized_admin"
+  | "chat_inappropriate";
 
 export type FlagSeverity = "low" | "medium" | "high";
 
@@ -102,6 +103,7 @@ export const FLAG_TYPE_LABELS: Record<FlagType, string> = {
   rapid_downloads: "Download burst",
   failed_login: "Repeated failed sign-ins",
   unauthorized_admin: "Admin-area probe",
+  chat_inappropriate: "Inappropriate chat message",
 };
 
 export const FLAG_STATUS_LABELS: Record<FlagStatus, string> = {
