@@ -79,7 +79,7 @@ Raw data exists today (activity logs, quiz attempts, flags, downloads).
 | **Teacher tools**: AI student-record lookup (admin only) | SHIPPED |
 | AI quiz generator for teachers (unit/topic/difficulty → review → publish) | SHIPPED |
 | Student records page (/admin/students/[id]: profile, activity, attempts, flags, downloads) | SHIPPED |
-| Websearch tool | V3 (needs free search API — NVIDIA web-search NIM first, Tavily fallback) |
+| Websearch tool (Tavily free tier behind key; tool hidden when unconfigured) | SHIPPED |
 | Narrow V2 vision: upload PDF → index → ask → answer from that PDF | V3 |
 | Source references / citations under answers | V3 (with the above) |
 
@@ -255,6 +255,8 @@ Motivated by the actual school situation. Do this before any simulator work.
 6. **AI — teacher quiz generator**: structured MCQs from unit/topic/difficulty → existing
    editor + validation. Needs NVIDIA_API_KEY. — DONE
 7. **AI — websearch tool**: NVIDIA web-search NIM first (free), Tavily free tier fallback.
+   — DONE via Tavily (no NVIDIA web-search NIM exists in the catalog; tool is provider-shaped
+   and hidden until a key is set).
 8. **V2 — student records page**: /admin/students/[id] with activity, attempts, flags,
    downloads (data exists; AI tool already has the query). — DONE
 

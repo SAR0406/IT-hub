@@ -60,6 +60,7 @@ export type ActivityAction =
   | "login_failed"
   | "resource_upload"
   | "resource_delete"
+  | "resource_replace"
   | "admin_action"
   | "quiz_start"
   | "quiz_submit"
@@ -74,6 +75,7 @@ export const ACTIVITY_ACTION_LABELS: Record<ActivityAction, string> = {
   login_failed: "Sign-in failed",
   resource_upload: "Uploaded resource",
   resource_delete: "Deleted resource",
+  resource_replace: "Replaced resource",
   admin_action: "Admin action",
   quiz_start: "Started quiz",
   quiz_submit: "Submitted quiz",

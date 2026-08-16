@@ -1,10 +1,36 @@
 import type { SessionContext } from "@/lib/auth";
 import { UNITS } from "@/lib/syllabus";
+import { webSearch, webSearchEnabled } from "@/lib/ai/websearch";
 import type { ChatCompletionTool } from "openai/resources/chat/completions";
 
 export type ToolContext = SessionContext;
 
 type FunctionTool = Extract<ChatCompletionTool, { type: "function" }>;
+
+const WEBSEARCH_TOOL: FunctionTool = {
+  type: "function",
+  function: {
+    name: "websearch",
+    description:
+      "Search the live web for up-to-date facts the archive can't answer (e.g. latest IT news, current events, definitions from the internet). Returns titles, urls and snippets.",
+    parameters: {
+      type: "object",
+      properties: {
+        query: {
+          type: "string",
+          description: "Concise search query.",
+        },
+      },
+      required: ["query"],
+      additionalProperties: false,
+    },
+  },
+};
+
+/** Tools available to the AI. websearch only appears when a provider key exists. */
+export function getAiTools(): FunctionTool[] {
+  return webSearchEnabled() ? [...AI_TOOLS, WEBSEARCH_TOOL] : AI_TOOLS;
+}
 
 /**
  * Server-side tools the AI assistant can call. Every tool talks to the
@@ -129,6 +155,8 @@ export async function runAiTool(
         return getQuizInfo(ctx);
       case "get_student_record":
         return getStudentRecord(String(args.student_id ?? ""), ctx);
+      case "websearch":
+        return runWebSearch(String(args.query ?? ""));
       default:
         return JSON.stringify({ error: `Unknown tool: ${name}` });
     }
@@ -228,6 +256,19 @@ async function getQuizInfo(ctx: ToolContext): Promise<string> {
     link: `/quizzes/${q.id}`,
   }));
   return JSON.stringify(results.length > 0 ? results : { message: "No published quizzes yet." });
+}
+
+async function runWebSearch(query: string): Promise<string> {
+  if (!webSearchEnabled()) {
+    return JSON.stringify({ error: "Web search is not configured." });
+  }
+  const results = await webSearch(query, 5);
+  if (results.length === 0) {
+    return JSON.stringify({ message: "No web results for that query." });
+  }
+  return JSON.stringify(
+    results.map((r) => ({ title: r.title, url: r.url, snippet: r.content }))
+  );
 }
 
 async function getStudentRecord(studentId: string, ctx: ToolContext): Promise<string> {

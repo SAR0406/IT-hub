@@ -39,9 +39,10 @@ Copy `.env.example` to `.env.local` and fill in the values:
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Anon (or publishable) key from Project Settings → API |
 | `SUPABASE_SERVICE_ROLE_KEY` | **Server-only.** Service role key (Project Settings → API → `service_role`). Needed for creating / deleting / resetting student accounts, because Supabase Auth only allows service-role clients to do that. Without it the Students page explains what to add and returns a clear 501 — everything else keeps working. |
 | `NVIDIA_API_KEY` | **Server-only.** Optional — required for the Ask AI chat room. Get a free key from https://build.nvidia.com; the app calls the NIM OpenAI-compatible endpoint (`NVIDIA_BASE_URL` overrides the default `https://integrate.api.nvidia.com/v1`). Without it the Ask AI room shows a "not set up yet" message. |
+| `TAVILY_API_KEY` | **Server-only.** Optional — adds a live-web search tool to the AI assistant. Free tier at https://tavily.com (1,000 searches/month, no card). Without it the AI answers from the archive only. |
 
-These `NEXT_PUBLIC_*` values are public by design (browser-safe). `SUPABASE_SERVICE_ROLE_KEY`
-and `NVIDIA_API_KEY` are server-only — never expose them, never commit them. `.env.local` is gitignored.
+These `NEXT_PUBLIC_*` values are public by design (browser-safe). `SUPABASE_SERVICE_ROLE_KEY`,
+`NVIDIA_API_KEY` and `TAVILY_API_KEY` are server-only — never expose them, never commit them. `.env.local` is gitignored.
 
 ## Supabase setup
 
