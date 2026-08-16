@@ -3,6 +3,13 @@
 :root {
   --background: #faf8f6;
   --foreground: #1e293b;
+
+  /* Brand accent (pink) — the default hue. Each section overrides these
+     three variables (see .accent-* below) so the site is multi-color while
+     every component keeps using the single brand-* token family. */
+  --brand: #db2777;
+  --brand-strong: #be185d;
+  --brand-soft: #fce7f3;
 }
 
 @theme inline {
@@ -14,10 +21,10 @@
   /* Dark navy — headings and primary text */
   --color-ink: #1e293b;
   --color-ink-soft: #0f172a;
-  /* Hot pink — primary CTA (AA-safe on white and white text) */
-  --color-brand: #db2777;
-  --color-brand-strong: #be185d;
-  --color-brand-soft: #fce7f3;
+  /* Accent hue — inherits from the section scope (--brand etc.) */
+  --color-brand: var(--brand, #db2777);
+  --color-brand-strong: var(--brand-strong, #be185d);
+  --color-brand-soft: var(--brand-soft, #fce7f3);
   /* Warm gray — secondary text (AA-safe on paper) */
   --color-mist: #475569;
   /* Secondary accents */
@@ -38,6 +45,41 @@
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 }
 
+/* Section accent scopes. Set one of these on a section wrapper and every
+   brand-* utility inside recolors (base hues are AA-safe with white text).
+   Prefix is "accent-scope" — NOT "accent" — to avoid Tailwind's accent-color
+   utility namespace. */
+.accent-scope-teal {
+  --brand: #0f766e;
+  --brand-strong: #115e59;
+  --brand-soft: #ccfbf1;
+}
+.accent-scope-violet {
+  --brand: #6d28d9;
+  --brand-strong: #5b21b6;
+  --brand-soft: #ede9fe;
+}
+.accent-scope-amber {
+  --brand: #b45309;
+  --brand-strong: #92400e;
+  --brand-soft: #fef3c7;
+}
+.accent-scope-emerald {
+  --brand: #047857;
+  --brand-strong: #065f46;
+  --brand-soft: #d1fae5;
+}
+.accent-scope-blue {
+  --brand: #1d4ed8;
+  --brand-strong: #1e40af;
+  --brand-soft: #dbeafe;
+}
+.accent-scope-indigo {
+  --brand: #4338ca;
+  --brand-strong: #3730a3;
+  --brand-soft: #e0e7ff;
+}
+
 /* slate-500 fails WCAG AA on paper (4.35:1); nudge it to the AA-safe family */
 @theme {
   --color-slate-500: #475569;
@@ -52,7 +94,7 @@ body {
 
 /* Visible, consistent focus states for keyboard navigation */
 :focus-visible {
-  outline: 2px solid var(--color-brand);
+  outline: 2px solid var(--brand, #db2777);
   outline-offset: 2px;
   border-radius: 4px;
 }

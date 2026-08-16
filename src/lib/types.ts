@@ -60,6 +60,8 @@ export type ActivityAction =
   | "resource_upload"
   | "resource_delete"
   | "admin_action"
+  | "quiz_start"
+  | "quiz_submit"
   | "unauthorized_admin_attempt";
 
 export const ACTIVITY_ACTION_LABELS: Record<ActivityAction, string> = {
@@ -72,6 +74,8 @@ export const ACTIVITY_ACTION_LABELS: Record<ActivityAction, string> = {
   resource_upload: "Uploaded resource",
   resource_delete: "Deleted resource",
   admin_action: "Admin action",
+  quiz_start: "Started quiz",
+  quiz_submit: "Submitted quiz",
   unauthorized_admin_attempt: "Admin-area probe",
 };
 

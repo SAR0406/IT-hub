@@ -15,6 +15,7 @@ const CLIENT_ACTIONS: ActivityAction[] = [
   "page_view",
   "login_success",
   "login_failed",
+  "quiz_start",
 ];
 
 function error(message: string, status: number) {

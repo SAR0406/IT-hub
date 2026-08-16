@@ -106,6 +106,25 @@ export function RobotSketch(props: SketchProps) {
   );
 }
 
+/** Quiz paper with A–D options. */
+export function QuizSketch(props: SketchProps) {
+  return (
+    <svg {...sketchBase(props, "0 0 24 24")}>
+      <path
+        d="M5.5 3.5 H 15 L 18.5 7 V 20.5 H 5.5 Z"
+        fill={SKY}
+        stroke={INK}
+        strokeWidth="1.8"
+        strokeLinejoin="round"
+      />
+      <path d="M15 3.5 V 7 H 18.5" stroke={INK} strokeWidth="1.8" strokeLinejoin="round" />
+      <path d="M8 10.6 l 1.2 -0.9 l 1.2 1.2 l 2.6 -3" stroke="#0891b2" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M8.2 14.6 h 6.4 M8.2 17.4 h 4.6" stroke={INK} strokeWidth="1.5" strokeLinecap="round" />
+      <path d="M5.5 3.8 l -1.2 -1.2" stroke={INK} strokeWidth="1.4" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 /** Speech bubble — Employability Skills. */
 export function ChatSketch(props: SketchProps) {
   return (

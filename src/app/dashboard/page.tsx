@@ -26,8 +26,8 @@ const ACTION_LABELS: Record<string, string> = {
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Dashboard", soon: false },
   { href: "/chapters", label: "Chapters", soon: false },
+  { href: "/quizzes", label: "Quizzes", soon: false },
   { href: "/search", label: "Search", soon: false },
-  { href: "/chapters", label: "Quizzes", soon: true },
 ];
 
 export default async function DashboardPage() {
@@ -59,6 +59,12 @@ export default async function DashboardPage() {
   const progress = Math.round((exploredCount / UNITS.length) * 100);
   const counts = await getResourceCountsByUnit();
 
+  const { data: announcements } = await ctx.supabase
+    .from("announcements")
+    .select("*")
+    .order("created_at", { ascending: false })
+    .limit(4);
+
   const mission = [
     {
       label: "Open a chapter and read the material",
@@ -71,6 +77,10 @@ export default async function DashboardPage() {
     {
       label: "Try the search — find a topic in seconds",
       done: rows.some((r) => r.action === "search"),
+    },
+    {
+      label: "Take a quiz and beat your score",
+      done: rows.some((r) => r.action === "quiz_submit"),
     },
     { label: "Check your dashboard", done: true },
   ];
@@ -157,6 +167,28 @@ export default async function DashboardPage() {
               Hi {firstName} — Your Progress
             </h1>
           </div>
+
+          {/* Announcements */}
+          {(announcements ?? []).length > 0 && (
+            <section aria-label="Announcements" className="space-y-3">
+              {(announcements ?? []).map((announcement) => (
+                <div
+                  key={announcement.id}
+                  className="rounded-2xl border-l-4 border-brand bg-white p-5 shadow-soft"
+                >
+                  <p className="flex flex-wrap items-center gap-2 text-sm font-bold text-ink">
+                    {announcement.title}
+                    <span className="font-mono text-[11px] font-normal text-slate-400">
+                      {formatRelativeDate(announcement.created_at)}
+                    </span>
+                  </p>
+                  <p className="mt-1 whitespace-pre-wrap text-sm leading-relaxed text-mist">
+                    {announcement.body}
+                  </p>
+                </div>
+              ))}
+            </section>
+          )}
 
           {/* Overall progress */}
           <section className="rounded-2xl bg-white p-6 shadow-soft sm:p-8" aria-label="Overall progress">
