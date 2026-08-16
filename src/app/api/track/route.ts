@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { logActivity } from "@/lib/activity";
 import { getProfileForUser } from "@/lib/auth";
 import { ACTIVITY_ACTION_LABELS, type ActivityAction } from "@/lib/types";
+import type { Json } from "@/lib/supabase/database.types";
 
 /**
  * POST /api/track — records an action for the signed-in user and runs the
@@ -41,13 +42,14 @@ export async function POST(request: Request) {
   if (typeof details !== "object" || details === null || Array.isArray(details)) {
     return error("Invalid details.", 400);
   }
-  const cleanDetails: Record<string, unknown> = {};
+  const cleanDetails: Record<string, Json> = {};
   for (const [key, value] of Object.entries(details)) {
     if (key.length > 40) continue;
-    if (typeof value === "string" && value.length > 200) continue;
-    if (typeof value === "number" && Number.isFinite(value)) continue;
-    if (typeof value === "boolean") continue;
-    if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+    if (
+      (typeof value === "string" && value.length <= 200) ||
+      (typeof value === "number" && Number.isFinite(value)) ||
+      typeof value === "boolean"
+    ) {
       cleanDetails[key] = value;
     }
   }

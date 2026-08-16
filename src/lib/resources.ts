@@ -4,13 +4,14 @@ import type { Resource, ResourceWithLabels } from "@/lib/types";
 
 const SEARCH_LIMIT = 50;
 
-type ResourceRow = Resource;
+type ResourceRow = Omit<Resource, "created_at"> & { created_at: string | null };
 
 function toLabels(row: ResourceRow): ResourceWithLabels {
   const unit = UNITS.find((u) => u.slug === row.unit_slug);
   const topic = unit?.topics.find((t) => t.slug === row.topic_slug);
   return {
     ...row,
+    created_at: row.created_at ?? "",
     unit_name: unit?.name ?? row.unit_slug,
     topic_name: topic?.name ?? null,
   };
@@ -68,7 +69,7 @@ export async function getResourceById(id: string): Promise<Resource | null> {
     .maybeSingle();
 
   if (error || !data) return null;
-  return data as Resource;
+  return { ...data, created_at: data.created_at ?? "" } as Resource;
 }
 
 /**
