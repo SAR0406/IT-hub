@@ -59,6 +59,12 @@ begin
 end;
 $function$;
 
+-- All five rule helpers are callable by anon + authenticated only — never
+-- PUBLIC. The hardening migration revokes the default PUBLIC grant; these
+-- explicit grants keep anon/authenticated execution working.
+-- (recent_flag_exists is granted by 20260816_add_flag_cooldown_helper.sql,
+-- which defines it.)
+grant execute on function public.is_admin() to anon, authenticated;
 grant execute on function public.count_recent_actions(uuid, text, interval) to anon, authenticated;
 grant execute on function public.count_recent_failed_logins(text, interval) to anon, authenticated;
 grant execute on function public.flag_failed_logins(text) to anon, authenticated;

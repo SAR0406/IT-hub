@@ -105,11 +105,12 @@ alter table public.activity_logs enable row level security;
 alter table public.misbehavior_flags enable row level security;
 
 -- profiles: users see their own row; admins see all.
+-- (select auth.uid()) = initplan: evaluated once per query, not per row.
 create policy "profiles_select_own_or_admin" on public.profiles
-  for select using (auth.uid() = id or public.is_admin());
+  for select using ((select auth.uid()) = id or public.is_admin());
 
 create policy "profiles_insert_own" on public.profiles
-  for insert with check (auth.uid() = id);
+  for insert with check ((select auth.uid()) = id);
 
 create policy "profiles_update_admin" on public.profiles
   for update using (public.is_admin());
@@ -121,20 +122,20 @@ create policy "profiles_delete_admin" on public.profiles
 create policy "logs_select_admin" on public.activity_logs
   for select using (public.is_admin());
 
-create policy "logs_insert_own" on public.activity_logs
-  for insert with check (auth.uid() = user_id);
-
--- Guests have no session, but a failed login must still be recorded so the
--- admin can spot brute-force attempts against known accounts.
-create policy "logs_insert_guest_failed_login" on public.activity_logs
-  for insert with check (user_id is null and action = 'login_failed');
+-- One auditable insert policy: students log their own actions, and guests
+-- (no session) can only record a failed login attempt against a known account.
+create policy "logs_insert_owner_or_guest_failure" on public.activity_logs
+  for insert with check (
+    (select auth.uid()) = user_id
+    or (user_id is null and action = 'login_failed')
+  );
 
 -- misbehavior_flags: admins read and review; students can only raise their own.
 create policy "flags_select_admin" on public.misbehavior_flags
   for select using (public.is_admin());
 
 create policy "flags_insert_own" on public.misbehavior_flags
-  for insert with check (auth.uid() = user_id);
+  for insert with check ((select auth.uid()) = user_id);
 
 create policy "flags_update_admin" on public.misbehavior_flags
   for update using (public.is_admin()) with check (public.is_admin());
@@ -144,7 +145,7 @@ create policy "flags_update_admin" on public.misbehavior_flags
 -- Content is now behind login: only authenticated users may read material.
 drop policy if exists "resources_public_select" on public.resources;
 create policy "resources_authenticated_select" on public.resources
-  for select using (auth.role() = 'authenticated');
+  for select using ((select auth.uid()) is not null);
 
 -- Writes were previously allowed for any authenticated user; only admins.
 drop policy if exists "resources_authenticated_insert" on public.resources;

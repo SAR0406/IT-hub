@@ -42,15 +42,28 @@ is server-only — never expose it, never commit it. `.env.local` is gitignored.
 
 ## Supabase setup
 
-1. Create a project at https://supabase.com.
+1. Create a project at https://supabase.com (use a **dedicated** project — no
+   other app shares this database).
 2. Run the SQL in `supabase/migrations/` (SQL Editor), in filename order:
-   `20260816_create_resources.sql` → `20260816_create_student_auth.sql` →
-   `20260816_seed_demo_students.sql` (optional demo data) →
-   `20260816_add_activity_rule_functions.sql` → `20260816_add_flag_cooldown_helper.sql` →
-   `20260816_fix_log_joins.sql`.
-3. Create the storage bucket (see below).
-4. Create the admin user (see below).
-5. Copy the project URL, anon key and service role key into `.env.local`.
+
+   1. `20260816_create_resources.sql` — resources table + initial policies
+   2. `20260816_create_student_auth.sql` — profiles, activity log, flags, `is_admin`, RLS
+   3. `20260816_add_activity_rule_functions.sql` — misbehavior rule helpers + grants
+   4. `20260816_add_flag_cooldown_helper.sql` — 5-minute cooldown helper + grant
+   5. `20260816_create_admin_account.sql` — `admin@ithub11.in` auth user (bcrypt hash)
+   6. `20260816_fix_log_joins.sql` — FKs on logs/flags point at `profiles(id)`
+   7. `20260816_harden_rls_and_grants.sql` — initplan RLS, merged insert policy, FK index, PUBLIC revoke
+   8. `20260816_create_resources_bucket.sql` — private `resources` bucket (25 MB limit)
+   9. `20260816_seed_demo_students.sql` — optional demo students/activity/flags
+   10. `20260816_fix_storage_insert_policy.sql` — storage insert allows unit-folder paths
+
+   The storage policies in step 2 reference the bucket; the bucket-creation
+   migration makes that a no-op risk by using `on conflict do nothing`, but if
+   you prefer, create the bucket first (private, 25 MB) in the dashboard.
+3. Copy the project URL, anon key and service role key into `.env.local`
+   (`.env.example` lists all four keys).
+4. Optional demo material: `node --env-file=.env.local scripts/seed-demo.mjs`
+   uploads one placeholder file per unit and registers it.
 
 ### Database schema
 
@@ -69,21 +82,35 @@ is server-only — never expose it, never commit it. `.env.local` is gitignored.
 `is_admin()` is a SECURITY DEFINER helper (checks role + `is_active`), so RLS never
 recurses. The four rule functions (`count_recent_actions`, `count_recent_failed_logins`,
 `flag_failed_logins`, `recent_flag_exists`) are SECURITY DEFINER too, granted to
-anon/authenticated — the app calls them under the user's session.
+anon/authenticated — the app calls them under the user's session. All five set a strict
+`search_path` and are never granted to PUBLIC (the hardening migration revokes the
+default grant; the rule-function migration re-grants anon/authenticated explicitly).
 
 The FK on `activity_logs.user_id` / `misbehavior_flags.user_id` / `.reviewed_by` points at
 `profiles(id)` (which cascades from `auth.users`), so admin queries can embed the student
 profile in one request: `student:profiles(full_name, email)`.
 
+### Auth + session wiring
+
+- Session refresh + cookie rotation happens in `src/middleware.ts` (`updateSession`), so an
+  auth cookie is refreshed on every navigation — not only when a page queries Supabase.
+  Route guards live in the server components (`requireUser` / `requireAdmin`), not in
+  middleware, so redirect logic is not duplicated.
+- Every Supabase client is typed with the generated `Database` type from
+  `src/lib/supabase/database.types.ts` (server, browser, middleware, and the
+  service-role client used only for admin student CRUD).
+
 ### Storage bucket
 
-Create a **private** bucket named `resources` with a 25 MB file size limit, then apply the
-storage policies from the migrations:
+The private `resources` bucket (25 MB file limit) is created by
+`20260816_create_resources_bucket.sql`. Policies:
 
 - `SELECT` — signed-in users (the app streams files through `/api/files/[id]/open|download`,
   which checks the session, logs the action, and returns the bytes with
   `Cache-Control: private, no-store`). Guests are redirected to `/login`.
-- `INSERT` / `UPDATE` / `DELETE` — admins only.
+- `INSERT` / `UPDATE` / `DELETE` — admins only. Files are stored under unit
+  folders (`<unit>/<timestamp>-<name>`), so the insert policy checks only
+  `is_admin()`, not a per-owner folder.
 
 Folder layout inside the bucket mirrors the syllabus slugs:
 
@@ -171,6 +198,7 @@ src/
     fileStream.ts         # Session-checked file streaming from the private bucket
     supabase/             # Server & browser Supabase clients
     supabase/database.types.ts  # Generated types (Supabase CLI / MCP typegen) — Database generic wired into all clients
+    supabase/middleware.ts      # Session cookie refresh (used by src/middleware.ts)
 supabase/migrations/      # SQL: tables, bucket, RLS policies, rules, demo seed
 scripts/seed-demo.mjs     # V1 demo resource seed
 ```
