@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { Profile } from "@/lib/types";
 
 type FormState = { status: "idle" } | { status: "busy" } | { status: "error"; message: string };
@@ -31,9 +31,13 @@ export function StudentsPanel({ initial }: { initial: Profile[] }) {
   const [rowStates, setRowStates] = useState<Record<string, RowState>>({});
   const [resetTargets, setResetTargets] = useState<Record<string, string>>({});
 
-  useEffect(() => {
+  // Sync the list when the server re-renders (router.refresh) — the official
+  // render-phase adjustment pattern, not an effect.
+  const [prevInitial, setPrevInitial] = useState(initial);
+  if (prevInitial !== initial) {
+    setPrevInitial(initial);
     setStudents(initial);
-  }, [initial]);
+  }
 
   function setRowState(id: string, state: RowState) {
     setRowStates((prev) => ({ ...prev, [id]: state }));

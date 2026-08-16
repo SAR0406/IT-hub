@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { CloseIcon, LogoutIcon, MenuIcon } from "@/components/icons";
 import { LogoutButton } from "@/components/LogoutButton";
@@ -30,6 +30,7 @@ function initials(name: string): string {
 
 export function Navbar({ profile }: { profile: Profile | null }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const homeHref = profile?.role === "admin" ? "/admin" : "/chapters";
@@ -132,7 +133,8 @@ export function Navbar({ profile }: { profile: Profile | null }) {
                   const supabase = createClient();
                   await supabase.auth.signOut();
                   setMenuOpen(false);
-                  window.location.href = "/login";
+                  router.push("/login");
+                  router.refresh();
                 }}
                 className="flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-200 hover:text-red-600"
                 aria-label="Sign out"

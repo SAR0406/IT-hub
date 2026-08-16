@@ -70,7 +70,7 @@ export default function SearchClient() {
       <div className="mt-8" aria-live="polite">
         {!hasQuery && (
           <p className="rounded-2xl border border-dashed border-zinc-300 bg-white px-6 py-10 text-center font-mono text-sm text-slate-500">
-            &gt; type at least two characters — try "mysql", "java" or "key"
+            &gt; type at least two characters — try &ldquo;mysql&rdquo;, &ldquo;java&rdquo; or &ldquo;key&rdquo;
           </p>
         )}
 

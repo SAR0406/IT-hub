@@ -49,7 +49,7 @@ export default function AboutPage() {
             </li>
             <li>
               Pick a unit from <strong>Chapters</strong> — open a topic or go straight to the
-              unit's resources.
+              unit&apos;s resources.
             </li>
             <li>
               <strong>Open</strong> a file to view it, or <strong>Download</strong> to save it.

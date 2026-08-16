@@ -4,7 +4,7 @@ import { UnitCard } from "@/components/UnitCard";
 import { UNITS } from "@/lib/syllabus";
 
 const STATS = [
-  { value: "10", label: "units — the full syllabus" },
+  { value: "6", label: "units — the full syllabus" },
   { value: "6", label: "resource types, one format" },
   { value: "25 MB", label: "per file, guaranteed" },
 ];
@@ -72,7 +72,7 @@ export default function HomePage() {
                   </p>
                 ))}
                 <p className="mt-3 text-slate-500">
-                  <span className="text-emerald-400">$</span> search "mysql"
+                  <span className="text-emerald-400">$</span> search &ldquo;mysql&rdquo;
                 </p>
                 <p className="text-indigo-300">2 results — opening chapters/rdbms…</p>
               </div>
