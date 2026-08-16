@@ -8,6 +8,7 @@ import { formatDate } from "@/lib/format";
 import { parseQuestions, QUIZ_MAX_QUESTIONS, type QuizQuestion } from "@/lib/quizzes";
 import { UNITS } from "@/lib/syllabus";
 import type { Json } from "@/lib/supabase/database.types";
+import { QuizGenerator } from "./QuizGenerator";
 
 type QuizRow = {
   id: string;
@@ -59,6 +60,7 @@ export function QuizManager({
   const [saving, setSaving] = useState(false);
   const [pendingDelete, setPendingDelete] = useState<DeleteState>(null);
   const [deleting, setDeleting] = useState(false);
+  const [generating, setGenerating] = useState(false);
 
   function addQuestion() {
     setEditing((draft) => {
@@ -410,25 +412,53 @@ export function QuizManager({
         </p>
       )}
 
-      <button
-        type="button"
-        onClick={() =>
-          setEditing({
-            id: null,
-            title: "",
-            description: "",
-            unitSlug: UNITS[0]!.slug,
-            published: false,
-            timeLimit: "",
-            questions: [
-              { id: crypto.randomUUID(), question: "", options: [...EMPTY_OPTIONS], answer: 0 },
-            ],
-          })
-        }
-        className="flex h-11 items-center justify-center rounded-2xl border-2 border-dashed border-zinc-300 text-sm font-semibold text-mist transition-colors hover:border-brand/50 hover:text-brand"
-      >
-        + Create a new quiz
-      </button>
+      {generating ? (
+        <QuizGenerator
+          onCancel={() => setGenerating(false)}
+          onDone={(questions, unitSlug) => {
+            const unit = UNITS.find((u) => u.slug === unitSlug);
+            setEditing({
+              id: null,
+              title: `${unit?.name ?? unitSlug} — practice quiz`,
+              description: "",
+              unitSlug,
+              published: false,
+              timeLimit: "",
+              questions,
+            });
+            setGenerating(false);
+          }}
+        />
+      ) : (
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <button
+            type="button"
+            onClick={() =>
+              setEditing({
+                id: null,
+                title: "",
+                description: "",
+                unitSlug: UNITS[0]!.slug,
+                published: false,
+                timeLimit: "",
+                questions: [
+                  { id: crypto.randomUUID(), question: "", options: [...EMPTY_OPTIONS], answer: 0 },
+                ],
+              })
+            }
+            className="flex h-11 flex-1 items-center justify-center rounded-2xl border-2 border-dashed border-zinc-300 text-sm font-semibold text-mist transition-colors hover:border-brand/50 hover:text-brand"
+          >
+            + Create a new quiz
+          </button>
+          <button
+            type="button"
+            onClick={() => setGenerating(true)}
+            className="flex h-11 flex-1 items-center justify-center rounded-2xl bg-ink text-sm font-semibold text-white transition-colors hover:bg-zinc-700"
+          >
+            ✦ Generate with AI
+          </button>
+        </div>
+      )}
 
       {initial.length === 0 ? (
         <p className="rounded-2xl border border-zinc-200 bg-white px-6 py-12 text-center text-sm text-zinc-500">

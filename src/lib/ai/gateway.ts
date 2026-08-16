@@ -45,6 +45,44 @@ export type AiChatResult = {
   reasoningLength: number;
 };
 
+/** Runs a single completion with JSON output requested (json_object when the
+ * provider supports it, otherwise by instruction). Returns the raw text. */
+export async function runAiJson(
+  messages: ChatCompletionMessageParam[],
+  model: string,
+  maxTokens = 1500
+): Promise<{ content: string; promptTokens: number; completionTokens: number }> {
+  const client = getOpenAIClient();
+  if (!client) throw new AiUnavailableError("AI is not configured.");
+
+  let response;
+  try {
+    response = await client.chat.completions.create({
+      model,
+      messages,
+      max_tokens: maxTokens,
+      temperature: 0.4,
+      response_format: { type: "json_object" },
+    });
+  } catch (err) {
+    console.error("[ai] json mode failed, retrying without it:", err);
+    response = await client.chat.completions.create({
+      model,
+      messages,
+      max_tokens: maxTokens,
+      temperature: 0.4,
+    });
+  }
+
+  const content = (response.choices[0]?.message.content ?? "").trim();
+  if (!content) throw new Error("Model returned no JSON.");
+  return {
+    content,
+    promptTokens: response.usage?.prompt_tokens ?? 0,
+    completionTokens: response.usage?.completion_tokens ?? 0,
+  };
+}
+
 export async function runAiChat(
   ctx: ToolContext,
   userMessage: string,

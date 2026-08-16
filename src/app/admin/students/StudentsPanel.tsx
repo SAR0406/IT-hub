@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { Profile } from "@/lib/types";
@@ -255,6 +256,12 @@ export function StudentsPanel({ initial }: { initial: Profile[] }) {
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
+                      <Link
+                        href={`/admin/students/${student.id}`}
+                        className="rounded-lg border border-zinc-300 px-3 py-1.5 text-xs font-semibold text-zinc-700 transition-colors hover:border-brand/50 hover:text-brand"
+                      >
+                        Record
+                      </Link>
                       <button
                         type="button"
                         onClick={() => handleToggleActive(student)}

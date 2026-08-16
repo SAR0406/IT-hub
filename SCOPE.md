@@ -77,7 +77,8 @@ Raw data exists today (activity logs, quiz attempts, flags, downloads).
 | **Ask AI chat room** (NVIDIA NIM GPT-OSS-120B, per-student daily cap, admin kill switch, moderation) | SHIPPED |
 | **AI with tools**: syllabus lookup, archive search, file links in chat, quiz info | SHIPPED |
 | **Teacher tools**: AI student-record lookup (admin only) | SHIPPED |
-| AI quiz generator for teachers | V2 |
+| AI quiz generator for teachers (unit/topic/difficulty → review → publish) | SHIPPED |
+| Student records page (/admin/students/[id]: profile, activity, attempts, flags, downloads) | SHIPPED |
 | Websearch tool | V3 (needs free search API — NVIDIA web-search NIM first, Tavily fallback) |
 | Narrow V2 vision: upload PDF → index → ask → answer from that PDF | V3 |
 | Source references / citations under answers | V3 (with the above) |
@@ -252,10 +253,10 @@ Motivated by the actual school situation. Do this before any simulator work.
 5. **AI — Ask AI room**: NVIDIA NIM GPT-OSS-120B, tools (syllabus, archive, files in chat,
    quiz info, teacher student records), per-student daily cap, admin kill switch. — DONE
 6. **AI — teacher quiz generator**: structured MCQs from unit/topic/difficulty → existing
-   editor + validation. Needs NVIDIA_API_KEY.
+   editor + validation. Needs NVIDIA_API_KEY. — DONE
 7. **AI — websearch tool**: NVIDIA web-search NIM first (free), Tavily free tier fallback.
 8. **V2 — student records page**: /admin/students/[id] with activity, attempts, flags,
-   downloads (data exists; AI tool already has the query).
+   downloads (data exists; AI tool already has the query). — DONE
 
 Rule for anything after that: one feature at a time, marked V2 or higher in this
 doc before a line of code is written.
