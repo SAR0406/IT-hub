@@ -241,7 +241,7 @@ export function Footer() {
             . Built for learning.
           </p>
           <div className="flex items-center gap-4 text-xs text-slate-500">
-            <a href="https://github.com/sar0406" target="_blank" rel="noopener noreferrer" className="hover:text-brand transition-colors">
+            <a href="https://github.com/sar0406/IT-hub" target="_blank" rel="noopener noreferrer" className="hover:text-brand transition-colors">
               View Source
             </a>
             <span className="text-slate-300">·</span>
