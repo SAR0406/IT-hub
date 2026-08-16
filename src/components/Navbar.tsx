@@ -43,11 +43,11 @@ export function Navbar({ profile }: { profile: Profile | null }) {
         aria-label="Main navigation"
       >
         <Link href="/" className="group flex items-center gap-2.5">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-ink font-mono text-sm font-bold text-indigo-300 shadow-sm transition-transform group-hover:-translate-y-0.5">
-            &gt;_
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand font-mono text-sm font-bold text-white shadow-soft transition-transform group-hover:-translate-y-0.5">
+            11
           </span>
           <span className="font-display text-[15px] font-bold tracking-tight text-ink">
-            IT HUB <span className="text-brand">11</span>
+            IT Hub <span className="text-brand">11</span>
           </span>
         </Link>
 
@@ -91,9 +91,9 @@ export function Navbar({ profile }: { profile: Profile | null }) {
           ) : (
             <Link
               href="/login"
-              className="flex h-9 items-center rounded-lg bg-brand px-4 text-sm font-semibold text-white transition-colors hover:bg-brand-strong"
+              className="flex h-9 items-center rounded-lg bg-brand px-4 text-sm font-semibold text-white shadow-soft transition-all hover:-translate-y-0.5 hover:bg-brand-strong hover:shadow-lift"
             >
-              Sign in
+              Get Started
             </Link>
           )}
         </div>

@@ -1,142 +1,171 @@
 import Link from "next/link";
-import { SearchIcon } from "@/components/icons";
 import { UnitCard } from "@/components/UnitCard";
+import {
+  BookSketch,
+  CodeSketch,
+  FloatBook,
+  FloatBulb,
+  FloatPlant,
+  HeroSketch,
+  RobotSketch,
+  TestimonialAvatar,
+} from "@/components/sketches";
+import { getSessionProfile } from "@/lib/auth";
+import { getResourceCountsByUnit } from "@/lib/resources";
 import { UNITS } from "@/lib/syllabus";
 
-const STATS = [
-  { value: "6", label: "units — the full syllabus" },
-  { value: "6", label: "resource types, one format" },
-  { value: "25 MB", label: "per file, guaranteed" },
+const FEATURES = [
+  {
+    icon: BookSketch,
+    chip: "bg-aqua/30",
+    title: "Learn Anywhere",
+    text: "Every unit in one place — notes, worksheets, practicals and question papers, sorted exactly the way the CBSE syllabus is.",
+  },
+  {
+    icon: CodeSketch,
+    chip: "bg-mint/30",
+    title: "Practice & Build",
+    text: "SQL, Java and networking practicals you can actually work through — download the worksheets and build the projects yourself.",
+  },
+  {
+    icon: RobotSketch,
+    chip: "bg-blush/30",
+    title: "AI Help Anytime",
+    text: "Your teacher sees what you're working on, and an AI tutor is planned to help you out when you get stuck at night.",
+  },
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  const profile = await getSessionProfile();
+  const counts = await getResourceCountsByUnit();
+  const totalResources = Object.values(counts).reduce((sum, n) => sum + n, 0);
+
+  const primaryHref = profile ? "/chapters" : "/login";
+  const primaryLabel = profile ? "Continue learning" : "Start Learning";
+
   return (
     <>
-      {/* Hero — the signature: syllabus as a terminal. */}
-      <section className="grid-bg relative overflow-hidden bg-ink text-white">
-        <div className="mx-auto grid max-w-6xl gap-12 px-4 py-16 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:py-24">
+      {/* Hero */}
+      <section className="relative overflow-hidden bg-paper">
+        <FloatBulb className="float-y absolute left-[4%] top-16 h-8 w-8 opacity-70" />
+        <FloatPlant className="float-y float-y-1 absolute right-[3%] top-24 hidden h-9 w-9 opacity-60 lg:block" />
+        <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 py-16 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:py-24">
           <div>
-            <p className="rise-in rise-in-1 font-mono text-[13px] text-indigo-300">
-              ~/it-hub-11 — cbse · class 11 · information technology (402)
+            <p className="rise-in rise-in-1 font-mono text-[13px] font-medium text-brand">
+              cbse · class 11 · information technology (402)
             </p>
-            <h1 className="rise-in rise-in-2 mt-6 font-display text-4xl font-bold leading-[1.06] tracking-tight sm:text-5xl lg:text-[3.3rem]">
-              One hub for your whole IT syllabus<span className="caret" aria-hidden />
+            <h1 className="rise-in rise-in-2 mt-5 text-4xl font-bold leading-[1.12] tracking-tight text-ink sm:text-5xl">
+              Learn India&rsquo;s CBSE Class 11 IT Online
             </h1>
-            <p className="rise-in rise-in-3 mt-5 max-w-md text-base leading-relaxed text-slate-400">
-              Notes, worksheets, practicals and question papers — organized by unit,
-              searchable in seconds, updated by your teacher.
+            <p className="rise-in rise-in-3 mt-5 max-w-md text-base leading-relaxed text-mist">
+              Master SQL, Java, Networking &amp; More — study material organized by
+              the official syllabus, updated by your teacher, ready when you are.
             </p>
             <div className="rise-in rise-in-4 mt-8 flex flex-col gap-3 sm:flex-row">
               <Link
-                href="/chapters"
-                className="flex h-12 items-center justify-center rounded-xl bg-brand px-6 text-base font-semibold text-white transition-all hover:bg-brand-strong"
+                href={primaryHref}
+                className="flex h-12 items-center justify-center rounded-xl bg-brand px-7 text-base font-semibold text-white shadow-soft transition-all hover:-translate-y-0.5 hover:bg-brand-strong hover:shadow-lift"
               >
-                Browse chapters
+                {primaryLabel}
               </Link>
               <Link
-                href="/search"
-                className="flex h-12 items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/5 px-6 text-base font-semibold text-white transition-colors hover:border-white/30 hover:bg-white/10"
+                href="/chapters"
+                className="flex h-12 items-center justify-center rounded-xl bg-white px-7 text-base font-semibold text-ink shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-lift"
               >
-                <SearchIcon width={17} height={17} />
-                Search material
+                Explore chapters
               </Link>
             </div>
-            <p className="rise-in rise-in-4 mt-6 font-mono text-xs text-slate-500">
+            <p className="rise-in rise-in-4 mt-6 font-mono text-xs text-mist">
               &gt; sign in required to view material — accounts come from your teacher
             </p>
           </div>
 
-          <div className="rise-in rise-in-3 hidden lg:block">
-            <div className="overflow-hidden rounded-xl border border-white/10 bg-ink-soft/80 shadow-2xl shadow-black/40 backdrop-blur">
-              <div className="flex items-center gap-1.5 border-b border-white/10 px-4 py-3">
-                <span className="h-2.5 w-2.5 rounded-full bg-red-400/70" />
-                <span className="h-2.5 w-2.5 rounded-full bg-amber-400/70" />
-                <span className="h-2.5 w-2.5 rounded-full bg-emerald-400/70" />
-                <span className="ml-2 font-mono text-[11px] text-slate-500">it-hub — bash</span>
-              </div>
-              <div className="p-5 font-mono text-[13px] leading-7">
-                <p className="text-slate-500">
-                  <span className="text-emerald-400">$</span> ls units/
-                </p>
-                {UNITS.map((unit, index) => (
-                  <p key={unit.slug} className="flex justify-between gap-4">
-                    <span className="text-slate-300">
-                      <span className="mr-3 text-slate-600">
-                        {String(index + 1).padStart(2, "0")}
-                      </span>
-                      {unit.slug}
-                    </span>
-                    <span className="text-slate-500">
-                      {unit.topics.length > 0 ? `${unit.topics.length} topics` : "—"}
-                    </span>
-                  </p>
-                ))}
-                <p className="mt-3 text-slate-500">
-                  <span className="text-emerald-400">$</span> search &ldquo;mysql&rdquo;
-                </p>
-                <p className="text-indigo-300">2 results — opening chapters/rdbms…</p>
-              </div>
-            </div>
+          <div className="rise-in rise-in-3 relative hidden lg:block">
+            <HeroSketch className="mx-auto w-full max-w-md" />
+            <FloatBook
+              className="float-y absolute -top-2 left-0 h-10 w-10"
+            />
           </div>
         </div>
       </section>
 
-      {/* Stats strip */}
-      <section className="border-b border-zinc-200 bg-white">
-        <dl className="mx-auto grid max-w-6xl grid-cols-1 gap-6 px-4 py-8 sm:grid-cols-3 sm:px-6">
-          {STATS.map((stat) => (
-            <div key={stat.label} className="flex items-baseline gap-3">
-              <dt className="sr-only">{stat.label}</dt>
-              <dd className="font-display text-2xl font-bold text-ink">{stat.value}</dd>
-              <dd className="font-mono text-xs text-slate-500">{stat.label}</dd>
+      {/* Features */}
+      <section id="features" className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+        <h2 className="text-center text-2xl font-bold tracking-tight text-ink sm:text-3xl">
+          Why Learn With IT Hub 11
+        </h2>
+        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {FEATURES.map((feature) => (
+            <div
+              key={feature.title}
+              className="rounded-2xl border-l-4 border-teal bg-white p-6 shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-lift"
+            >
+              <span
+                className={`flex h-11 w-11 items-center justify-center rounded-full ${feature.chip}`}
+              >
+                <feature.icon width={22} height={22} />
+              </span>
+              <h3 className="mt-4 font-display text-lg font-bold tracking-tight text-ink">
+                {feature.title}
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-mist">{feature.text}</p>
             </div>
           ))}
-        </dl>
-      </section>
-
-      {/* Syllabus at a glance — public, no DB reads */}
-      <section className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
-        <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <p className="font-mono text-xs text-brand">~/it-hub-11/units</p>
-            <h2 className="mt-1 font-display text-2xl font-bold tracking-tight text-ink sm:text-3xl">
-              Syllabus at a glance
-            </h2>
-          </div>
-          <Link
-            href="/chapters"
-            className="text-sm font-semibold text-brand hover:text-brand-strong"
-          >
-            Open all chapters →
-          </Link>
-        </div>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {UNITS.map((unit, index) => (
-            <UnitCard key={unit.slug} unit={unit} index={index + 1} topicCount={unit.topics.length} />
-          ))}
         </div>
       </section>
 
-      {/* Teachers band */}
-      <section className="border-t border-zinc-200 bg-white">
-        <div className="mx-auto flex max-w-6xl flex-col items-start gap-6 px-4 py-12 sm:px-6 md:flex-row md:items-center md:justify-between">
-          <div className="max-w-xl">
-            <p className="font-mono text-xs text-brand">~/it-hub-11/admin</p>
-            <h2 className="mt-1 font-display text-2xl font-bold tracking-tight text-ink">
-              For teachers: one panel to manage it all
-            </h2>
-            <p className="mt-2 text-sm leading-relaxed text-slate-500">
-              Upload material, create student accounts, and review activity — every
-              download, search and sign-in is logged, with flags raised automatically
-              for anything that looks off.
-            </p>
+      {/* Chapters showcase */}
+      <section className="bg-white">
+        <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+          <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <p className="font-mono text-xs font-medium text-brand">
+                {totalResources > 0
+                  ? `${totalResources} ${totalResources === 1 ? "resource" : "resources"} live`
+                  : "material being prepared"}
+              </p>
+              <h2 className="mt-1 text-2xl font-bold tracking-tight text-ink sm:text-3xl">
+                Your Learning Path
+              </h2>
+            </div>
+            <Link
+              href="/chapters"
+              className="text-sm font-semibold text-teal transition-colors hover:text-ink"
+            >
+              View all chapters →
+            </Link>
           </div>
-          <Link
-            href="/login"
-            className="flex h-11 shrink-0 items-center rounded-lg border border-zinc-300 bg-white px-5 text-sm font-semibold text-ink transition-colors hover:border-brand/50 hover:text-brand"
-          >
-            Teacher sign in
-          </Link>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {UNITS.map((unit, index) => (
+              <UnitCard
+                key={unit.slug}
+                unit={unit}
+                index={index + 1}
+                resourceCount={counts[unit.slug] ?? 0}
+                topicCount={unit.topics.length}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonial */}
+      <section className="bg-sky-100">
+        <div className="mx-auto max-w-3xl px-4 py-16 text-center sm:px-6">
+          <figure className="rounded-2xl bg-white p-8 shadow-soft sm:p-10">
+            <blockquote className="text-lg leading-relaxed text-ink">
+              &ldquo;Everything for IT 402 in one place — notes, worksheets and
+              practicals. No more hunting across class groups when an exam is
+              coming.&rdquo;
+            </blockquote>
+            <figcaption className="mt-6 flex items-center justify-center gap-3">
+              <TestimonialAvatar width={44} height={44} />
+              <span className="text-left">
+                <span className="block text-sm font-bold text-ink">A Class 11 student</span>
+                <span className="block text-xs text-mist">Information Technology (402)</span>
+              </span>
+            </figcaption>
+          </figure>
         </div>
       </section>
     </>
