@@ -14,7 +14,8 @@ import type { Profile } from "@/lib/types";
 export function AppChrome({ profile }: { profile: Profile | null }) {
   const pathname = usePathname();
 
-  if (pathname.startsWith("/concepts")) return null;
+  if (pathname.startsWith("/concepts") || pathname.startsWith("/design-system"))
+    return null;
 
   return (
     <>

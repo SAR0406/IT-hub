@@ -1,0 +1,96 @@
+/*
+ * IT Hub 11 — Premium Design System tokens (spec §2/§10).
+ * Tailwind v4 port: the spec's tailwind.config.js is v3-era; tokens here
+ * replace it. All names are prefixed (pm-) so they never collide with the
+ * site's own theme or the /concepts studies.
+ *
+ *   Surface            #F5F3F0   Elevated      #FAFAF8   Dark        #0F1119
+ *   Ink                #09090B   Text-2        #52525B   Muted       #94A3B8
+ *   Line               #E4E4E7   Hover         #F0EEEB
+ *   Teal               #0891B2   Teal-2        #14B8A6
+ *   Success            #10B981   Warning       #F59E0B   Error       #EF4444
+ *   Info               #0EA5E9
+ *
+ * AA corrections vs. spec: text-2 is #52525B (≈5.9:1 on surface) instead of
+ * #64748B (≈4.2:1 — fails WCAG 2.1 AA for body text).
+ */
+@theme {
+  --color-pm-surface: #f5f3f0;
+  --color-pm-surface-elevated: #fafaf8;
+  --color-pm-surface-dark: #0f1119;
+  --color-pm-ink: #09090b;
+  --color-pm-text2: #52525b;
+  --color-pm-mute: #94a3b8;
+  --color-pm-line: #e4e4e7;
+  --color-pm-hover: #f0eeeb;
+  --color-pm-teal: #0891b2;
+  --color-pm-teal2: #14b8a6;
+  --color-pm-success: #10b981;
+  --color-pm-warning: #f59e0b;
+  --color-pm-error: #ef4444;
+  --color-pm-info: #0ea5e9;
+
+  --font-pm-sans: var(--font-inter), system-ui, sans-serif;
+  --font-pm-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+/* Progress fill — smooth width animation (§5, Pattern 4). */
+.ds-progress-fill {
+  transition: width 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Skeleton shimmer (§8). */
+@keyframes ds-shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.ds-skeleton {
+  background: linear-gradient(90deg, #e4e4e7 25%, #d4d4d8 50%, #e4e4e7 75%);
+  background-size: 1000px 100%;
+  animation: ds-shimmer 2s infinite;
+}
+
+/* Success feedback slide-in (§8). */
+@keyframes ds-slide-in-check {
+  from {
+    opacity: 0;
+    transform: scale(0.98) translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateX(0);
+  }
+}
+
+.ds-success-feedback {
+  animation: ds-slide-in-check 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Tab underline: keyed by the active label via inline style (§5, Pattern 2). */
+.ds-tab-underline {
+  transition:
+    transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+    left 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Micro-label used across the preview. */
+.ds-microlabel {
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-progress-fill,
+  .ds-skeleton,
+  .ds-success-feedback,
+  .ds-tab-underline {
+    animation: none;
+    transition: none;
+  }
+}

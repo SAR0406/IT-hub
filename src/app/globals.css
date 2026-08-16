@@ -1,23 +1,46 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f6f7f9;
-  --foreground: #0f172a;
+  --background: #faf8f6;
+  --foreground: #1e293b;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-ink: #0b1220;
-  --color-ink-soft: #111a2e;
-  --color-paper: #f6f7f9;
-  --color-brand: #4f46e5;
-  --color-brand-strong: #4338ca;
-  --color-brand-soft: #eef2ff;
-  --color-mist: #8b95a7;
+
+  /* Warm off-white paper */
+  --color-paper: #faf8f6;
+  /* Dark navy — headings and primary text */
+  --color-ink: #1e293b;
+  --color-ink-soft: #0f172a;
+  /* Hot pink — primary CTA (AA-safe on white and white text) */
+  --color-brand: #db2777;
+  --color-brand-strong: #be185d;
+  --color-brand-soft: #fce7f3;
+  /* Warm gray — secondary text (AA-safe on paper) */
+  --color-mist: #475569;
+  /* Secondary accents */
+  --color-teal: #0891b2;
+  --color-emerald: #10b981;
+  /* Pastel decorative accents */
+  --color-sun: #fcd34d;
+  --color-mint: #86efac;
+  --color-aqua: #7dd3d3;
+  --color-blush: #f4a4d4;
+
+  /* Soft shadows — never harsh */
+  --shadow-soft: 0 4px 12px rgba(30, 41, 59, 0.08);
+  --shadow-lift: 0 12px 24px rgba(30, 41, 59, 0.12);
+
   --font-sans: var(--font-inter), system-ui, sans-serif;
-  --font-display: var(--font-space-grotesk), var(--font-inter), system-ui, sans-serif;
+  --font-display: var(--font-inter), system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+/* slate-500 fails WCAG AA on paper (4.35:1); nudge it to the AA-safe family */
+@theme {
+  --color-slate-500: #475569;
 }
 
 body {
@@ -35,8 +58,8 @@ body {
 }
 
 ::selection {
-  background: #c7d2fe;
-  color: #1e1b4b;
+  background: #fce7f3;
+  color: #831843;
 }
 
 /* Blinking block caret — the signature motif, borrowed from a terminal. */
@@ -55,20 +78,18 @@ body {
   animation: caret-blink 1.1s steps(1) infinite;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .caret {
-    animation: none;
-    opacity: 0.6;
-  }
+/* Gentle floating for decorative elements — no distracting motion */
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
 }
 
-/* Subtle blueprint grid for the dark hero. */
-.grid-bg {
-  background-image:
-    linear-gradient(rgba(148, 163, 184, 0.09) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(148, 163, 184, 0.09) 1px, transparent 1px);
-  background-size: 44px 44px;
+.float-y {
+  animation: float-y 5s ease-in-out infinite;
 }
+
+.float-y-1 { animation-delay: 0.6s; }
+.float-y-2 { animation-delay: 1.4s; }
 
 /* Deliberate motion: one orchestrated hero reveal. */
 @keyframes rise-in {
@@ -86,6 +107,13 @@ body {
 .rise-in-4 { animation-delay: 0.32s; }
 
 @media (prefers-reduced-motion: reduce) {
+  .caret {
+    animation: none;
+    opacity: 0.6;
+  }
+  .float-y, .float-y-1, .float-y-2 {
+    animation: none;
+  }
   .rise-in, .rise-in-1, .rise-in-2, .rise-in-3, .rise-in-4 {
     animation: none;
   }
