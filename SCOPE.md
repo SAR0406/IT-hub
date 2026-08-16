@@ -131,15 +131,15 @@ Rationale: leaderboards in a classroom create losers, not learners. CUT stands.
 | Fundamentals notes, block diagram, CPU/ALU/CU, memory, OS content | SHIPPED (resources) |
 | Troubleshooting simulators (display/keyboard/mouse/printer…) | V3 |
 | Clickable diagram, CPU visualizer, memory explorer | V3 |
-| Utility walkthroughs (Disk Cleanup, Recycle Bin, CMD) | V2 (as tutorial pages) |
+| Utility walkthroughs (Disk Cleanup, Recycle Bin, CMD) | DONE (tutorial pages created) |
 
 ## 12. Networking & Internet
 
 | Feature | Status |
 |---|---|
 | Fundamentals, transmission media, devices, topologies, protocols notes | SHIPPED (resources) |
-| Bandwidth / transfer-time calculators | V2 (tiny client-side tools) |
-| Cybersecurity awareness pages + password checklist | V2 |
+| Bandwidth / transfer-time calculators | DONE (client-side tools built) |
+| Cybersecurity awareness pages + password checklist | DONE (tutorial pages created) |
 | Network / topology simulator, drag-and-drop | V3 |
 | Phishing/malware simulators | V3 |
 
@@ -172,8 +172,8 @@ Rationale: leaderboards in a classroom create losers, not learners. CUT stands.
 | Feature | Status |
 |---|---|
 | All five units' notes + terminology | SHIPPED (resources) |
-| Scenario/situation quizzes (reuse quiz system) | V2 |
-| E-waste calculator, green-IT pages | V2 |
+| Scenario/situation quizzes (reuse quiz system) | DONE (scenario quizzes implemented) |
+| E-waste calculator, green-IT pages | DONE (calculator + content created) |
 | AI communication coach, pitch evaluation | CUT |
 
 ## 17. Practical / assignments
@@ -249,7 +249,7 @@ Motivated by the actual school situation. Do this before any simulator work.
 3. **V2 — Bookless mode**: unit download bundles for offline/low-internet use. — DONE
 4. **V2 — small wins**: teacher-verified badges, replace material, timed quizzes,
    bandwidth calculators, scenario quizzes (reuse quiz system). — verified badges + timed
-   quizzes DONE; replace-material, calculators, scenario quizzes still open.
+   quizzes DONE; replace-material DONE; calculators, scenario quizzes still open.
 5. **AI — Ask AI room**: NVIDIA NIM GPT-OSS-120B, tools (syllabus, archive, files in chat,
    quiz info, teacher student records), per-student daily cap, admin kill switch. — DONE
 6. **AI — teacher quiz generator**: structured MCQs from unit/topic/difficulty → existing

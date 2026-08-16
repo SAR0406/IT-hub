@@ -69,7 +69,14 @@ export const UNITS: Unit[] = [
     part: "B",
     description:
       "Computer hardware, software, memory and the functioning of a computer system.",
-    topics: [],
+    topics: [
+      {
+        name: "Utility Walkthroughs",
+        slug: "utility-walkthroughs",
+        description:
+          "Step-by-step guides for Disk Cleanup, Recycle Bin, Command Prompt basics.",
+      },
+    ],
   },
   {
     name: "Networking & Internet",
@@ -77,7 +84,20 @@ export const UNITS: Unit[] = [
     part: "B",
     description:
       "Computer networks, the internet, web services and online safety.",
-    topics: [],
+    topics: [
+      {
+        name: "Cybersecurity Awareness",
+        slug: "cybersecurity-awareness",
+        description:
+          "Threats, vulnerabilities, safe browsing habits and online safety practices.",
+      },
+      {
+        name: "Password Security & Checklist",
+        slug: "password-security",
+        description:
+          "Creating strong passwords, multi-factor authentication and a practical checklist.",
+      },
+    ],
   },
   {
     name: "Office Automation Tools",
@@ -85,7 +105,14 @@ export const UNITS: Unit[] = [
     part: "B",
     description:
       "Word processing, spreadsheets and presentations using office tools.",
-    topics: [],
+    topics: [
+      {
+        name: "Calc Playground",
+        slug: "calc-playground",
+        description:
+          "Interactive spreadsheet formulas, references, and charts tutorial.",
+      },
+    ],
   },
   {
     name: "RDBMS",
