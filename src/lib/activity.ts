@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Json } from "@/lib/supabase/database.types";
 import type { ActivityAction, ActivityLog, FlagSeverity, FlagType } from "@/lib/types";
 
 /**
@@ -34,7 +35,7 @@ const FAILED_LOGIN_LIMIT = 3;
 const FAILED_LOGIN_WINDOW = "10 minutes";
 const FLAG_COOLDOWN = "5 minutes";
 
-export type TrackDetails = Record<string, unknown>;
+export type TrackDetails = Record<string, Json>;
 
 export type ActivityLogWithStudent = ActivityLog & {
   student_name: string | null;

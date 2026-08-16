@@ -4,15 +4,18 @@ One reliable place for Class 11 CBSE Information Technology (Code 402) students 
 open and download their study material — notes, worksheets, question papers and practicals —
 organised exactly like the official syllabus.
 
-The problem it solves is deliberately simple: students don't have the IT book, so the teacher
-needs one place where material is always available. No accounts for students, no dashboards,
-no gamification. Just browse → find → open/download.
+Students sign in with the account their teacher creates. Every meaningful action is
+tracked — downloads, searches, sign-ins — and the admin panel reviews automatically-raised
+misbehavior flags (banned search terms, download bursts, repeated failed logins, admin-area
+probes) and manages students and material.
 
 ## Tech stack
 
 - **Next.js 16** (App Router, Server Components) + **TypeScript**
-- **Tailwind CSS v4**
-- **Supabase** — PostgreSQL (resources metadata), Storage (files), Auth (admin only)
+- **Tailwind CSS v4** — design system: Space Grotesk display + Inter body + Geist Mono,
+  "study terminal" identity (dark ink hero, blinking block caret, mono file-path eyebrows)
+- **Supabase** — PostgreSQL (resources, profiles, activity logs, flags), Storage (private
+  bucket, files stream through the server), Auth (students + admin)
 - Deploys on **Vercel**
 
 ## Installation
@@ -32,56 +35,55 @@ Copy `.env.example` to `.env.local` and fill in the values:
 | --- | --- |
 | `NEXT_PUBLIC_SUPABASE_URL` | Project URL, e.g. `https://xxxx.supabase.co` |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Anon (or publishable) key from Project Settings → API |
+| `SUPABASE_SERVICE_ROLE_KEY` | **Server-only.** Service role key (Project Settings → API → `service_role`). Needed for creating / deleting / resetting student accounts, because Supabase Auth only allows service-role clients to do that. Without it the Students page explains what to add and returns a clear 501 — everything else keeps working. |
 
-These are public by design (browser-safe). Never commit secrets. `.env.local` is gitignored.
-
-Optional (only needed for the seed script):
-
-| Variable | Description |
-| --- | --- |
-| `ADMIN_EMAIL` | Admin account email used by `scripts/seed-demo.mjs` |
-| `ADMIN_PASSWORD` | Admin account password used by `scripts/seed-demo.mjs` |
+These `NEXT_PUBLIC_*` values are public by design (browser-safe). `SUPABASE_SERVICE_ROLE_KEY`
+is server-only — never expose it, never commit it. `.env.local` is gitignored.
 
 ## Supabase setup
 
 1. Create a project at https://supabase.com.
-2. Run the SQL in `supabase/migrations/20260816_create_resources.sql` (SQL Editor).
+2. Run the SQL in `supabase/migrations/` (SQL Editor), in filename order:
+   `20260816_create_resources.sql` → `20260816_create_student_auth.sql` →
+   `20260816_seed_demo_students.sql` (optional demo data) →
+   `20260816_add_activity_rule_functions.sql` → `20260816_add_flag_cooldown_helper.sql` →
+   `20260816_fix_log_joins.sql`.
 3. Create the storage bucket (see below).
 4. Create the admin user (see below).
-5. Copy the project URL and anon key into `.env.local`.
+5. Copy the project URL, anon key and service role key into `.env.local`.
 
 ### Database schema
 
-```sql
-create table resources (
-  id uuid primary key default gen_random_uuid(),
-  title text not null,
-  file_name text not null,
-  file_path text not null,
-  file_type text not null,
-  file_size bigint,
-  unit_slug text not null,
-  topic_slug text,
-  resource_type text not null,
-  description text,
-  created_at timestamptz default now()
-);
-```
+- `resources` — uploaded material (title, file path, unit/topic slug, type, size).
+  `SELECT` requires a signed-in user; writes are admin-only.
+- `profiles` — one row per account (role `student`/`admin`, class, roll number, `is_active`).
+  Students read only their own row; admins read all.
+- `activity_logs` — immutable audit trail: `page_view`, `search`, `resource_open`,
+  `resource_download`, `login_success`, `login_failed`, `resource_upload`,
+  `resource_delete`, `admin_action`, `unauthorized_admin_attempt`. Guests may only insert
+  `login_failed` rows (for brute-force detection). Admins read all.
+- `misbehavior_flags` — raised automatically: `banned_search`, `rapid_downloads`,
+  `failed_login`, `unauthorized_admin`, with severity and `open`/`reviewed`/`dismissed`
+  status. Admins read and review; students can only raise their own.
 
-Indexes on `title`, `file_name`, `unit_slug`, `topic_slug` and `created_at`.
+`is_admin()` is a SECURITY DEFINER helper (checks role + `is_active`), so RLS never
+recurses. The four rule functions (`count_recent_actions`, `count_recent_failed_logins`,
+`flag_failed_logins`, `recent_flag_exists`) are SECURITY DEFINER too, granted to
+anon/authenticated — the app calls them under the user's session.
 
-Row Level Security is enabled. Policies:
-
-- `SELECT` — public (students read without accounts)
-- `INSERT` / `UPDATE` / `DELETE` — authenticated only (admin)
+The FK on `activity_logs.user_id` / `misbehavior_flags.user_id` / `.reviewed_by` points at
+`profiles(id)` (which cascades from `auth.users`), so admin queries can embed the student
+profile in one request: `student:profiles(full_name, email)`.
 
 ### Storage bucket
 
-Create one **public** bucket named `resources` with a 25 MB file size limit, then apply the
-storage policies from the migration file:
+Create a **private** bucket named `resources` with a 25 MB file size limit, then apply the
+storage policies from the migrations:
 
-- `SELECT` — public
-- `INSERT` / `UPDATE` / `DELETE` — authenticated only
+- `SELECT` — signed-in users (the app streams files through `/api/files/[id]/open|download`,
+  which checks the session, logs the action, and returns the bytes with
+  `Cache-Control: private, no-store`). Guests are redirected to `/login`.
+- `INSERT` / `UPDATE` / `DELETE` — admins only.
 
 Folder layout inside the bucket mirrors the syllabus slugs:
 
@@ -95,17 +97,26 @@ resources/
     fundamentals-of-java/
 ```
 
-### Admin setup
+### Accounts
 
-IT Hub 11 uses Supabase Auth with a single admin account. Students never log in.
+- **Admin** — create via Supabase dashboard: **Authentication → Users → Add user**,
+  then add a matching row in `profiles` with `role = 'admin'`. Signs in at `/login`.
+- **Students** — created from the admin panel (Students page). No open registration:
+  accounts come from the teacher. Pausing an account blocks sign-in immediately.
 
-1. In the Supabase dashboard: **Authentication → Users → Add user**, choose email/password,
-   and create the teacher's account.
-2. The admin signs in at `/admin/login` (the login field is the email of that account).
+Demo accounts (from `20260816_seed_demo_students.sql`, password `student@123`):
+`aarav.sharma@ithub11.in`, `priya.patel@ithub11.in`, `rohan.mehta@ithub11.in`,
+`sara.khan@ithub11.in`.
 
-All upload and delete actions verify the session server-side (`/api/resources`), and the
-database and storage RLS policies are an additional guard — an unauthenticated request can
-never create or remove anything.
+## Misbehavior rules
+
+All rules run server-side inside `src/lib/activity.ts`, silently (students are never told
+they are being watched), with a 5-minute cooldown per student + rule:
+
+- **banned_search** — search query contains a word from the banned list
+- **rapid_downloads** — 8+ downloads within 60 seconds
+- **failed_login** — 3+ failed sign-ins within 10 minutes (per email)
+- **unauthorized_admin** — a student reached an admin-only page/API
 
 ## Local development
 
@@ -113,14 +124,15 @@ never create or remove anything.
 npm run dev
 ```
 
-Seed the site with clearly-marked demo resources (one per unit, tiny text files — no fake PDFs):
+Seed the site with demo resources (clearly marked, tiny text files) and demo student
+accounts:
 
 ```bash
-node --env-file=.env.local scripts/seed-demo.mjs
+node --env-file=.env.local scripts/seed-demo.mjs   # demo resources (V1)
+node --env-file=.env.local supabase/seed/          # not used — students seeded via SQL migration
 ```
 
-Then delete them from `/admin` once real material is uploaded — deleting a resource removes
-both the database row and the file in storage.
+Delete demo resources from `/admin/resources` once real material is uploaded.
 
 ## Testing
 
@@ -130,33 +142,41 @@ npx tsc --noEmit # TypeScript
 npm run build    # Production build
 ```
 
+End-to-end suite (Playwright/Python, against `npm run start`): see
+`C:\Users\abnup\AppData\Local\Temp\opencode\e2e_v2.py` — covers guest redirects, student
+sign-in/search/download, flag raising, and the admin panel flows.
+
 ## Production deployment
 
 1. Push the repo to GitHub.
 2. Import it in Vercel (Framework preset: Next.js).
-3. Add the two `NEXT_PUBLIC_*` environment variables in Vercel project settings.
-4. Deploy. The database, bucket and admin user already live in Supabase.
+3. Add the environment variables (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`,
+   `SUPABASE_SERVICE_ROLE_KEY`) in Vercel project settings.
+4. Deploy. The database, bucket and accounts already live in Supabase.
 
 ## Project structure
 
 ```
 src/
-  app/                    # Routes: /, /chapters/..., /search, /about, /admin, /api/*
-  components/             # Navbar, UnitCard, ResourceCard, FileUploadForm, …
+  app/                    # Routes: /, /chapters/..., /search, /about, /login, /admin/*, /api/*
+  components/             # Navbar, UnitCard, ResourceCard, AdminNav, ActivityTracker, …
   lib/
     syllabus.ts           # Hardcoded CBSE syllabus hierarchy (the source of truth)
-    resources.ts          # All database queries (search included)
+    resources.ts          # Resource queries (search included)
+    auth.ts               # getSessionProfile, requireUser, requireAdmin guards
+    activity.ts           # logActivity + misbehavior rules + admin log queries
+    students.ts           # Admin CRUD for student accounts (service role)
+    flags.ts              # Flag queries + status updates
+    stats.ts              # Admin dashboard queries
+    fileStream.ts         # Session-checked file streaming from the private bucket
     supabase/             # Server & browser Supabase clients
-supabase/migrations/      # SQL for table, bucket and RLS policies
-scripts/seed-demo.mjs     # Demo seed data
+    supabase/database.types.ts  # Generated types (Supabase CLI / MCP typegen) — Database generic wired into all clients
+supabase/migrations/      # SQL: tables, bucket, RLS policies, rules, demo seed
+scripts/seed-demo.mjs     # V1 demo resource seed
 ```
 
 ## Roadmap
 
-- **V2** — AI tutor grounded in uploaded notes, full-text PDF search, better resource
-  categorization, recent uploads, favorites.
-- **V3** — SQL playground (PGlite), Java browser practice, interactive tutorials.
-- **V4** — Teacher analytics, assignments, student progress, exam mode.
-
-None of these exist in V1 by design. The syllabus slugs and storage layout are the
-stable boundaries future features build on.
+- **V3** — AI tutor grounded in uploaded notes, full-text PDF search, browser-based SQL
+  (PGlite) and Java practice.
+- **V4** — Teacher analytics beyond flags, assignments, student progress, exam mode.

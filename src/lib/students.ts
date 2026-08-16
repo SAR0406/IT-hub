@@ -1,5 +1,6 @@
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
+import type { Database } from "@/lib/supabase/database.types";
 import type { Profile } from "@/lib/types";
 
 /**
@@ -16,7 +17,7 @@ export function serviceRoleAvailable(): boolean {
 }
 
 function serviceRoleClient() {
-  return createSupabaseClient(
+  return createSupabaseClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
@@ -92,7 +93,12 @@ export async function updateStudent(
   }
 ): Promise<StudentResult> {
   const supabase = await createClient();
-  const updates: Record<string, unknown> = {};
+  const updates: {
+    full_name?: string;
+    class_name?: string | null;
+    student_id?: string | null;
+    is_active?: boolean;
+  } = {};
 
   if (patch.fullName !== undefined) updates.full_name = patch.fullName.trim();
   if (patch.className !== undefined) updates.class_name = patch.className?.trim() || null;

@@ -67,7 +67,8 @@ export async function getDashboardStats(): Promise<DashboardStats> {
 
   const searchCounts = new Map<string, number>();
   for (const row of searches.data ?? []) {
-    const query = String(row.details?.query ?? "").trim().toLowerCase();
+    const raw = row.details as Record<string, unknown> | null;
+    const query = String(raw?.query ?? "").trim().toLowerCase();
     if (query) searchCounts.set(query, (searchCounts.get(query) ?? 0) + 1);
   }
   const topSearches = [...searchCounts.entries()]
