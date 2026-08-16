@@ -30,6 +30,7 @@ const NAV_ITEMS = [
   { href: "/lab/sql", label: "SQL Lab", soon: false },
   { href: "/search", label: "Search", soon: false },
   { href: "/chat", label: "Chat", soon: false },
+  { href: "/bookless", label: "Offline Packs", soon: false },
 ];
 
 export default async function DashboardPage() {

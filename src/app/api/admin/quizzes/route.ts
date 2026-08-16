@@ -18,10 +18,8 @@ export async function POST(request: Request) {
     return error("Invalid request body.", 400);
   }
 
-  const { title, description, unitSlug, questions, published } = (body ?? {}) as Record<
-    string,
-    unknown
-  >;
+  const { title, description, unitSlug, questions, published, timeLimitMinutes } = (body ??
+    {}) as Record<string, unknown>;
 
   if (typeof title !== "string" || title.trim().length < 3 || title.trim().length > 120) {
     return error("Please give the quiz a title (3–120 characters).", 400);
@@ -31,6 +29,22 @@ export async function POST(request: Request) {
   }
   if (description !== undefined && description !== null && typeof description !== "string") {
     return error("Invalid description.", 400);
+  }
+
+  const timeLimit =
+    timeLimitMinutes === null || timeLimitMinutes === undefined || timeLimitMinutes === ""
+      ? null
+      : typeof timeLimitMinutes === "number" && Number.isInteger(timeLimitMinutes)
+        ? timeLimitMinutes
+        : null;
+  if (
+    timeLimit !== null &&
+    (typeof timeLimitMinutes !== "number" ||
+      !Number.isInteger(timeLimitMinutes) ||
+      timeLimitMinutes < 1 ||
+      timeLimitMinutes > 120)
+  ) {
+    return error("Time limit must be between 1 and 120 minutes (or leave it empty).", 400);
   }
 
   const validation = validateQuestions(questions);
@@ -44,6 +58,7 @@ export async function POST(request: Request) {
       unit_slug: unitSlug,
       questions: validation.questions,
       published: published === true,
+      time_limit_minutes: timeLimit,
     })
     .select()
     .single();

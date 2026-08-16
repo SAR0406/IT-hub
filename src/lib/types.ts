@@ -26,6 +26,7 @@ export type Resource = {
   topic_slug: string | null;
   resource_type: string;
   description: string | null;
+  is_verified: boolean;
   created_at: string;
 };
 

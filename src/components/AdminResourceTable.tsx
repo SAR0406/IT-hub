@@ -15,11 +15,36 @@ type DeleteState =
 export function AdminResourceTable({ initial }: { initial: ResourceWithLabels[] }) {
   const router = useRouter();
   const [deletedIds, setDeletedIds] = useState<string[]>([]);
+  const [verifiedIds, setVerifiedIds] = useState<Record<string, boolean>>({});
   const [pendingDelete, setPendingDelete] = useState<DeleteState>(null);
   const [deleting, setDeleting] = useState(false);
+  const [busyId, setBusyId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const resources = initial.filter((resource) => !deletedIds.includes(resource.id));
+
+  async function toggleVerified(resource: ResourceWithLabels) {
+    const next = !(verifiedIds[resource.id] ?? resource.is_verified);
+    setBusyId(resource.id);
+    setError(null);
+    try {
+      const response = await fetch(`/api/resources/${resource.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ is_verified: next }),
+      });
+      if (!response.ok) {
+        const data = (await response.json().catch(() => null)) as { error?: string } | null;
+        throw new Error(data?.error ?? "Update failed.");
+      }
+      setVerifiedIds((ids) => ({ ...ids, [resource.id]: next }));
+      router.refresh();
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setBusyId(null);
+    }
+  }
 
   async function confirmDelete() {
     if (!pendingDelete) return;
@@ -80,6 +105,21 @@ export function AdminResourceTable({ initial }: { initial: ResourceWithLabels[] 
                 </p>
               </div>
               <div className="flex shrink-0 items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => void toggleVerified(resource)}
+                  disabled={busyId === resource.id}
+                  className={`h-9 rounded-lg border px-3 text-xs font-semibold transition-colors disabled:opacity-50 ${
+                    (verifiedIds[resource.id] ?? resource.is_verified)
+                      ? "border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+                      : "border-zinc-300 text-zinc-700 hover:border-brand/50 hover:text-brand"
+                  }`}
+                  aria-pressed={verifiedIds[resource.id] ?? resource.is_verified}
+                >
+                  {(verifiedIds[resource.id] ?? resource.is_verified)
+                    ? "Verified ✓"
+                    : "Mark verified"}
+                </button>
                 <Link
                   href={`/api/files/${resource.id}/open`}
                   className="h-9 rounded-lg border border-zinc-300 px-3 text-xs font-semibold text-zinc-700 transition-colors hover:border-brand/50 hover:text-brand"

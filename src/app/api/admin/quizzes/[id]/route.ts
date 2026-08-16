@@ -20,10 +20,8 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     return error("Invalid request body.", 400);
   }
 
-  const { title, description, unitSlug, questions, published } = (body ?? {}) as Record<
-    string,
-    unknown
-  >;
+  const { title, description, unitSlug, questions, published, timeLimitMinutes } = (body ??
+    {}) as Record<string, unknown>;
 
   const updates: {
     title?: string;
@@ -31,6 +29,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     unit_slug?: string;
     questions?: Json;
     published?: boolean;
+    time_limit_minutes?: number | null;
   } = {};
 
   if (title !== undefined) {
@@ -59,6 +58,18 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   if (published !== undefined) {
     if (typeof published !== "boolean") return error("Invalid publish setting.", 400);
     updates.published = published;
+  }
+  if (timeLimitMinutes !== undefined) {
+    if (
+      timeLimitMinutes !== null &&
+      (typeof timeLimitMinutes !== "number" ||
+        !Number.isInteger(timeLimitMinutes) ||
+        timeLimitMinutes < 1 ||
+        timeLimitMinutes > 120)
+    ) {
+      return error("Time limit must be between 1 and 120 minutes (or null).", 400);
+    }
+    updates.time_limit_minutes = timeLimitMinutes === null ? null : timeLimitMinutes;
   }
 
   const { data: updated, error: updateError } = await ctx.supabase

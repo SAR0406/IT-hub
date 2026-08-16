@@ -16,6 +16,7 @@ type QuizRow = {
   unit_slug: string;
   questions: Json;
   published: boolean;
+  time_limit_minutes: number | null;
   created_at: string;
 };
 
@@ -25,6 +26,7 @@ type Draft = {
   description: string;
   unitSlug: string;
   published: boolean;
+  timeLimit: string;
   questions: QuizQuestion[];
 };
 
@@ -39,6 +41,7 @@ function toDraft(quiz: QuizRow): Draft {
     description: quiz.description ?? "",
     unitSlug: quiz.unit_slug,
     published: quiz.published,
+    timeLimit: quiz.time_limit_minutes ? String(quiz.time_limit_minutes) : "",
     questions: parseQuestions(quiz.questions),
   };
 }
@@ -116,6 +119,7 @@ export function QuizManager({
             description: editing.description.trim() || null,
             unitSlug: editing.unitSlug,
             published: editing.published,
+            timeLimitMinutes: editing.timeLimit.trim() === "" ? null : Number(editing.timeLimit),
             questions: editing.questions,
           }),
         }
@@ -251,6 +255,22 @@ export function QuizManager({
                 onChange={(event) => setEditing({ ...editing, description: event.target.value })}
                 className="w-full resize-none rounded-lg border border-zinc-300 bg-white px-3.5 py-3 text-base text-ink placeholder:text-slate-400 focus:border-brand focus:outline-none"
                 placeholder="What this quiz covers…"
+              />
+            </div>
+
+            <div className="mt-4 max-w-56">
+              <label htmlFor="quizTimeLimit" className="mb-1.5 block text-sm font-semibold text-ink">
+                Time limit <span className="font-normal text-mist">(minutes, optional)</span>
+              </label>
+              <input
+                id="quizTimeLimit"
+                type="number"
+                min={1}
+                max={120}
+                value={editing.timeLimit}
+                onChange={(event) => setEditing({ ...editing, timeLimit: event.target.value })}
+                className="h-11 w-full rounded-lg border border-zinc-300 bg-white px-3.5 text-base text-ink placeholder:text-slate-400 focus:border-brand focus:outline-none"
+                placeholder="e.g. 10 — empty means no timer"
               />
             </div>
           </section>
@@ -399,6 +419,7 @@ export function QuizManager({
             description: "",
             unitSlug: UNITS[0]!.slug,
             published: false,
+            timeLimit: "",
             questions: [
               { id: crypto.randomUUID(), question: "", options: [...EMPTY_OPTIONS], answer: 0 },
             ],
@@ -441,8 +462,11 @@ export function QuizManager({
                   <p className="mt-0.5 text-xs text-zinc-500">
                     {unit?.name ?? quiz.unit_slug} · {questionCount}{" "}
                     {questionCount === 1 ? "question" : "questions"} · {attempts}{" "}
-                    {attempts === 1 ? "attempt" : "attempts"} ·{" "}
-                    {formatDate(quiz.created_at)}
+                    {attempts === 1 ? "attempt" : "attempts"}
+                    {quiz.time_limit_minutes
+                      ? ` · ${quiz.time_limit_minutes} min timer`
+                      : ""}{" "}
+                    · {formatDate(quiz.created_at)}
                   </p>
                 </div>
                 <div className="flex shrink-0 flex-wrap items-center gap-2">

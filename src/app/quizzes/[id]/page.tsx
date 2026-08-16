@@ -69,6 +69,7 @@ export default async function QuizPage({ params }: { params: Promise<{ id: strin
         unitName={unit?.name ?? quiz.unit_slug}
         questions={questions}
         best={best}
+        timeLimitMinutes={quiz.time_limit_minutes}
       />
     </div>
   );

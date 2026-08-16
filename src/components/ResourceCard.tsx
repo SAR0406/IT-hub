@@ -43,6 +43,11 @@ export function ResourceCard({ resource }: { resource: ResourceWithLabels }) {
                 Demo
               </span>
             )}
+            {resource.is_verified && (
+              <span className="rounded-full bg-emerald-50 px-2 py-0.5 font-mono text-[10px] font-bold text-emerald-700">
+                STATUS / VERIFIED
+              </span>
+            )}
           </div>
           <h3 className="text-base font-semibold leading-snug text-ink">{resource.title}</h3>
         </div>

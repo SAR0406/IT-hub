@@ -35,7 +35,7 @@ added after. This doc supersedes that inventory.
 | Metadata display (title, type, size, date, description) | SHIPPED |
 | Grouping by unit + topic, newest-first, empty states | SHIPPED |
 | Supabase Storage + DB metadata, consistent deletes | SHIPPED |
-| Teacher-verified badge | V2 |
+| Teacher-verified badge | SHIPPED (admin toggle + STATUS / VERIFIED badge) |
 | Replace/update uploaded material | V2 |
 
 ## 3. Search
@@ -95,7 +95,7 @@ Raw data exists today (activity logs, quiz attempts, flags, downloads).
 |---|---|
 | Admin-built MCQ quizzes, rooms by unit, instant scoring, answer review, retakes | SHIPPED |
 | Student quiz list + best-score tracking | SHIPPED |
-| Timed quizzes | V2 |
+| Timed quizzes | SHIPPED (optional per-quiz timer, auto-submit on timeout) |
 | Explanations on questions | V2 |
 | Weak-topic identification from attempts | V2 |
 | AI-generated questions | V3 |
@@ -190,8 +190,8 @@ Rationale: leaderboards in a classroom create losers, not learners. CUT stands.
 
 | Feature | Status |
 |---|---|
-| Download whole chapter/unit as a bundle, offline access | V2 |
-| Low-data experience | V2 (same bundles; zip, not individual PDFs) |
+| Download whole chapter/unit as a bundle, offline access | SHIPPED (/bookless — one zip per unit) |
+| Low-data experience | SHIPPED (same bundles; zip, not individual PDFs) |
 
 Motivated by the actual school situation. Do this before any simulator work.
 
@@ -237,13 +237,14 @@ Motivated by the actual school situation. Do this before any simulator work.
 
 ## Build order from here
 
-1. **V1 close-out**: README, `.env.example`, seed data (demo quiz, welcome chat message).
+1. **V1 close-out**: README, `.env.example`, seed data (demo quiz, welcome chat message). — DONE
 2. **V2 — SQL playground (PGlite)**: the one feature with the best learning-per-effort
    ratio. Client-side SQL in the browser, no backend, missions + error explanations.
-   Fits the LAB world already designed.
-3. **V2 — Bookless mode**: unit download bundles for offline/low-internet use.
+   Fits the LAB world already designed. — DONE
+3. **V2 — Bookless mode**: unit download bundles for offline/low-internet use. — DONE
 4. **V2 — small wins**: teacher-verified badges, replace material, timed quizzes,
-   bandwidth calculators, scenario quizzes (reuse quiz system).
+   bandwidth calculators, scenario quizzes (reuse quiz system). — verified badges + timed
+   quizzes DONE; replace-material, calculators, scenario quizzes still open.
 
 Rule for anything after that: one feature at a time, marked V2 or higher in this
 doc before a line of code is written.

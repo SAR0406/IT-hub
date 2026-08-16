@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { QuizQuestion } from "@/lib/quizzes";
 
 type QuizPlayerProps = {
@@ -9,6 +9,7 @@ type QuizPlayerProps = {
   unitName: string;
   questions: QuizQuestion[];
   best: { score: number; total: number } | null;
+  timeLimitMinutes: number | null;
 };
 
 type Result = { score: number; total: number };
@@ -21,13 +22,20 @@ function scoreMessage(score: number, total: number): { title: string; dark: stri
   return { title: "Review this unit’s material, then try again.", dark: "text-blush" };
 }
 
-export function QuizPlayer({ quiz, unitName, questions, best }: QuizPlayerProps) {
+export function QuizPlayer({ quiz, unitName, questions, best, timeLimitMinutes }: QuizPlayerProps) {
   const [answers, setAnswers] = useState<(number | null)[]>(() =>
     questions.map(() => null)
   );
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<Result | null>(null);
+  const [secondsLeft, setSecondsLeft] = useState<number | null>(() =>
+    timeLimitMinutes ? timeLimitMinutes * 60 : null
+  );
+  const answersRef = useRef(answers);
+  answersRef.current = answers;
+  const submitRef = useRef<(force?: boolean) => Promise<void>>(async () => {});
+  const timerDoneRef = useRef(false);
 
   useEffect(() => {
     fetch("/api/track", {
@@ -56,34 +64,55 @@ export function QuizPlayer({ quiz, unitName, questions, best }: QuizPlayerProps)
     });
   }
 
-  async function handleSubmit() {
-    if (!allAnswered || submitting) return;
-    setSubmitting(true);
-    setError(null);
+  const handleSubmit = useCallback(
+    async (force = false) => {
+      if ((!force && !allAnswered) || submitting || timerDoneRef.current) return;
+      if (force) timerDoneRef.current = true;
+      setSubmitting(true);
+      setError(null);
 
-    try {
-      const response = await fetch(`/api/quizzes/${quiz.id}/attempt`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ answers }),
-      });
-      const data = (await response.json()) as { score?: number; total?: number; error?: string };
-      if (!response.ok) {
-        throw new Error(data.error ?? "Your answers could not be submitted.");
+      try {
+        const response = await fetch(`/api/quizzes/${quiz.id}/attempt`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ answers: answersRef.current }),
+        });
+        const data = (await response.json()) as {
+          score?: number;
+          total?: number;
+          error?: string;
+        };
+        if (!response.ok) {
+          throw new Error(data.error ?? "Your answers could not be submitted.");
+        }
+        setResult({ score: data.score ?? 0, total: data.total ?? questions.length });
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } catch (err) {
+        setError((err as Error).message);
+      } finally {
+        setSubmitting(false);
       }
-      setResult({ score: data.score ?? 0, total: data.total ?? questions.length });
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    } catch (err) {
-      setError((err as Error).message);
-    } finally {
-      setSubmitting(false);
+    },
+    [allAnswered, submitting, quiz.id, questions.length]
+  );
+  submitRef.current = handleSubmit;
+
+  useEffect(() => {
+    if (secondsLeft === null || result) return;
+    if (secondsLeft <= 0) {
+      void submitRef.current(true);
+      return;
     }
-  }
+    const timer = setTimeout(() => setSecondsLeft((s) => (s === null ? null : s - 1)), 1000);
+    return () => clearTimeout(timer);
+  }, [secondsLeft, result]);
 
   function reset() {
     setAnswers(questions.map(() => null));
     setResult(null);
     setError(null);
+    timerDoneRef.current = false;
+    setSecondsLeft(timeLimitMinutes ? timeLimitMinutes * 60 : null);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
@@ -211,6 +240,18 @@ export function QuizPlayer({ quiz, unitName, questions, best }: QuizPlayerProps)
             </span>
           )}
         </div>
+        {secondsLeft !== null && (
+          <div
+            className={`mt-5 flex items-center gap-3 ${secondsLeft <= 30 ? "text-red-400" : "text-slate-300"}`}
+          >
+            <span className="font-mono text-2xl font-bold tabular-nums">
+              {Math.floor(secondsLeft / 60)}:{String(secondsLeft % 60).padStart(2, "0")}
+            </span>
+            <span className="font-mono text-[10px]">
+              {secondsLeft <= 30 ? "time's almost up — submit soon!" : "left on the clock"}
+            </span>
+          </div>
+        )}
         <div className="mt-5 h-1.5 w-full overflow-hidden rounded-full bg-white/10">
           <div
             className="h-full rounded-full bg-brand transition-all"
@@ -271,7 +312,7 @@ export function QuizPlayer({ quiz, unitName, questions, best }: QuizPlayerProps)
       <div className="sticky bottom-4">
         <button
           type="button"
-          onClick={handleSubmit}
+          onClick={() => void handleSubmit()}
           disabled={!allAnswered || submitting}
           className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-brand text-base font-semibold text-white shadow-lift transition-colors hover:bg-brand-strong disabled:opacity-60"
         >

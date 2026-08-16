@@ -231,13 +231,14 @@ export type Database = {
           },
         ]
       }
-      quizzes: {
+quizzes: {
         Row: {
           created_at: string
           description: string | null
           id: string
           published: boolean
           questions: Json
+          time_limit_minutes: number | null
           title: string
           unit_slug: string
         }
@@ -247,6 +248,7 @@ export type Database = {
           id?: string
           published?: boolean
           questions?: Json
+          time_limit_minutes?: number | null
           title: string
           unit_slug: string
         }
@@ -256,12 +258,13 @@ export type Database = {
           id?: string
           published?: boolean
           questions?: Json
+          time_limit_minutes?: number | null
           title?: string
           unit_slug?: string
         }
         Relationships: []
       }
-      resources: {
+resources: {
         Row: {
           created_at: string | null
           description: string | null
@@ -270,6 +273,7 @@ export type Database = {
           file_size: number | null
           file_type: string
           id: string
+          is_verified: boolean
           resource_type: string
           title: string
           topic_slug: string | null
@@ -283,6 +287,7 @@ export type Database = {
           file_size?: number | null
           file_type: string
           id?: string
+          is_verified?: boolean
           resource_type: string
           title: string
           topic_slug?: string | null
@@ -296,10 +301,11 @@ export type Database = {
           file_size?: number | null
           file_type?: string
           id?: string
+          is_verified?: boolean
           resource_type?: string
           title?: string
           topic_slug?: string | null
-          unit_slug: string
+          unit_slug?: string
         }
         Relationships: []
       }
