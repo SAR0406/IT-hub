@@ -2,6 +2,13 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { passwordChecks, validatePassword } from "@/lib/password";
+
+const PASSWORD_RULES = [
+  { key: "length" as const, label: "8+ characters" },
+  { key: "letter" as const, label: "a letter" },
+  { key: "digit" as const, label: "a number" },
+];
 
 export function RegisterForm() {
   const [fullName, setFullName] = useState("");
@@ -15,6 +22,13 @@ export function RegisterForm() {
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
+
+    const clientError = validatePassword(password);
+    if (clientError) {
+      setError(clientError);
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -175,13 +189,43 @@ export function RegisterForm() {
                 type="password"
                 autoComplete="new-password"
                 required
-                minLength={8}
                 maxLength={128}
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
                 className="h-11 w-full rounded-lg border border-zinc-300 bg-white px-3.5 text-base text-ink placeholder:text-slate-400 focus:border-brand focus:outline-none"
                 placeholder="At least 8 characters"
+                aria-describedby="password-rules"
               />
+              <ul
+                id="password-rules"
+                className="mt-2.5 flex flex-wrap gap-x-4 gap-y-1"
+                aria-live="polite"
+              >
+                {PASSWORD_RULES.map((rule) => {
+                  const ok = passwordChecks(password)[rule.key];
+                  const active = password.length > 0;
+                  return (
+                    <li
+                      key={rule.key}
+                      className={`flex items-center gap-1.5 font-mono text-[11px] transition-colors ${
+                        active && ok ? "text-emerald-700" : active ? "text-mist" : "text-slate-400"
+                      }`}
+                    >
+                      <span
+                        className={`flex h-3.5 w-3.5 items-center justify-center rounded-full border-[1.5px] text-[9px] font-bold ${
+                          active && ok
+                            ? "border-emerald bg-emerald text-white"
+                            : "border-slate-300 text-transparent"
+                        }`}
+                        aria-hidden
+                      >
+                        ✓
+                      </span>
+                      {rule.label}
+                    </li>
+                  );
+                })}
+              </ul>
             </div>
 
             {error && (

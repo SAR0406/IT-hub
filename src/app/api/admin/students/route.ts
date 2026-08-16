@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth";
 import { logActivity } from "@/lib/activity";
 import { createStudent } from "@/lib/students";
+import { validatePassword } from "@/lib/password";
 
 /**
  * POST /api/admin/students — creates a student account (auth user + profile).
@@ -34,8 +35,12 @@ export async function POST(request: Request) {
   if (typeof email !== "string" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
     return error("Please enter a valid email address.", 400);
   }
-  if (typeof password !== "string" || password.length < 8) {
-    return error("The password must be at least 8 characters.", 400);
+  if (typeof password !== "string") {
+    return error("Please enter a password.", 400);
+  }
+  const passwordError = validatePassword(password);
+  if (passwordError) {
+    return error(passwordError, 400);
   }
   if (className !== undefined && className !== null && typeof className !== "string") {
     return error("Invalid class name.", 400);

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { registerStudent } from "@/lib/students";
+import { validatePassword } from "@/lib/password";
 
 /**
  * POST /api/register — self-service account request.
@@ -11,7 +12,6 @@ import { registerStudent } from "@/lib/students";
 
 const NAME_MAX = 80;
 const EMAIL_MAX = 200;
-const PASSWORD_MAX = 128;
 const CLASS_MAX = 40;
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -40,8 +40,12 @@ export async function POST(request: Request) {
   ) {
     return NextResponse.json({ error: "Please enter a valid email address." }, { status: 400 });
   }
-  if (typeof password !== "string" || password.length < 8 || password.length > PASSWORD_MAX) {
-    return NextResponse.json({ error: "Password must be 8–128 characters." }, { status: 400 });
+  if (typeof password !== "string") {
+    return NextResponse.json({ error: "Password is required." }, { status: 400 });
+  }
+  const passwordError = validatePassword(password);
+  if (passwordError) {
+    return NextResponse.json({ error: passwordError }, { status: 400 });
   }
   if (className !== undefined && className !== null && typeof className !== "string") {
     return NextResponse.json({ error: "Invalid class name." }, { status: 400 });

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth";
 import { logActivity } from "@/lib/activity";
 import { updateStudent, deleteStudent } from "@/lib/students";
+import { validatePassword } from "@/lib/password";
 
 function error(message: string, status: number) {
   return NextResponse.json({ error: message }, { status });
@@ -35,8 +36,10 @@ export async function PATCH(request: Request, context: RouteContext<"/api/admin/
   if (isActive !== undefined && typeof isActive !== "boolean") {
     return error("Invalid status.", 400);
   }
-  if (resetPassword !== undefined && (typeof resetPassword !== "string" || resetPassword.length < 8)) {
-    return error("The new password must be at least 8 characters.", 400);
+  if (resetPassword !== undefined) {
+    const resetError =
+      typeof resetPassword !== "string" ? "Please enter the new password." : validatePassword(resetPassword);
+    if (resetError) return error(resetError, 400);
   }
 
   const result = await updateStudent(id, {

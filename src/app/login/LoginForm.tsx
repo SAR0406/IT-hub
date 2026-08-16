@@ -147,6 +147,10 @@ export function LoginForm() {
                 className="h-11 w-full rounded-lg border border-zinc-300 bg-white px-3.5 text-base text-ink placeholder:text-slate-400 focus:border-brand focus:outline-none"
                 placeholder="••••••••"
               />
+              <p className="mt-2 text-xs leading-relaxed text-mist">
+                Forgot your password? Ask your teacher — they can reset it from the
+                admin panel.
+              </p>
             </div>
 
             {error && (
