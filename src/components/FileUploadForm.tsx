@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -80,7 +80,7 @@ export function FileUploadForm() {
       className="rounded-2xl border border-zinc-200 bg-white p-6"
     >
       <h2 className="flex items-center gap-2 text-lg font-bold text-zinc-900">
-        <UploadIcon width={18} height={18} className="text-accent" />
+        <UploadIcon width={18} height={18} className="text-brand" />
         Upload a resource
       </h2>
 
@@ -97,7 +97,7 @@ export function FileUploadForm() {
                 setUnitSlug(event.target.value);
                 setTopicSlug("");
               }}
-              className="h-11 w-full rounded-lg border border-zinc-300 bg-white px-3 text-sm text-zinc-900 focus:border-accent focus:outline-none"
+              className="h-11 w-full rounded-lg border border-zinc-300 bg-white px-3 text-sm text-zinc-900 focus:border-brand focus:outline-none"
             >
               {UNITS.map((u) => (
                 <option key={u.slug} value={u.slug}>
@@ -116,7 +116,7 @@ export function FileUploadForm() {
                 id="topic"
                 value={topicSlug}
                 onChange={(event) => setTopicSlug(event.target.value)}
-                className="h-11 w-full rounded-lg border border-zinc-300 bg-white px-3 text-sm text-zinc-900 focus:border-accent focus:outline-none"
+                className="h-11 w-full rounded-lg border border-zinc-300 bg-white px-3 text-sm text-zinc-900 focus:border-brand focus:outline-none"
               >
                 {topics.map((topic) => (
                   <option key={topic.slug} value={topic.slug}>
@@ -140,7 +140,7 @@ export function FileUploadForm() {
             value={title}
             onChange={(event) => setTitle(event.target.value)}
             placeholder="e.g. Primary Key Notes"
-            className="h-11 w-full rounded-lg border border-zinc-300 px-3 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-accent focus:outline-none"
+            className="h-11 w-full rounded-lg border border-zinc-300 px-3 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-brand focus:outline-none"
           />
         </div>
 
@@ -152,7 +152,7 @@ export function FileUploadForm() {
             id="resource-type"
             value={resourceType}
             onChange={(event) => setResourceType(event.target.value as typeof resourceType)}
-            className="h-11 w-full rounded-lg border border-zinc-300 bg-white px-3 text-sm text-zinc-900 focus:border-accent focus:outline-none"
+            className="h-11 w-full rounded-lg border border-zinc-300 bg-white px-3 text-sm text-zinc-900 focus:border-brand focus:outline-none"
           >
             {RESOURCE_TYPES.map((type) => (
               <option key={type} value={type}>
@@ -171,7 +171,7 @@ export function FileUploadForm() {
             type="file"
             required
             onChange={(event) => setFile(event.target.files?.[0] ?? null)}
-            className="block w-full cursor-pointer rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm text-zinc-700 file:mr-3 file:rounded-lg file:border-0 file:bg-indigo-50 file:px-3 file:py-1.5 file:text-sm file:font-semibold file:text-accent hover:file:bg-indigo-100"
+            className="block w-full cursor-pointer rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm text-zinc-700 file:mr-3 file:rounded-lg file:border-0 file:bg-indigo-50 file:px-3 file:py-1.5 file:text-sm file:font-semibold file:text-brand hover:file:bg-indigo-100"
           />
           {file && <p className="mt-1 text-xs text-zinc-500">{file.name}</p>}
         </div>
@@ -187,7 +187,7 @@ export function FileUploadForm() {
             value={description}
             onChange={(event) => setDescription(event.target.value)}
             placeholder="Short note for students, e.g. covers keys, joins and normalisation."
-            className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-accent focus:outline-none"
+            className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-brand focus:outline-none"
           />
         </div>
       </div>
@@ -206,7 +206,7 @@ export function FileUploadForm() {
       <button
         type="submit"
         disabled={status.state === "uploading"}
-        className="mt-5 flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-accent text-sm font-semibold text-accent-foreground transition-colors hover:bg-indigo-700 disabled:opacity-60 sm:w-auto sm:px-6"
+        className="mt-5 flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-brand text-sm font-semibold text-white transition-colors hover:bg-brand-strong disabled:opacity-60 sm:w-auto sm:px-6"
       >
         {status.state === "uploading" ? "Uploading…" : "Upload"}
       </button>

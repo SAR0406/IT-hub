@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { ResourceList } from "@/components/ResourceList";
+import { requireUser } from "@/lib/auth";
 import { getResourcesByTopic } from "@/lib/resources";
 import { getTopic, getUnit } from "@/lib/syllabus";
 import type { Metadata } from "next";
@@ -18,6 +19,7 @@ export default async function TopicPage({
   params,
 }: PageProps<"/chapters/[unit]/[topic]">) {
   const { unit: unitSlug, topic: topicSlug } = await params;
+  await requireUser();
   const unit = getUnit(unitSlug);
   const topic = getTopic(unitSlug, topicSlug);
 
@@ -36,23 +38,27 @@ export default async function TopicPage({
         ]}
       />
 
-      <div className="mb-8">
-        <span className="mb-3 inline-flex rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-accent">
+      <div className="mb-10">
+        <p className="font-mono text-xs text-brand">
+          ~/it-hub-11/units/{unit.slug}/{topic.slug}
+        </p>
+        <span className="mt-3 inline-flex rounded-full border border-zinc-200 bg-white px-2.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wide text-slate-500">
           {unit.name}
         </span>
-        <h1 className="text-3xl font-extrabold tracking-tight text-zinc-900 sm:text-4xl">
+        <h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-ink sm:text-4xl">
           {topic.name}
         </h1>
-        <p className="mt-3 max-w-2xl text-base text-zinc-500">{topic.description}</p>
+        <p className="mt-3 max-w-2xl text-base text-slate-500">{topic.description}</p>
       </div>
 
       <section>
-        <h2 className="mb-4 text-xl font-bold text-zinc-900">
-          Resources{" "}
-          <span className="text-base font-medium text-zinc-400">
-            ({resources.length})
-          </span>
-        </h2>
+        <div className="mb-4 flex items-center gap-3">
+          <h2 className="font-mono text-xs font-bold uppercase tracking-widest text-slate-400">
+            Resources
+          </h2>
+          <span className="font-mono text-xs text-slate-400">({resources.length})</span>
+          <span className="h-px flex-1 bg-zinc-200" />
+        </div>
         <ResourceList resources={resources} />
       </section>
     </div>

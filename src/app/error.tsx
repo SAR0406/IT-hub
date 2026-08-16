@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 export default function GlobalError({
   reset,
@@ -17,7 +17,7 @@ export default function GlobalError({
       <button
         type="button"
         onClick={reset}
-        className="mt-6 h-11 rounded-xl bg-accent px-6 text-sm font-semibold text-accent-foreground transition-colors hover:bg-indigo-700"
+        className="mt-6 h-11 rounded-xl bg-brand px-6 text-sm font-semibold text-white transition-colors hover:bg-brand-strong"
       >
         Try again
       </button>

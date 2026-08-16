@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { requireAdmin } from "@/lib/auth";
+import { logActivity } from "@/lib/activity";
 
 function error(message: string, status: number) {
   return NextResponse.json({ error: message }, { status });
@@ -11,18 +12,12 @@ export async function DELETE(
 ) {
   const { id } = await context.params;
 
-  const supabase = await createClient();
+  // Admins only; students who try this are flagged.
+  const ctx = await requireAdmin();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) {
-    return error("You must be signed in as admin to delete resources.", 401);
-  }
-
-  const { data: resource, error: fetchError } = await supabase
+  const { data: resource, error: fetchError } = await ctx.supabase
     .from("resources")
-    .select("id, file_path")
+    .select("id, file_path, title")
     .eq("id", id)
     .maybeSingle();
 
@@ -32,7 +27,7 @@ export async function DELETE(
 
   // Delete the file from storage first. If the object is already gone,
   // treat it as success so the DB row can still be cleaned up.
-  const { error: storageError } = await supabase.storage
+  const { error: storageError } = await ctx.supabase.storage
     .from("resources")
     .remove([resource.file_path]);
 
@@ -41,12 +36,19 @@ export async function DELETE(
     return error("The file could not be deleted. Please try again.", 500);
   }
 
-  const { error: deleteError } = await supabase.from("resources").delete().eq("id", id);
+  const { error: deleteError } = await ctx.supabase
+    .from("resources")
+    .delete()
+    .eq("id", id);
 
   if (deleteError) {
     console.error("Resource delete failed:", deleteError.message);
     return error("The resource could not be deleted. Please try again.", 500);
   }
+
+  await logActivity(ctx.supabase, ctx.user.id, "resource_delete", {
+    title: resource.title,
+  });
 
   return NextResponse.json({ ok: true });
 }

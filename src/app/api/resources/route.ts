@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { requireAdmin } from "@/lib/auth";
+import { logActivity } from "@/lib/activity";
 import { getTopic, UNITS } from "@/lib/syllabus";
 import { MAX_FILE_SIZE_BYTES, RESOURCE_TYPES } from "@/lib/types";
 
@@ -13,14 +14,8 @@ function sanitizeFileName(fileName: string): string {
 }
 
 export async function POST(request: Request) {
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) {
-    return error("You must be signed in as admin to upload.", 401);
-  }
+  // Admins only; students who try this are flagged.
+  const ctx = await requireAdmin();
 
   let formData: FormData;
   try {
@@ -70,7 +65,7 @@ export async function POST(request: Request) {
   const safeName = sanitizeFileName(file.name);
   const filePath = `${unitSlug}/${Date.now()}-${safeName}`;
 
-  const { error: uploadError } = await supabase.storage
+  const { error: uploadError } = await ctx.supabase.storage
     .from("resources")
     .upload(filePath, file, {
       cacheControl: "3600",
@@ -83,7 +78,7 @@ export async function POST(request: Request) {
     return error("The file could not be uploaded. Please try again.", 500);
   }
 
-  const { data: inserted, error: insertError } = await supabase
+  const { data: inserted, error: insertError } = await ctx.supabase
     .from("resources")
     .insert({
       title,
@@ -102,9 +97,14 @@ export async function POST(request: Request) {
   if (insertError) {
     console.error("Resource insert failed:", insertError.message);
     // Roll back the stored file so no orphaned objects are left behind.
-    await supabase.storage.from("resources").remove([filePath]);
+    await ctx.supabase.storage.from("resources").remove([filePath]);
     return error("The resource could not be saved. Please try again.", 500);
   }
+
+  await logActivity(ctx.supabase, ctx.user.id, "resource_upload", {
+    title,
+    unit: unitSlug,
+  });
 
   return NextResponse.json(inserted, { status: 201 });
 }

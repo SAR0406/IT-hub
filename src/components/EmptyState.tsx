@@ -38,8 +38,8 @@ export function EmptyState({
       <span className="flex h-12 w-12 items-center justify-center rounded-full bg-zinc-100 text-zinc-400">
         <Icon width={22} height={22} />
       </span>
-      <h2 className="text-base font-semibold text-zinc-800">{copy.title}</h2>
-      <p className="max-w-sm text-sm text-zinc-500">{copy.message}</p>
+      <h2 className="text-base font-semibold text-ink">{copy.title}</h2>
+      <p className="max-w-sm text-sm text-slate-500">{copy.message}</p>
     </div>
   );
 }

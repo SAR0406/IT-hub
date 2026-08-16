@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -70,7 +70,7 @@ export function AdminResourceTable({ initial }: { initial: ResourceWithLabels[] 
                 <p className="mt-0.5 text-xs text-zinc-500">
                   <Link
                     href={`/chapters/${resource.unit_slug}`}
-                    className="font-medium text-accent hover:underline"
+                    className="font-medium text-brand hover:underline"
                   >
                     {resource.unit_name}
                   </Link>
@@ -82,7 +82,7 @@ export function AdminResourceTable({ initial }: { initial: ResourceWithLabels[] 
               <div className="flex shrink-0 items-center gap-2">
                 <Link
                   href={`/api/files/${resource.id}/open`}
-                  className="h-9 rounded-lg border border-zinc-300 px-3 text-xs font-semibold text-zinc-700 transition-colors hover:border-accent hover:text-accent"
+                  className="h-9 rounded-lg border border-zinc-300 px-3 text-xs font-semibold text-zinc-700 transition-colors hover:border-brand/50 hover:text-brand"
                 >
                   Open
                 </Link>
