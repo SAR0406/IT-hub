@@ -35,7 +35,9 @@ export function AdminLogin() {
     try {
       supabase = createClient();
     } catch {
-      setError("This site isn't connected to its account service yet.");
+      setError(
+        "Setup issue: the site is missing the Supabase public keys (NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY) in its environment. Add them in Vercel and redeploy."
+      );
       setLoading(false);
       return;
     }
