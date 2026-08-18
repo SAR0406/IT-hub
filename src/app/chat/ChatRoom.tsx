@@ -59,9 +59,6 @@ export function ChatRoom({ profile }: ChatRoomProps) {
   useEffect(() => {
     let active = true;
 
-    setLoading(true);
-    setMessages([]);
-
     async function load() {
       const { data } = await supabase
         .from("chat_messages")
@@ -112,6 +109,14 @@ export function ChatRoom({ profile }: ChatRoomProps) {
     () => ROOMS.find((r) => r.slug === room)?.label ?? "General",
     [room]
   );
+
+  function selectRoom(nextRoom: string) {
+    if (nextRoom === room) return;
+    setRoom(nextRoom);
+    setMessages([]);
+    setLoading(true);
+    setError(null);
+  }
 
   const send = useCallback(async () => {
     const content = input.trim();
@@ -164,7 +169,7 @@ export function ChatRoom({ profile }: ChatRoomProps) {
           <button
             key={r.slug}
             type="button"
-            onClick={() => setRoom(r.slug)}
+            onClick={() => selectRoom(r.slug)}
             className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors ${
               r.slug === room
                 ? "bg-brand text-white"

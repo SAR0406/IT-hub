@@ -8,7 +8,7 @@ import {
   getAiSettings,
   logAiUsage,
 } from "@/lib/ai/settings";
-import { runAiJson, AiUnavailableError } from "@/lib/ai/gateway";
+import { runAiJson } from "@/lib/ai/gateway";
 import type { ChatCompletionMessageParam } from "openai/resources/chat/completions";
 
 export const runtime = "nodejs";
@@ -42,7 +42,8 @@ function buildPrompt(
     focus ? `Teacher's focus request: ${focus}` : "",
     `Difficulty: ${difficulty} — ${difficultyGuide[difficulty]}`,
     "Rules: 4 options per question, exactly one correct answer (index 0–3). Plausible distractors, no 'all of the above' or 'none of the above', no trick questions. Questions must be answerable from the syllabus — no trivia outside it.",
-    'Return ONLY a JSON object in this exact shape: {"questions":[{"question":"...","options":["A","B","C","D"],"answer":0}]}. The answer field is the index of the correct option.',
+    'Return ONLY a JSON object in this exact shape: {"questions":[{"question":"...","options":["A","B","C","D"],"answer":0,"explanation":"..."}]}. The answer field is the index of the correct option.',
+    '"explanation" is optional: 1–2 plain sentences, written for a Class 11 student, explaining why the correct option is right. No fancy words, no markdown. Omit the field only if you cannot explain confidently.',
   ]
     .filter(Boolean)
     .join("\n");

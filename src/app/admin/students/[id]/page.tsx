@@ -26,7 +26,7 @@ export default async function AdminStudentRecordPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const ctx = await requireAdmin();
+  await requireAdmin();
   const supabase = await createClient();
 
   const [profileRes, quizzesRes, attemptsRes, activityRes, flagsRes, downloadsRes] =

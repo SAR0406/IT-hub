@@ -33,9 +33,12 @@ export function QuizPlayer({ quiz, unitName, questions, best, timeLimitMinutes }
     timeLimitMinutes ? timeLimitMinutes * 60 : null
   );
   const answersRef = useRef(answers);
-  answersRef.current = answers;
   const submitRef = useRef<(force?: boolean) => Promise<void>>(async () => {});
   const timerDoneRef = useRef(false);
+
+  useEffect(() => {
+    answersRef.current = answers;
+  });
 
   useEffect(() => {
     fetch("/api/track", {
@@ -95,7 +98,9 @@ export function QuizPlayer({ quiz, unitName, questions, best, timeLimitMinutes }
     },
     [allAnswered, submitting, quiz.id, questions.length]
   );
-  submitRef.current = handleSubmit;
+  useEffect(() => {
+    submitRef.current = handleSubmit;
+  });
 
   useEffect(() => {
     if (secondsLeft === null || result) return;
@@ -210,6 +215,20 @@ export function QuizPlayer({ quiz, unitName, questions, best, timeLimitMinutes }
                       );
                     })}
                   </ul>
+                  {question.explanation && (
+                    <div
+                      className={`mt-3 border-l-2 pl-4 ${
+                        correct ? "border-emerald-600" : "border-red-400"
+                      }`}
+                    >
+                      <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                        why / the idea
+                      </p>
+                      <p className="mt-1 whitespace-pre-line text-sm leading-relaxed text-ink">
+                        {question.explanation}
+                      </p>
+                    </div>
+                  )}
                 </li>
               );
             })}

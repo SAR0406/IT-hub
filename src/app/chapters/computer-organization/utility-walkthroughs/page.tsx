@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { requireUser } from "@/lib/auth";
 import { getUnit } from "@/lib/syllabus";
@@ -11,6 +12,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function UtilityWalkthroughsPage() {
   await requireUser();
   const unit = getUnit("computer-organization");
+  if (!unit) notFound();
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
@@ -18,7 +20,7 @@ export default async function UtilityWalkthroughsPage() {
         items={[
           { label: "Home", href: "/" },
           { label: "Chapters", href: "/chapters" },
-          { label: unit?.name, href: `/chapters/${unit?.slug}` },
+          { label: unit.name, href: `/chapters/${unit.slug}` },
           { label: "Utility Walkthroughs" },
         ]}
       />
@@ -51,7 +53,7 @@ export default async function UtilityWalkthroughsPage() {
                 Open Disk Cleanup
               </h3>
               <ol className="list-decimal list-inside text-slate-600 space-y-2">
-                <li>Press <kbd className="bg-zinc-100 px-1.5 py-0.5 rounded text-xs font-mono">Win + S</kbd> and type "Disk Cleanup"</li>
+                <li>Press <kbd className="bg-zinc-100 px-1.5 py-0.5 rounded text-xs font-mono">Win + S</kbd> and type &ldquo;Disk Cleanup&rdquo;</li>
                 <li>Select the drive you want to clean (usually <strong>C:</strong>)</li>
                 <li>Click <strong>OK</strong> — Windows calculates freeable space</li>
               </ol>
@@ -68,10 +70,10 @@ export default async function UtilityWalkthroughsPage() {
                 <li><strong>Downloaded Program Files</strong> — ActiveX/Java applets</li>
                 <li><strong>Thumbnails</strong> — Image preview cache</li>
                 <li><strong>Temporary Files</strong> — App temp data</li>
-                <li><strong>Recycle Bin</strong> — Deleted files (if you're sure)</li>
+                <li><strong>Recycle Bin</strong> — Deleted files (if you&rsquo;re sure)</li>
               </ul>
               <p className="mt-2 text-sm text-amber-700">
-                ⚠️ Avoid checking "Windows ESD Installation Files" unless you're certain — needed for reset/recovery.
+                ⚠️ Avoid checking &ldquo;Windows ESD Installation Files&rdquo; unless you&rsquo;re certain — needed for reset/recovery.
               </p>
             </div>
 
@@ -102,7 +104,7 @@ export default async function UtilityWalkthroughsPage() {
               <ol className="list-decimal list-inside text-slate-600 space-y-2">
                 <li>Settings → System → Storage</li>
                 <li>Turn on <strong>Storage Sense</strong></li>
-                <li>Configure: run daily/weekly, delete files in Recycle Bin > 30 days, Downloads > 60 days</li>
+                <li>Configure: run daily/weekly, delete files in Recycle Bin {">"} 30 days, Downloads {">"} 60 days</li>
               </ol>
             </div>
           </div>
@@ -139,7 +141,7 @@ export default async function UtilityWalkthroughsPage() {
               <ol className="list-decimal list-inside text-slate-600 space-y-2">
                 <li>Right-click Recycle Bin → <strong>Properties</strong></li>
                 <li>Select drive, adjust <strong>Maximum size (MB)</strong></li>
-                <li>Optional: <strong>Don't move files to Recycle Bin</strong> (not recommended)</li>
+                <li>Optional: <strong>Don&rsquo;t move files to Recycle Bin</strong> (not recommended)</li>
                 <li>Optional: <strong>Display delete confirmation dialog</strong> (recommended)</li>
               </ol>
             </div>
@@ -171,8 +173,8 @@ export default async function UtilityWalkthroughsPage() {
               <ul className="list-disc list-inside text-slate-600 space-y-1">
                 <li><strong>Win + R</strong> → type <code className="bg-zinc-100 px-1.5 py-0.5 rounded text-xs font-mono">cmd</code> → Enter</li>
                 <li><strong>Win + X</strong> → Command Prompt (or Terminal)</li>
-                <li>Search "cmd" in Start menu</li>
-                <li><strong>Admin:</strong> Right-click → "Run as administrator" (for system commands)</li>
+                <li>Search &ldquo;cmd&rdquo; in Start menu</li>
+                <li><strong>Admin:</strong> Right-click → &ldquo;Run as administrator&rdquo; (for system commands)</li>
               </ul>
             </div>
 
@@ -196,12 +198,12 @@ export default async function UtilityWalkthroughsPage() {
                     <tr><td className="py-1 font-mono">move</td><td>Move/rename files</td><td className="font-mono">move file.txt newname.txt</td></tr>
                     <tr><td className="py-1 font-mono">del</td><td>Delete files (permanent!)</td><td className="font-mono">del *.tmp</td></tr>
                     <tr><td className="py-1 font-mono">type</td><td>Display file contents</td><td className="font-mono">type readme.txt</td></tr>
-                    <tr><td className="py-1 font-mono">find</td><td>Search text in files</td><td className="font-mono">find "error" log.txt</td></tr>
+                    <tr><td className="py-1 font-mono">find</td><td>Search text in files</td><td className="font-mono">find &quot;error&quot; log.txt</td></tr>
                     <tr><td className="py-1 font-mono">ipconfig</td><td>Network configuration</td><td className="font-mono">ipconfig /all</td></tr>
                     <tr><td className="py-1 font-mono">ping</td><td>Test network connectivity</td><td className="font-mono">ping google.com</td></tr>
                     <tr><td className="py-1 font-mono">tracert</td><td>Trace route to host</td><td className="font-mono">tracert 8.8.8.8</td></tr>
                     <tr><td className="py-1 font-mono">systeminfo</td><td>System information</td><td className="font-mono">systeminfo</td></tr>
-                    <tr><td className="py-1 font-mono">tasklist</td><td>List running processes</td><td className="font-mono">tasklist | find "chrome"</td></tr>
+                    <tr><td className="py-1 font-mono">tasklist</td><td>List running processes</td><td className="font-mono">tasklist | find &quot;chrome&quot;</td></tr>
                     <tr><td className="py-1 font-mono">sfc /scannow</td><td>System file checker</td><td className="font-mono">sfc /scannow (admin)</td></tr>
                     <tr><td className="py-1 font-mono">chkdsk</td><td>Check disk for errors</td><td className="font-mono">chkdsk C: /f /r (admin)</td></tr>
                   </tbody>
@@ -216,8 +218,8 @@ export default async function UtilityWalkthroughsPage() {
                 <li><strong>Up/Down arrows:</strong> Cycle through command history</li>
                 <li><strong>F7:</strong> Pop-up command history list</li>
                 <li><strong>Ctrl + C:</strong> Cancel running command</li>
-                <li><strong>Output redirection:</strong> <code className="bg-zinc-100 px-1.5 py-0.5 rounded text-xs font-mono">command > output.txt</code> saves output</li>
-                <li><strong>Pipe:</strong> <code className="bg-zinc-100 px-1.5 py-0.5 rounded text-xs font-mono">command | find "text"</code> filters output</li>
+                <li><strong>Output redirection:</strong> <code className="bg-zinc-100 px-1.5 py-0.5 rounded text-xs font-mono">command {">"} output.txt</code> saves output</li>
+                <li><strong>Pipe:</strong> <code className="bg-zinc-100 px-1.5 py-0.5 rounded text-xs font-mono">command | find &quot;text&quot;</code> filters output</li>
                 <li><strong>Help:</strong> <code className="bg-zinc-100 px-1.5 py-0.5 rounded text-xs font-mono">command /?</code> shows usage (e.g., <code className="bg-zinc-100 px-1.5 py-0.5 rounded text-xs font-mono">dir /?</code>)</li>
               </ul>
             </div>
@@ -227,7 +229,7 @@ export default async function UtilityWalkthroughsPage() {
               <p className="text-slate-600 mb-2">Automate repetitive tasks:</p>
               <pre className="bg-zinc-900 text-zinc-100 p-4 rounded text-sm font-mono overflow-x-auto"><code>@echo off
 echo Backing up Documents...
-xcopy "C:\Users\%USERNAME%\Documents" "D:\Backup\Documents" /E /H /Y
+xcopy &quot;C:\Users\%USERNAME%\Documents&quot; &quot;D:\Backup\Documents&quot; /E /H /Y
 echo Backup complete!
 pause</code></pre>
               <p className="mt-2 text-sm text-slate-600">
@@ -243,10 +245,10 @@ pause</code></pre>
             <div className="p-4 rounded-lg border border-zinc-200 bg-white">
               <h3 className="font-medium text-ink mb-2 text-center">🧹 Disk Cleanup</h3>
               <ul className="text-sm text-slate-600 space-y-1">
-                <li>Win+S → "Disk Cleanup"</li>
+                <li>Win+S → &ldquo;Disk Cleanup&rdquo;</li>
                 <li>Select C: drive</li>
                 <li>Check temp files, thumbnails, Recycle Bin</li>
-                <li>Click "Clean up system files" for more</li>
+                <li>Click &ldquo;Clean up system files&rdquo; for more</li>
                 <li>Enable Storage Sense for automation</li>
               </ul>
             </div>

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { UNITS } from "@/lib/syllabus";
 import "./technical-scrapbook.css";
 
@@ -97,18 +98,18 @@ export default function TechnicalScrapbookConcept() {
               <em className="tsb-em">Information Technology</em>
             </h1>
             <div className="mt-5 flex flex-wrap items-center gap-4">
-              <a
+              <Link
                 href="/chapters"
                 className="border-2 border-ink bg-ink px-5 py-2.5 font-dmono text-[12px] tracking-[0.22em] uppercase text-paper transition-colors hover:bg-transparent hover:text-ink"
               >
                 ENTER ARCHIVE →
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/login"
                 className="font-dmono text-[12px] tracking-[0.22em] uppercase underline decoration-dotted underline-offset-4"
               >
                 LOGIN
-              </a>
+              </Link>
               <span className="font-dmono text-[10px] tracking-[0.18em] uppercase text-ink/50">
                 FIG. 00 — SIX UNITS
               </span>
@@ -132,7 +133,7 @@ export default function TechnicalScrapbookConcept() {
       <section className="relative mx-auto max-w-6xl px-5 py-6">
         <div className="space-y-6">
           {UNITS.map((unit, i) => (
-            <a
+            <Link
               key={unit.slug}
               href="/chapters"
               className={`tsb-plate group block border-2 border-ink bg-paper transition-transform duration-150 hover:-translate-y-0.5 ${
@@ -188,7 +189,7 @@ export default function TechnicalScrapbookConcept() {
                   ))}
                 </svg>
               </div>
-            </a>
+            </Link>
           ))}
         </div>
       </section>

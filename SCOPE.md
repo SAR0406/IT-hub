@@ -36,7 +36,7 @@ added after. This doc supersedes that inventory.
 | Grouping by unit + topic, newest-first, empty states | SHIPPED |
 | Supabase Storage + DB metadata, consistent deletes | SHIPPED |
 | Teacher-verified badge | SHIPPED (admin toggle + STATUS / VERIFIED badge) |
-| Replace/update uploaded material | V2 |
+| Replace/update uploaded material | SHIPPED |
 
 ## 3. Search
 
@@ -53,8 +53,8 @@ added after. This doc supersedes that inventory.
 | Upload workflow (unit → topic → title → description → type → file) | SHIPPED |
 | Announcements (create/delete) | SHIPPED |
 | Resource management + confirm deletion | SHIPPED |
-| Teacher-verified marking | V2 |
-| Replace material | V2 |
+| Teacher-verified marking | SHIPPED (admin toggle + STATUS / VERIFIED badge) |
+| Replace material | SHIPPED |
 | Advanced CMS | CUT |
 | Notification system | CUT |
 
@@ -89,7 +89,7 @@ Raw data exists today (activity logs, quiz attempts, flags, downloads).
 |---|---|
 | Student accounts, profiles, instant signup, sign-in | SHIPPED |
 | Dashboard: progress, mission list, announcements | SHIPPED |
-| Weak-topic detection (from quiz attempts) | V2 |
+| Weak-topic detection (from quiz attempts) | SHIPPED (dashboard "weak areas" card — unit-level accuracy from attempts; topic-level waits on quiz.topic_slug) |
 | Study streak, daily tasks, habit tracking | CUT (vanity metrics, not school need) |
 | Study planner, exam countdown, pomodoro | V3 |
 | AI-generated study plan | CUT |
@@ -101,8 +101,8 @@ Raw data exists today (activity logs, quiz attempts, flags, downloads).
 | Admin-built MCQ quizzes, rooms by unit, instant scoring, answer review, retakes | SHIPPED |
 | Student quiz list + best-score tracking | SHIPPED |
 | Timed quizzes | SHIPPED (optional per-quiz timer, auto-submit on timeout) |
-| Explanations on questions | V2 |
-| Weak-topic identification from attempts | V2 |
+| Explanations on questions | SHIPPED (optional per-question "why" in admin editor + AI generator; shown in student answer review) |
+| Weak-topic identification from attempts | SHIPPED (same dashboard weak-areas analysis as §7) |
 | AI-generated questions | V3 |
 | Full exam mode (marks distribution, descriptive answers) | V3 |
 | Revision modes | V3 |
@@ -121,7 +121,7 @@ Rationale: leaderboards in a classroom create losers, not learners. CUT stands.
 | Feature | Status |
 |---|---|
 | Topics as resource shelves (notes/downloads) | SHIPPED |
-| Per-chapter Learn → Practice → Quiz ladder | V2 |
+| Per-chapter Learn → Practice → Quiz ladder | SHIPPED (progression card on each unit page — stages mark real completion: opened material / downloaded a sheet / attempted the unit quiz; next-step guidance, best-score chip, no locking) |
 | Interactive demos per chapter | V3 |
 
 ## 11. Computer organization
@@ -226,8 +226,8 @@ Motivated by the actual school situation. Do this before any simulator work.
 | Next.js + TS + Tailwind + Supabase + Vercel, RLS everywhere | SHIPPED |
 | Activity logs, misbehavior flags, admin moderation | SHIPPED |
 | `.env.example`, DB indexes, clean component structure | SHIPPED |
-| README / setup docs | V1 (pending) |
-| Seed data (demo quiz + a few messages) | V1 (pending) |
+| README / setup docs | SHIPPED |
+| Seed data (demo quiz + a few messages) | SHIPPED |
 
 ## 25. Cut list (final)
 
@@ -248,8 +248,7 @@ Motivated by the actual school situation. Do this before any simulator work.
    Fits the LAB world already designed. — DONE
 3. **V2 — Bookless mode**: unit download bundles for offline/low-internet use. — DONE
 4. **V2 — small wins**: teacher-verified badges, replace material, timed quizzes,
-   bandwidth calculators, scenario quizzes (reuse quiz system). — verified badges + timed
-   quizzes DONE; replace-material DONE; calculators, scenario quizzes still open.
+   bandwidth calculators, scenario quizzes (reuse quiz system). — all DONE.
 5. **AI — Ask AI room**: NVIDIA NIM GPT-OSS-120B, tools (syllabus, archive, files in chat,
    quiz info, teacher student records), per-student daily cap, admin kill switch. — DONE
 6. **AI — teacher quiz generator**: structured MCQs from unit/topic/difficulty → existing
@@ -259,6 +258,15 @@ Motivated by the actual school situation. Do this before any simulator work.
    and hidden until a key is set).
 8. **V2 — student records page**: /admin/students/[id] with activity, attempts, flags,
    downloads (data exists; AI tool already has the query). — DONE
+9. **V2 — quiz explanations**: optional per-question "why" (admin editor + AI generator
+   prompt), rendered in the student answer review. Backward compatible — old quizzes
+   simply have no explanations. — DONE
+10. **V2 — weak areas**: dashboard card analysing quiz attempts per unit (≥5 answers for a
+    verdict; <60% weak, ≥80% strong), with review CTAs and on-track chips. Pure analysis
+    in lib/quizzes.ts. Topic-level waits on quiz.topic_slug. — DONE
+11. **V2 — chapter ladder**: Learn → Practice → Quiz progression card on `/chapters/[unit]`.
+    Status from real signals (resource_open / resource_download / quiz attempt in the
+    unit), not self-reported. Ladder presentational only — nothing is locked. — DONE
 
 Rule for anything after that: one feature at a time, marked V2 or higher in this
 doc before a line of code is written.

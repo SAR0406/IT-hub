@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth";
 import { logActivity } from "@/lib/activity";
 import { MAX_FILE_SIZE_BYTES, RESOURCE_TYPES } from "@/lib/types";
-import { getTopic, UNITS } from "@/lib/syllabus";
 
 function error(message: string, status: number) {
   return NextResponse.json({ error: message }, { status });

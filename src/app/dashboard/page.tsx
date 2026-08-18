@@ -5,6 +5,11 @@ import { LogoutButton } from "@/components/LogoutButton";
 import { requireUser } from "@/lib/auth";
 import { formatRelativeDate } from "@/lib/format";
 import { getResourceCountsByUnit } from "@/lib/resources";
+import {
+  analyzeUnitPerformance,
+  STRONG_ACCURACY_THRESHOLD,
+  WEAK_ACCURACY_THRESHOLD,
+} from "@/lib/quizzes";
 import { UNITS } from "@/lib/syllabus";
 
 export const metadata: Metadata = {
@@ -37,12 +42,30 @@ export default async function DashboardPage() {
   const ctx = await requireUser();
   if (ctx.profile.role === "admin") redirect("/admin");
 
-  const { data: activity } = await ctx.supabase
-    .from("activity_logs")
-    .select("action, details, created_at")
-    .eq("user_id", ctx.user.id)
-    .order("created_at", { ascending: false })
-    .limit(8);
+  const [activityRes, counts, announcementsRes, attemptsRes, quizzesRes] = await Promise.all([
+    ctx.supabase
+      .from("activity_logs")
+      .select("action, details, created_at")
+      .eq("user_id", ctx.user.id)
+      .order("created_at", { ascending: false })
+      .limit(8),
+    getResourceCountsByUnit(),
+    ctx.supabase
+      .from("announcements")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(4),
+    ctx.supabase
+      .from("quiz_attempts")
+      .select("quiz_id, score, total")
+      .eq("user_id", ctx.user.id),
+    ctx.supabase.from("quizzes").select("id, unit_slug").eq("published", true),
+  ]);
+
+  const { data: activity } = activityRes;
+  const { data: announcements } = announcementsRes;
+  const { data: attempts } = attemptsRes;
+  const { data: quizzes } = quizzesRes;
 
   const rows = (activity ?? []) as unknown as {
     action: string;
@@ -60,13 +83,21 @@ export default async function DashboardPage() {
 
   const exploredCount = explored.size;
   const progress = Math.round((exploredCount / UNITS.length) * 100);
-  const counts = await getResourceCountsByUnit();
 
-  const { data: announcements } = await ctx.supabase
-    .from("announcements")
-    .select("*")
-    .order("created_at", { ascending: false })
-    .limit(4);
+  const unitRank = new Map(UNITS.map((unit, index) => [unit.slug, index]));
+  const unitName = new Map(UNITS.map((unit) => [unit.slug, unit.name]));
+  const performance = analyzeUnitPerformance(attempts ?? [], quizzes ?? []).sort(
+    (a, b) =>
+      (unitRank.get(a.unitSlug) ?? Number.MAX_SAFE_INTEGER) -
+      (unitRank.get(b.unitSlug) ?? Number.MAX_SAFE_INTEGER)
+  );
+  const weakAreas = performance.filter((unit) => unit.verdict === "weak");
+  const onTrack = performance.filter(
+    (unit) =>
+      unit.verdict === "strong" ||
+      (unit.verdict === "building" && unit.accuracy >= WEAK_ACCURACY_THRESHOLD)
+  );
+  const insufficient = performance.filter((unit) => unit.verdict === "insufficient");
 
   const mission = [
     {
@@ -218,6 +249,121 @@ export default async function DashboardPage() {
               {exploredCount} of {UNITS.length} units explored — progress follows the
               chapters and worksheets you open.
             </p>
+          </section>
+
+          {/* Quiz analysis — weak areas */}
+          <section
+            className="rounded-2xl bg-white p-6 shadow-soft sm:p-8"
+            aria-label="Where to focus"
+          >
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <h2 className="font-display text-lg font-bold tracking-tight text-ink">
+                Where to focus
+              </h2>
+              <span className="font-mono text-[11px] font-semibold uppercase tracking-widest text-slate-400">
+                analysis / quiz data
+              </span>
+            </div>
+
+            {performance.length === 0 ? (
+              <div className="mt-4 rounded-xl border border-dashed border-zinc-300 px-5 py-8 text-center">
+                <p className="text-sm text-mist">
+                  No quiz data yet — take a quiz and your answers get analysed unit by unit.
+                </p>
+                <Link
+                  href="/quizzes"
+                  className="mt-4 inline-flex h-10 items-center justify-center rounded-lg bg-brand px-5 text-sm font-semibold text-white transition-colors hover:bg-brand-strong"
+                >
+                  Take a quiz
+                </Link>
+              </div>
+            ) : (
+              <>
+                {weakAreas.length > 0 ? (
+                  <ul className="mt-4 space-y-3">
+                    {weakAreas.map((unit) => {
+                      const unitSlug = unit.unitSlug;
+                      const percent = Math.round((unit.accuracy ?? 0) * 100);
+                      return (
+                        <li key={unitSlug} className="rounded-xl border border-zinc-200 p-4">
+                          <div className="flex items-center justify-between gap-3">
+                            <p className="text-sm font-semibold text-ink">
+                              {unitName.get(unitSlug) ?? unitSlug}
+                            </p>
+                            <span className="font-mono text-sm font-bold text-red-600">
+                              {percent}%
+                            </span>
+                          </div>
+                          <div
+                            className="mt-2 h-2 w-full overflow-hidden rounded-full bg-slate-100"
+                            role="img"
+                            aria-label={`${percent}% accuracy`}
+                          >
+                            <div
+                              className="h-full rounded-full bg-gradient-to-r from-red-400 to-amber-500"
+                              style={{ width: `${percent}%` }}
+                            />
+                          </div>
+                          <div className="mt-2 flex items-center justify-between gap-3">
+                            <p className="font-mono text-[11px] text-mist">
+                              {unit.correct}/{unit.total} correct — below{" "}
+                              {Math.round(WEAK_ACCURACY_THRESHOLD * 100)}%
+                            </p>
+                            <Link
+                              href={`/chapters/${unitSlug}`}
+                              className="shrink-0 text-xs font-semibold text-brand transition-colors hover:text-brand-strong"
+                            >
+                              Review material →
+                            </Link>
+                          </div>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                ) : (
+                  <p className="mt-4 rounded-xl bg-mint/20 px-4 py-3 text-sm text-ink">
+                    Nothing flagged — your quiz accuracy is above{" "}
+                    {Math.round(WEAK_ACCURACY_THRESHOLD * 100)}% everywhere you&rsquo;ve
+                    practised.
+                  </p>
+                )}
+
+                {onTrack.length > 0 && (
+                  <div className="mt-4 border-t border-slate-100 pt-4">
+                    <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                      on track
+                    </p>
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      {onTrack.map((unit) => {
+                        const percent = Math.round((unit.accuracy ?? 0) * 100);
+                        const isStrong = (unit.accuracy ?? 0) >= STRONG_ACCURACY_THRESHOLD;
+                        return (
+                          <span
+                            key={unit.unitSlug}
+                            className={`rounded-full px-2.5 py-1 font-mono text-[11px] font-semibold text-ink ${
+                              isStrong ? "bg-mint/40" : "bg-slate-100"
+                            }`}
+                          >
+                            {unitName.get(unit.unitSlug) ?? unit.unitSlug} · {percent}%
+                          </span>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {insufficient.length > 0 && (
+                  <p className="mt-4 text-xs leading-relaxed text-mist">
+                    {insufficient.length === 1
+                      ? `Answer a few more questions in ${unitName.get(insufficient[0]!.unitSlug) ?? insufficient[0]!.unitSlug} for a verdict.`
+                      : `Answer a few more questions in ${insufficient
+                          .slice(0, 3)
+                          .map((unit) => unitName.get(unit.unitSlug) ?? unit.unitSlug)
+                          .join(", ")} for a verdict.`}
+                  </p>
+                )}
+              </>
+            )}
           </section>
 
           {/* Per-unit breakdown */}

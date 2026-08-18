@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
 import { requireUser } from "@/lib/auth";
 import { BANNED_TERMS, raiseFlag } from "@/lib/activity";
 import { UNITS } from "@/lib/syllabus";
@@ -13,7 +12,6 @@ export const CHAT_ROOMS: { slug: ChatRoomSlug; label: string }[] = [
 ];
 
 const MAX_LENGTH = 500;
-const RATE_LIMIT_WINDOW = "5 seconds";
 
 function error(message: string, status: number) {
   return NextResponse.json({ error: message }, { status });

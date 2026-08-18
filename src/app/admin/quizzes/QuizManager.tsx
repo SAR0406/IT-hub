@@ -5,7 +5,7 @@ import { useState } from "react";
 import { ConfirmDeleteDialog } from "@/components/ConfirmDeleteDialog";
 import { TrashIcon } from "@/components/icons";
 import { formatDate } from "@/lib/format";
-import { parseQuestions, QUIZ_MAX_QUESTIONS, type QuizQuestion } from "@/lib/quizzes";
+import { parseQuestions, QUIZ_EXPLANATION_MAX, QUIZ_MAX_QUESTIONS, type QuizQuestion } from "@/lib/quizzes";
 import { UNITS } from "@/lib/syllabus";
 import type { Json } from "@/lib/supabase/database.types";
 import { QuizGenerator } from "./QuizGenerator";
@@ -343,6 +343,30 @@ export function QuizManager({
                     </div>
                   );
                 })}
+              </div>
+              <div className="mt-4">
+                <label
+                  htmlFor={`explanation-${question.id}`}
+                  className="mb-1.5 block text-sm font-semibold text-ink"
+                >
+                  Why is this correct?{" "}
+                  <span className="font-normal text-mist">(optional)</span>
+                </label>
+                <textarea
+                  id={`explanation-${question.id}`}
+                  maxLength={QUIZ_EXPLANATION_MAX}
+                  rows={2}
+                  value={question.explanation ?? ""}
+                  onChange={(event) =>
+                    updateQuestion(questionIndex, { explanation: event.target.value })
+                  }
+                  className="w-full resize-none rounded-lg border border-zinc-300 bg-white px-3.5 py-3 text-base text-ink placeholder:text-slate-400 focus:border-brand focus:outline-none"
+                  placeholder="e.g. A foreign key references another table's primary key — it doesn't need to be unique."
+                />
+                <p className="mt-1 font-mono text-[11px] text-slate-400">
+                  shown to students after they submit ·{" "}
+                  {(question.explanation ?? "").length}/{QUIZ_EXPLANATION_MAX}
+                </p>
               </div>
               <p className="mt-3 font-mono text-[11px] text-slate-400">
                 &gt; select the radio next to the correct option

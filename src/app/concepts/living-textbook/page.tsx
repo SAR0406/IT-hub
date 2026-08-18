@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { UNITS } from "@/lib/syllabus";
 import "./living-textbook.css";
 
@@ -77,19 +78,19 @@ export default function LivingTextbookConcept() {
               TO BE <em className="ltb-em">A BOOK.</em>
             </h1>
             <div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-4">
-              <a
+              <Link
                 href="/chapters"
                 className="inline-flex items-center gap-3 border-2 border-ink bg-ink px-5 py-3 font-dmono text-[12px] tracking-[0.2em] uppercase text-paper transition-colors hover:bg-transparent hover:text-ink"
               >
                 OPEN CONTENTS
                 <span aria-hidden>↓</span>
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/login"
                 className="font-dmono text-[12px] tracking-[0.2em] uppercase underline decoration-dotted underline-offset-4 hover:decoration-solid"
               >
                 Student login →
-              </a>
+              </Link>
             </div>
             <p className="handnote mt-10 text-lg text-ink/80 md:text-xl">
               <span className="pencil-hl">everything you actually need.</span>
@@ -131,7 +132,7 @@ export default function LivingTextbookConcept() {
               const even = i % 2 === 1;
               return (
                 <li key={unit.slug}>
-                  <a
+                  <Link
                     href="/chapters"
                     className={`ltb-row group relative block border border-ink/70 bg-paper ${
                       even ? "md:ml-[12%]" : "md:mr-[8%]"
@@ -173,7 +174,7 @@ export default function LivingTextbookConcept() {
                         </span>
                       </div>
                     </div>
-                  </a>
+                  </Link>
                 </li>
               );
             })}

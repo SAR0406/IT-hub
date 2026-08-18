@@ -1,220 +1,343 @@
-import { useState, useEffect } from "react";
+"use client";
+
+import { useState } from "react";
 
 const UNITS = ["bits", "Kb", "Mb", "Gb", "Tb"] as const;
 
-function convertBits(bits: number, from: string, to: string): number {
-  const fromIdx = UNITS.indexOf(from);
-  const toIdx = UNITS.indexOf(to);
-  if (fromIdx === -1 || toIdx === -1) return bits;
-  const exponent = toIdx - fromIdx;
-  return bits * Math.pow(2, 10 * exponent);
+function unitIndex(unit: string): number {
+  return UNITS.findIndex((u) => u.toLowerCase() === unit.trim().toLowerCase());
 }
 
-export default function CalculatorsClient() {
-  const [calcType, setCalcType] = useState<"bandwidth" | "storage">("bandwidth");
-  const [bandwidth, setBandwidth] = useState({
-    fromUnit: "Mb" as string,
-    toUnit: "Mb" as string,
-    speed: "" as string,
-    size: "" as string,
-    result: "" as string,
+/** Converts a value from one unit to another using binary steps of 1024. */
+function convert(value: number, from: string, to: string): number | null {
+  const fromIndex = unitIndex(from);
+  const toIndex = unitIndex(to);
+  if (fromIndex === -1 || toIndex === -1) return null;
+  return value * Math.pow(2, 10 * (toIndex - fromIndex));
+}
+
+type TransferState = {
+  size: string;
+  sizeUnit: string;
+  speed: string;
+  speedUnit: string;
+  result: string | null;
+};
+
+type StorageState = {
+  value: string;
+  from: string;
+  to: string;
+  result: string | null;
+};
+
+type DataUsageState = {
+  monthly: string;
+  result: string | null;
+};
+
+function formatTime(seconds: number): string {
+  if (seconds >= 86400) {
+    return `${seconds / 86400 >= 10 ? Math.round(seconds / 86400) : (seconds / 86400).toFixed(2)} days`;
+  }
+  if (seconds >= 3600) return `${(seconds / 3600).toFixed(2)} hours`;
+  if (seconds >= 60) return `${(seconds / 60).toFixed(2)} minutes`;
+  return `${seconds.toFixed(2)} seconds`;
+}
+
+function parsePositive(value: string): number | null {
+  const number = parseFloat(value);
+  return Number.isFinite(number) && number > 0 ? number : null;
+}
+
+export function CalculatorsClient() {
+  const [transfer, setTransfer] = useState<TransferState>({
+    size: "",
+    sizeUnit: "Mb",
+    speed: "",
+    speedUnit: "Mb",
+    result: null,
   });
-  const [storage, setStorage] = useState({
-    fromUnit: "GB" as string,
-    toUnit: "GB" as string,
-    value: "" as string,
-    result: "" as string,
+  const [storage, setStorage] = useState<StorageState>({
+    value: "",
+    from: "Mb",
+    to: "Gb",
+    result: null,
   });
-  const [dataUsage, setDataUsage] = useState({
-    monthlyGB: "" as string,
-    dailyGB: "" as string,
-    result: "" as string,
+  const [dataUsage, setDataUsage] = useState<DataUsageState>({
+    monthly: "",
+    result: null,
   });
 
-  const calculateBandwidth = (): void => {
-    const speed = parseFloat(bandwidth.speed);
-    const size = parseFloat(bandwidth.size);
-    if (isNaN(speed) || isNaN(size)) {
-      setBandwidth((b) => ({ ...b, result: "Enter valid numbers" }));
+  function calculateTransfer() {
+    const size = parsePositive(transfer.size);
+    if (size === null) {
+      setTransfer((t) => ({ ...t, result: "Enter a file size above zero." }));
       return;
     }
-    const speedBits = convertBits(speed, bandwidth.fromUnit, "bits");
-    const sizeBits = convertBits(size, bandwidth.size, "bits");
-    const timeSeconds = sizeBits / speedBits;
-    const timeMinutes = timeSeconds / 60;
-    const timeHours = timeMinutes / 60;
-    let result = "";
-    if (timeHours >= 1) {
-      result = `${timeHours.toFixed(2)} hours`;
-    } else if (timeMinutes >= 1) {
-      result = `${timeMinutes.toFixed(2)} minutes`;
-    } else {
-      result = `${timeSeconds.toFixed(2)} seconds`;
+    const speed = parsePositive(transfer.speed);
+    if (speed === null) {
+      setTransfer((t) => ({ ...t, result: "Enter a speed above zero." }));
+      return;
     }
-    setBandwidth((b) => ({ ...b, result }));
-  };
+    const sizeBits = convert(size, transfer.sizeUnit, "bits");
+    const speedBits = convert(speed, transfer.speedUnit, "bits");
+    if (sizeBits === null || speedBits === null || speedBits <= 0) {
+      setTransfer((t) => ({ ...t, result: "Those units aren't recognised." }));
+      return;
+    }
+    setTransfer((t) => ({ ...t, result: `Transfer time ≈ ${formatTime(sizeBits / speedBits)}` }));
+  }
 
-  const calculateStorage = (): void => {
-    const value = parseFloat(storage.value);
-    if (isNaN(value)) {
-      setStorage((s) => ({ ...s, result: "Enter valid number" }));
+  function calculateStorage() {
+    const value = parsePositive(storage.value);
+    if (value === null) {
+      setStorage((s) => ({ ...s, result: "Enter a value above zero." }));
       return;
     }
-    const fromBits = convertBits(value, storage.fromUnit, "bits");
-    const toBits = convertBits(value, storage.toUnit, "bits");
-    const ratio = toBits / fromBits;
-    const result = (value * ratio).toFixed(2);
-    setStorage((s) => ({ ...s, result: `${result} ${storage.toUnit}` }));
-  };
+    const result = convert(value, storage.from, storage.to);
+    if (result === null) {
+      setStorage((s) => ({ ...s, result: "Those units aren't recognised." }));
+      return;
+    }
+    setStorage((s) => ({ ...s, result: `${result.toFixed(2)} ${s.to}` }));
+  }
 
-  const calculateDataUsage = (): void => {
-    const monthly = parseFloat(dataUsage.monthlyGB);
-    if (isNaN(monthly)) {
-      setDataUsage((d) => ({ ...d, result: "Enter valid number" }));
+  function calculateDataUsage() {
+    const monthly = parsePositive(dataUsage.monthly);
+    if (monthly === null) {
+      setDataUsage((d) => ({ ...d, result: "Enter your monthly data above zero." }));
       return;
     }
-    const daily = (monthly / 30).toFixed(2);
-    setDataUsage((d) => ({ ...d, result: `${daily} GB per day` }));
-  };
+    setDataUsage((d) => ({ ...d, result: `${(monthly / 30).toFixed(2)} GB per day` }));
+  }
+
+  const inputClass =
+    "h-11 w-full rounded-lg border border-zinc-300 bg-white px-3.5 text-base text-ink placeholder:text-slate-400 focus:border-brand focus:outline-none";
+  const labelClass = "mb-1.5 block text-sm font-semibold text-ink";
+  const unitSelectClass =
+    "h-11 w-full rounded-lg border border-zinc-300 bg-white px-3 text-base text-ink focus:border-brand focus:outline-none";
 
   return (
     <div className="space-y-6">
-      {/* Bandwidth Calculator */}
-      <div>
-        <h2 className="font-mono text-sm text-brand">Bandwidth Calculator</h2>
-        <div className="grid grid-cols-2 gap-3">
+      <section className="rounded-2xl border border-zinc-200 bg-white p-6">
+        <h2 className="font-mono text-xs font-bold uppercase tracking-widest text-slate-400">
+          Bandwidth / transfer time
+        </h2>
+        <p className="mt-1 text-sm leading-relaxed text-mist">
+          How long will a download take? Transfer time = file size ÷ speed.
+        </p>
+
+        <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <div>
-            <label className="text-xs text-mist">Speed</label>
-            <input
-              value: speed
-              onChange={(e) =>
-                setBandwidth((b) => ({ ...b, speed: e.target.value }))
-              }
-              type="number"
-              className="border rounded w-full px-2 text-sm"
-            />{" "}
-            <select
-              value: bandwidth.fromUnit
-              onChange={(e) =>
-                setBandwidth((b) => ({ ...b, fromUnit: e.target.value }))
-              }
-              className="border rounded w-full px-2 text-sm mt-1"
-            >
-              {UNITS.map((u) => (
-                <option key: u={u}>{u}</option>
-              ))}
-            </select>
+            <label htmlFor="calc-transfer-size" className={labelClass}>
+              File size
+            </label>
+            <div className="flex gap-2">
+              <input
+                id="calc-transfer-size"
+                type="number"
+                min="0"
+                step="any"
+                inputMode="decimal"
+                value={transfer.size}
+                onChange={(event) =>
+                  setTransfer((t) => ({ ...t, size: event.target.value, result: null }))
+                }
+                className={inputClass}
+                placeholder="e.g. 700"
+              />
+              <select
+                aria-label="File size unit"
+                value={transfer.sizeUnit}
+                onChange={(event) =>
+                  setTransfer((t) => ({ ...t, sizeUnit: event.target.value, result: null }))
+                }
+                className={`${unitSelectClass} w-24 shrink-0`}
+              >
+                {UNITS.map((unit) => (
+                  <option key={unit} value={unit}>
+                    {unit}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
+
           <div>
-            <label className="text-xs text-mist">File Size</label>
-            <input
-              value: bandwidth.size
-              onChange={(e) =>
-                setBandwidth((b) => ({ ...b, size: e.target.value }))
-              }
-              type="number"
-              className="border rounded w-full px-2 text-sm"
-            />{" "}
-            <select
-              value: bandwidth.sizeUnit
-              onChange={(e) =>
-                setBandwidth((b) => ({ ...b, sizeUnit: e.target.value }))
-              }
-              className="border rounded w-full px-2 text-sm mt-1"
-            >
-              {UNITS.map((u) => (
-                <option key: u={u}>{u}</option>
-              ))}
-            </select>
+            <label htmlFor="calc-transfer-speed" className={labelClass}>
+              Speed
+            </label>
+            <div className="flex gap-2">
+              <input
+                id="calc-transfer-speed"
+                type="number"
+                min="0"
+                step="any"
+                inputMode="decimal"
+                value={transfer.speed}
+                onChange={(event) =>
+                  setTransfer((t) => ({ ...t, speed: event.target.value, result: null }))
+                }
+                className={inputClass}
+                placeholder="e.g. 2"
+              />
+              <select
+                aria-label="Speed unit"
+                value={transfer.speedUnit}
+                onChange={(event) =>
+                  setTransfer((t) => ({ ...t, speedUnit: event.target.value, result: null }))
+                }
+                className={`${unitSelectClass} w-24 shrink-0`}
+              >
+                {UNITS.map((unit) => (
+                  <option key={unit} value={unit}>
+                    {unit}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
+
         <button
-          onClick: calculateBandwidth
-          className="mt-2 btn btn-primary"
+          type="button"
+          onClick={calculateTransfer}
+          className="mt-4 flex h-11 w-full items-center justify-center rounded-xl bg-brand text-sm font-semibold text-white transition-colors hover:bg-brand-strong sm:w-auto sm:px-8"
         >
           Calculate
         </button>
-        <p className="mt-2 text-sm text-ink">{bandwidth.result}</p>
-      </div>
 
-      {/* Storage Converter */}
-      <div>
-        <h2 className="font-mono text-sm text-brand">Storage Converter</h2>
-        <div className="grid grid-cols-2 gap-3">
+        {transfer.result !== null && (
+          <p role="status" className="mt-3 font-mono text-sm font-semibold text-brand-strong">
+            {transfer.result}
+          </p>
+        )}
+      </section>
+
+      <section className="rounded-2xl border border-zinc-200 bg-white p-6">
+        <h2 className="font-mono text-xs font-bold uppercase tracking-widest text-slate-400">
+          Storage converter
+        </h2>
+        <p className="mt-1 text-sm leading-relaxed text-mist">
+          Convert between bits, Kb, Mb, Gb and Tb (1 Kb = 1024 bits).
+        </p>
+
+        <div className="mt-4 grid gap-4 sm:grid-cols-3">
           <div>
-            <label className="text-xs text-mist">From</label>
-            <select
-              value: storage.fromUnit
-              onChange={(e) =>
-                setStorage((s) => ({ ...s, fromUnit: e.target.value }))
-              }
-              className="border rounded w-full px-2 text-sm"
-            >
-              {UNITS.map((u) => (
-                <option key: u={u}>{u}</option>
-              ))}
-            </select>
-            <label className="text-xs text-mist">Value</label>
+            <label htmlFor="calc-storage-value" className={labelClass}>
+              Value
+            </label>
             <input
-              value: storage.value
-              onChange={(e) =>
-                setStorage((s) => ({ ...s, value: e.target.value }))
-              }
+              id="calc-storage-value"
               type="number"
-              className="border rounded w-full px-2 text-sm mt-1"
+              min="0"
+              step="any"
+              inputMode="decimal"
+              value={storage.value}
+              onChange={(event) =>
+                setStorage((s) => ({ ...s, value: event.target.value, result: null }))
+              }
+              className={inputClass}
+              placeholder="e.g. 1"
             />
           </div>
           <div>
-            <label className="text-xs text-mist">To</label>
+            <label htmlFor="calc-storage-from" className={labelClass}>
+              From
+            </label>
             <select
-              value: storage.toUnit
-              onChange={(e) =>
-                setStorage((s) => ({ ...s, toUnit: e.target.value }))
+              id="calc-storage-from"
+              value={storage.from}
+              onChange={(event) =>
+                setStorage((s) => ({ ...s, from: event.target.value, result: null }))
               }
-              className="border rounded w-full px-2 text-sm"
+              className={unitSelectClass}
             >
-              {UNITS.map((u) => (
-                <option key: u={u}>{u}</option>
+              {UNITS.map((unit) => (
+                <option key={unit} value={unit}>
+                  {unit}
+                </option>
               ))}
             </select>
-            <p className="mt-2 text-sm text-ink">{storage.result}</p>
+          </div>
+          <div>
+            <label htmlFor="calc-storage-to" className={labelClass}>
+              To
+            </label>
+            <select
+              id="calc-storage-to"
+              value={storage.to}
+              onChange={(event) =>
+                setStorage((s) => ({ ...s, to: event.target.value, result: null }))
+              }
+              className={unitSelectClass}
+            >
+              {UNITS.map((unit) => (
+                <option key={unit} value={unit}>
+                  {unit}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
+
         <button
-          onClick: calculateStorage
-          className="mt-2 btn btn-primary"
+          type="button"
+          onClick={calculateStorage}
+          className="mt-4 flex h-11 w-full items-center justify-center rounded-xl bg-brand text-sm font-semibold text-white transition-colors hover:bg-brand-strong sm:w-auto sm:px-8"
         >
           Convert
         </button>
-      </div>
 
-      {/* Data Usage Calculator */}
-      <div>
-        <h2 className="font-mono text-sm text-brand">Monthly Data Usage</h2>
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <label className="text-xs text-mist">Monthly GB</label>
-            <input
-              value: dataUsage.monthlyGB
-              onChange={(e) =>
-                setDataUsage((d) => ({ ...d, monthlyGB: e.target.value }))
-              }
-              type="number"
-              className="border rounded w-full px-2 text-sm"
-            />
-          </div>
-          <div>
-            <label className="text-xs text-mist">Daily Avg</label>
-            <p className="mt-2 text-sm text-ink">{dataUsage.result}</p>
-          </div>
+        {storage.result !== null && (
+          <p role="status" className="mt-3 font-mono text-sm font-semibold text-brand-strong">
+            {storage.result}
+          </p>
+        )}
+      </section>
+
+      <section className="rounded-2xl border border-zinc-200 bg-white p-6">
+        <h2 className="font-mono text-xs font-bold uppercase tracking-widest text-slate-400">
+          Monthly data usage
+        </h2>
+        <p className="mt-1 text-sm leading-relaxed text-mist">
+          What does a monthly data plan allow per day? Monthly ÷ 30 days.
+        </p>
+
+        <div className="mt-4 max-w-xs">
+          <label htmlFor="calc-data-monthly" className={labelClass}>
+            Monthly data (GB)
+          </label>
+          <input
+            id="calc-data-monthly"
+            type="number"
+            min="0"
+            step="any"
+            inputMode="decimal"
+            value={dataUsage.monthly}
+            onChange={(event) =>
+              setDataUsage((d) => ({ ...d, monthly: event.target.value, result: null }))
+            }
+            className={inputClass}
+            placeholder="e.g. 5"
+          />
         </div>
+
         <button
-          onClick: calculateDataUsage
-          className="mt-2 btn btn-primary w-full"
+          type="button"
+          onClick={calculateDataUsage}
+          className="mt-4 flex h-11 w-full items-center justify-center rounded-xl bg-brand text-sm font-semibold text-white transition-colors hover:bg-brand-strong sm:w-auto sm:px-8"
         >
-          Calculate Daily Average
+          Calculate daily average
         </button>
-      </div>
+
+        {dataUsage.result !== null && (
+          <p role="status" className="mt-3 font-mono text-sm font-semibold text-brand-strong">
+            {dataUsage.result}
+          </p>
+        )}
+      </section>
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { requireUser } from "@/lib/auth";
 import { getUnit } from "@/lib/syllabus";
@@ -11,6 +12,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function CybersecurityAwarenessPage() {
   await requireUser();
   const unit = getUnit("networking-internet");
+  if (!unit) notFound();
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
@@ -18,7 +20,7 @@ export default async function CybersecurityAwarenessPage() {
         items={[
           { label: "Home", href: "/" },
           { label: "Chapters", href: "/chapters" },
-          { label: unit?.name, href: `/chapters/${unit?.slug}` },
+          { label: unit.name, href: `/chapters/${unit.slug}` },
           { label: "Cybersecurity Awareness" },
         ]}
       />
@@ -64,7 +66,7 @@ export default async function CybersecurityAwarenessPage() {
                 by masquerading as trustworthy entities.
               </p>
               <ul className="mt-2 list-disc list-inside text-sm text-slate-600 space-y-1">
-                <li><strong>Email phishing:</strong> Fake emails from "banks," "services," etc.</li>
+                <li><strong>Email phishing:</strong> Fake emails from &ldquo;banks,&rdquo; &ldquo;services,&rdquo; etc.</li>
                 <li><strong>Spear phishing:</strong> Targeted attacks on specific individuals</li>
                 <li><strong>Smishing:</strong> Phishing via SMS/text messages</li>
                 <li><strong>Vishing:</strong> Voice phishing via phone calls</li>
@@ -112,7 +114,7 @@ export default async function CybersecurityAwarenessPage() {
               </h3>
               <p className="text-sm text-slate-600">
                 Hover over links to see actual URL. Check sender email addresses carefully.
-                Don't download attachments from unknown sources.
+                Don&rsquo;t download attachments from unknown sources.
               </p>
             </div>
             <div className="p-4 rounded-lg border border-zinc-200 bg-white">
@@ -148,7 +150,7 @@ export default async function CybersecurityAwarenessPage() {
               <h3 className="font-medium text-ink mb-2">Device Security</h3>
               <p className="text-slate-600">
                 Use screen locks (PIN, biometric). Enable device encryption. Install
-                reputable antivirus. Enable "Find My Device" features.
+                reputable antivirus. Enable &ldquo;Find My Device&rdquo; features.
               </p>
             </div>
           </div>

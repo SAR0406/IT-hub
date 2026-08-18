@@ -1,9 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { ChapterLadder, type ChapterLadderStep } from "@/components/ChapterLadder";
 import { ResourceList } from "@/components/ResourceList";
-import { ResourceListSkeleton } from "@/components/Skeletons";
 import { ChevronRightIcon } from "@/components/icons";
 import { requireUser } from "@/lib/auth";
 import { getResourcesByUnit } from "@/lib/resources";
@@ -20,12 +19,105 @@ export async function generateMetadata({
 
 export default async function UnitPage({ params }: PageProps<"/chapters/[unit]">) {
   const { unit: unitSlug } = await params;
-  await requireUser();
+  const ctx = await requireUser();
   const unit = getUnit(unitSlug);
 
   if (!unit) notFound();
 
-  const resources = await getResourcesByUnit(unit.slug);
+  const supabase = ctx.supabase;
+
+  const [resources, activityRes, quizRes] = await Promise.all([
+    getResourcesByUnit(unit.slug),
+    supabase
+      .from("activity_logs")
+      .select("action")
+      .eq("user_id", ctx.user.id)
+      .in("action", ["resource_open", "resource_download"])
+      .filter("details->>unit", "eq", unit.slug),
+    supabase
+      .from("quizzes")
+      .select("id, title")
+      .eq("unit_slug", unit.slug)
+      .eq("published", true)
+      .order("created_at", { ascending: false })
+      .limit(1),
+  ]);
+
+  const opened = (activityRes.data ?? []).some((row) => row.action === "resource_open");
+  const downloaded = (activityRes.data ?? []).some((row) => row.action === "resource_download");
+
+  const unitQuiz = quizRes.data?.[0] ?? null;
+  const { data: attempts } = unitQuiz
+    ? await supabase
+        .from("quiz_attempts")
+        .select("score, total")
+        .eq("user_id", ctx.user.id)
+        .eq("quiz_id", unitQuiz.id)
+    : { data: [] as { score: number; total: number }[] };
+
+  const attemptsSafe = attempts ?? [];
+  const attempted = attemptsSafe.length > 0;
+  const best = attemptsSafe.reduce<{ score: number; total: number } | null>(
+    (bestScore, attempt) => {
+    if (
+      attempt.total > 0 &&
+      (!bestScore || attempt.score / attempt.total > bestScore.score / bestScore.total)
+    ) {
+      return { score: attempt.score, total: attempt.total };
+    }
+    return bestScore;
+  }, null);
+
+  const practiceCount = resources.filter(
+    (resource) => resource.resource_type === "Worksheet" || resource.resource_type === "Practical"
+  ).length;
+
+  const rawSteps: Omit<ChapterLadderStep, "number" | "status">[] = [
+    {
+      key: "learn",
+      label: "Learn",
+      description: "Read the unit notes and topic material at your own pace.",
+      meta: resources.length > 0 ? `${resources.length} ${resources.length === 1 ? "resource" : "resources"} to read` : null,
+      cta: { href: "#topics", label: opened ? "Review material" : "Open topics" },
+      unavailableReason: null,
+    },
+    {
+      key: "practice",
+      label: "Practice",
+      description: "Download and solve the worksheets and practicals for this unit.",
+      meta: practiceCount > 0 ? `${practiceCount} practice ${practiceCount === 1 ? "sheet" : "sheets"}` : null,
+      cta: { href: "#resources", label: downloaded ? "Solve more" : "Open resources" },
+      unavailableReason: resources.length > 0 ? null : "No material yet",
+    },
+    {
+      key: "quiz",
+      label: "Quiz",
+      description: unitQuiz
+        ? `Test yourself with "${unitQuiz.title}".`
+        : "A quiz for this unit is being prepared.",
+      meta: best ? `Best: ${best.score}/${best.total}` : null,
+      cta: unitQuiz
+        ? { href: `/quizzes/${unitQuiz.id}`, label: attempted ? "Retake quiz" : "Take quiz" }
+        : null,
+      unavailableReason: unitQuiz ? null : "Not published yet",
+    },
+  ];
+
+  let nextAssigned = false;
+  const steps: ChapterLadderStep[] = rawSteps.map((step, index) => {
+    let status: ChapterLadderStep["status"];
+    if (step.unavailableReason !== null) {
+      status = "unavailable";
+    } else if (step.key === "learn" ? opened : step.key === "practice" ? downloaded : attempted) {
+      status = "done";
+    } else if (!nextAssigned) {
+      status = "next";
+      nextAssigned = true;
+    } else {
+      status = "upcoming";
+    }
+    return { ...step, number: index + 1, status };
+  });
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
@@ -48,8 +140,12 @@ export default async function UnitPage({ params }: PageProps<"/chapters/[unit]">
         <p className="mt-3 max-w-2xl text-base text-slate-500">{unit.description}</p>
       </div>
 
+      <div className="mb-12">
+        <ChapterLadder steps={steps} />
+      </div>
+
       {unit.topics.length > 0 && (
-        <section className="mb-12">
+        <section id="topics" className="mb-12 scroll-mt-24">
           <div className="mb-4 flex items-center gap-3">
             <h2 className="font-mono text-xs font-bold uppercase tracking-widest text-slate-400">
               Topics
@@ -79,7 +175,7 @@ export default async function UnitPage({ params }: PageProps<"/chapters/[unit]">
         </section>
       )}
 
-      <section>
+      <section id="resources" className="scroll-mt-24">
         <div className="mb-4 flex items-center gap-3">
           <h2 className="font-mono text-xs font-bold uppercase tracking-widest text-slate-400">
             Resources
@@ -87,9 +183,7 @@ export default async function UnitPage({ params }: PageProps<"/chapters/[unit]">
           <span className="font-mono text-xs text-slate-400">({resources.length})</span>
           <span className="h-px flex-1 bg-zinc-200" />
         </div>
-        <Suspense fallback={<ResourceListSkeleton />}>
-          <ResourceList resources={resources} />
-        </Suspense>
+        <ResourceList resources={resources} />
       </section>
     </div>
   );

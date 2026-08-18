@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 
 export type Tab = {
   id: string;
@@ -20,12 +20,28 @@ type Props = {
  */
 export function ChapterTabs({ tabs }: Props) {
   const [active, setActive] = useState(tabs[0]?.id ?? "");
+  const [underline, setUnderline] = useState({ left: 0, width: 0 });
   const activeIndex = Math.max(
     0,
     tabs.findIndex((tab) => tab.id === active)
   );
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const activeButton = buttonRefs.current[activeIndex];
+
+  useLayoutEffect(() => {
+    const button = buttonRefs.current[activeIndex];
+    if (!button) return;
+    setUnderline({ left: button.offsetLeft, width: button.offsetWidth });
+  }, [activeIndex, tabs]);
+
+  useLayoutEffect(() => {
+    function measure() {
+      const button = buttonRefs.current[activeIndex];
+      if (!button) return;
+      setUnderline({ left: button.offsetLeft, width: button.offsetWidth });
+    }
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [activeIndex]);
 
   return (
     <div>
@@ -59,8 +75,8 @@ export function ChapterTabs({ tabs }: Props) {
         <span
           className="ds-tab-underline absolute bottom-[-2px] h-[3px] rounded-sm bg-pm-teal"
           style={{
-            left: activeButton?.offsetLeft ?? 0,
-            width: activeButton?.offsetWidth ?? 0,
+            left: underline.left,
+            width: underline.width,
           }}
           aria-hidden
         />

@@ -101,7 +101,7 @@ export function Footer() {
   ];
 
   return (
-    <footer className="relative mt-auto border-t border-slate-200 bg-white">
+    <footer className="group relative mt-auto border-t border-slate-200 bg-white">
       {/* Decorative gradient line */}
       <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blush via-brand to-teal opacity-0 group-hover:opacity-100 transition-opacity" />
 
@@ -171,9 +171,9 @@ export function Footer() {
             <div>
               <h3 className="text-sm font-semibold text-ink mb-3">Built by a Student</h3>
               <p className="text-sm text-slate-600 leading-relaxed">
-                Hey! I'm <span className="font-semibold text-brand">Sarthak</span> 
+                Hey! I&rsquo;m <span className="font-semibold text-brand">Sarthak</span>{" "}
                 <span className="block mt-2 text-xs text-slate-500">
-                  " Just a Student who loves building and creating things "
+                  &ldquo;Just a Student who loves building and creating things&rdquo;
                 </span>
               </p>
             </div>
@@ -230,12 +230,12 @@ export function Footer() {
           <p className="text-xs text-slate-500">
             © {currentYear} IT Hub 11. Made with{" "}
             <span className="text-blush">❤</span> by{" "}
-            
+            <a
               href="https://github.com/sar0406"
               target="_blank"
               rel="noopener noreferrer"
               className="font-semibold text-brand transition-colors hover:text-blush"
-            <a>
+            >
               Sarthak
             </a>
             . Built for learning.

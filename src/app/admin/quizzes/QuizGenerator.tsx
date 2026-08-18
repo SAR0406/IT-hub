@@ -232,6 +232,14 @@ export function QuizGenerator({ onCancel, onDone }: QuizGeneratorProps) {
                     </li>
                   ))}
                 </ul>
+                {question.explanation && (
+                  <p className="mt-2.5 rounded-lg border-l-2 border-brand bg-brand-soft/50 px-3 py-2 text-xs leading-relaxed text-ink">
+                    <span className="font-mono font-bold uppercase tracking-wider text-brand-strong">
+                      why /{" "}
+                    </span>
+                    {question.explanation}
+                  </p>
+                )}
               </li>
             ))}
           </ul>

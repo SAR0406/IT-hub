@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { UNITS } from "@/lib/syllabus";
 import "./digital-desk.css";
 
@@ -32,12 +33,12 @@ export default function DigitalDeskConcept() {
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3 font-dmono text-[11px] tracking-[0.18em] uppercase">
           <span>IT—11</span>
           <span className="hidden sm:inline text-ink/50">CLASS XI / CBSE / 2026—27</span>
-          <a
+          <Link
             href="/chapters"
             className="border border-ink px-3 py-1 transition-colors hover:bg-ink hover:text-paper"
           >
             CHAPTERS →
-          </a>
+          </Link>
         </div>
       </header>
 
@@ -45,7 +46,7 @@ export default function DigitalDeskConcept() {
         <div className="dd-desk relative min-h-[52rem] md:min-h-[46rem]">
           {/* notebook — the hero statement sits on paper */}
           <div className="dd-notebook relative md:absolute md:left-[3%] md:top-[4%] md:w-[47%]">
-            <a href="/chapters" className="block transition-transform duration-200 hover:-translate-y-1">
+            <Link href="/chapters" className="block transition-transform duration-200 hover:-translate-y-1">
               <div className="dd-tape dd-tape-yellow absolute -top-3 left-10 z-20" />
               <div className="border-2 border-ink bg-paper p-0 shadow-[8px_10px_0_rgba(23,21,18,0.14)]">
                 <div className="flex items-center justify-between bg-plum px-4 py-2 font-dmono text-[10px] tracking-[0.22em] uppercase text-paper">
@@ -90,13 +91,13 @@ export default function DigitalDeskConcept() {
                   </p>
                 </div>
               </div>
-            </a>
+            </Link>
           </div>
 
           {/* the fanned stack of unit cards */}
           <div className="relative mx-auto mt-14 h-72 w-[19rem] md:absolute md:right-[2%] md:top-[5%] md:mx-0">
             {UNITS.map((unit, i) => (
-              <a
+              <Link
                 key={unit.slug}
                 href="/chapters"
                 className={`dd-card absolute inset-0 ${CARD_ROTATE[i]} ${i === 5 ? "" : "md:hover:rotate-0"}`}
@@ -117,7 +118,7 @@ export default function DigitalDeskConcept() {
                     OPEN →
                   </p>
                 </div>
-              </a>
+              </Link>
             ))}
             <div className="dd-tape dd-tape-moss absolute -top-3 right-8 z-20 rotate-[4deg]" />
           </div>
