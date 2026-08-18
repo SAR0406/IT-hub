@@ -145,6 +145,17 @@ export default async function UnitPage({ params }: PageProps<"/chapters/[unit]">
         }
       />
 
+      <section id="resources" className="mb-12 scroll-mt-24">
+        <div className="mb-4 flex items-center gap-3">
+          <h2 className="font-mono text-xs font-bold uppercase tracking-widest text-slate-400">
+            Resources
+          </h2>
+          <span className="font-mono text-xs text-slate-400">({resources.length})</span>
+          <span className="h-px flex-1 bg-line" />
+        </div>
+        <ResourceList resources={resources} />
+      </section>
+
       <div className="mb-12">
         <ChapterLadder steps={steps} />
       </div>
@@ -196,17 +207,6 @@ export default async function UnitPage({ params }: PageProps<"/chapters/[unit]">
           </ul>
         </section>
       )}
-
-      <section id="resources" className="scroll-mt-24">
-        <div className="mb-4 flex items-center gap-3">
-          <h2 className="font-mono text-xs font-bold uppercase tracking-widest text-slate-400">
-            Resources
-          </h2>
-          <span className="font-mono text-xs text-slate-400">({resources.length})</span>
-          <span className="h-px flex-1 bg-line" />
-        </div>
-        <ResourceList resources={resources} />
-      </section>
     </div>
   );
 }
