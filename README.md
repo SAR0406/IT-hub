@@ -4,7 +4,7 @@ One reliable place for Class 11 CBSE Information Technology (Code 402) students 
 open and download their study material — notes, worksheets, question papers and practicals —
 organised exactly like the official syllabus. On top of the archive sit quizzes (admin-built
 MCQs with scoring and review), a real-time class chat (rooms per unit, teacher moderation)
-and a browser-based SQL Lab for the RDBMS unit.
+and a browser-based SQL Playground tool for the RDBMS unit.
 
 Students sign up instantly with their email. Every meaningful action is tracked — downloads,
 searches, sign-ins, quiz attempts — and the admin panel reviews automatically-raised
@@ -92,8 +92,10 @@ These `NEXT_PUBLIC_*` values are public by design (browser-safe). `SUPABASE_SERV
   new messages stream to the browser over WebSockets. The send API rate-limits (1 per 5s),
   blocks the banned-word list and raises a `chat_inappropriate` flag on violations.
 
-The SQL Lab (`/lab/sql`) never touches the database: it runs a full Postgres inside the
-student's browser via **PGlite** (WebAssembly).
+The SQL Playground (`/tools/sql-playground`) never touches the database: it runs a full Postgres inside the
+student's browser via **PGlite** (WebAssembly). Every tool (SQL playground, network calculators,
+e-waste calculator, security checklists) is registered in `src/lib/tools.ts` with the chapter it
+belongs to and surfaced on `/tools`.
 
 `is_admin()` is a SECURITY DEFINER helper (checks role + `is_active`), so RLS never
 recurses. The four rule functions (`count_recent_actions`, `count_recent_failed_logins`,

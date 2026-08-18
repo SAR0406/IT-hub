@@ -32,7 +32,7 @@ const NAV_ITEMS = [
   { href: "/dashboard", label: "Dashboard", soon: false },
   { href: "/chapters", label: "Chapters", soon: false },
   { href: "/quizzes", label: "Quizzes", soon: false },
-  { href: "/lab/sql", label: "SQL Lab", soon: false },
+  { href: "/tools", label: "Tools", soon: false },
   { href: "/search", label: "Search", soon: false },
   { href: "/chat", label: "Chat", soon: false },
   { href: "/bookless", label: "Offline Packs", soon: false },
@@ -121,6 +121,7 @@ export default async function DashboardPage() {
   const missionDone = mission.filter((m) => m.done).length;
 
   const firstName = ctx.profile.full_name.split(/\s+/)[0] ?? "Student";
+  const recentActivityCount = rows.length;
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
@@ -136,10 +137,10 @@ export default async function DashboardPage() {
             aria-disabled={item.soon}
             className={`shrink-0 rounded-full px-4 py-2 text-sm font-semibold ${
               item.soon
-                ? "bg-slate-100 text-slate-400"
+                ? "pill-muted text-slate-400"
                 : item.label === "Dashboard"
-                  ? "bg-brand text-white"
-                  : "bg-white text-ink shadow-soft"
+                  ? "btn-primary text-white"
+                  : "surface-card text-ink"
             }`}
           >
             {item.label}
@@ -151,9 +152,9 @@ export default async function DashboardPage() {
       <div className="grid gap-8 lg:grid-cols-[240px_1fr]">
         {/* Sidebar */}
         <aside className="hidden lg:block">
-          <div className="sticky top-24 rounded-2xl bg-white p-5 shadow-soft">
+          <div className="surface-card sticky top-24 rounded-2xl p-5">
             <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
-              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-brand text-sm font-bold text-white">
+              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-strong text-sm font-bold text-white">
                 {ctx.profile.full_name
                   .split(/\s+/)
                   .filter(Boolean)
@@ -174,12 +175,12 @@ export default async function DashboardPage() {
                   key={item.label}
                   href={item.href}
                   aria-disabled={item.soon}
-                  className={`rounded-lg px-3 py-2 text-sm font-semibold transition-colors ${
+                  className={`rounded-xl px-3 py-2 text-sm font-semibold transition-colors ${
                     item.soon
                       ? "cursor-not-allowed text-slate-400"
                       : item.label === "Dashboard"
-                        ? "bg-brand-soft text-brand-strong"
-                        : "text-mist hover:bg-slate-100 hover:text-ink"
+                        ? "bg-white text-brand-strong shadow-soft"
+                        : "text-mist hover:bg-white hover:text-ink"
                   }`}
                 >
                   {item.label}
@@ -195,11 +196,28 @@ export default async function DashboardPage() {
 
         {/* Main */}
         <div className="min-w-0 space-y-6">
-          <div>
-            <p className="font-mono text-xs font-medium text-brand">your workspace</p>
-            <h1 className="mt-1 text-2xl font-bold tracking-tight text-ink sm:text-3xl">
+          <div className="surface-card rounded-3xl p-6 sm:p-8">
+            <p className="font-mono text-xs font-semibold uppercase tracking-[0.14em] text-brand">
+              your workspace
+            </p>
+            <h1 className="mt-2 font-display text-2xl font-bold tracking-tight text-ink sm:text-3xl">
               Hi {firstName} — Your Progress
             </h1>
+            <p className="mt-2 text-sm leading-relaxed text-slate-600">
+              Keep momentum with one focused mission list, per-unit visibility, and quiz-based
+              accuracy signals.
+            </p>
+            <div className="mt-5 flex flex-wrap gap-2">
+              <span className="pill-muted rounded-full px-3 py-1.5 font-mono text-[11px] font-semibold text-mist">
+                {progress}% syllabus progress
+              </span>
+              <span className="pill-muted rounded-full px-3 py-1.5 font-mono text-[11px] font-semibold text-mist">
+                {missionDone}/{mission.length} mission tasks done
+              </span>
+              <span className="pill-muted rounded-full px-3 py-1.5 font-mono text-[11px] font-semibold text-mist">
+                {recentActivityCount} recent activities
+              </span>
+            </div>
           </div>
 
           {/* Announcements */}
@@ -208,7 +226,7 @@ export default async function DashboardPage() {
               {(announcements ?? []).map((announcement) => (
                 <div
                   key={announcement.id}
-                  className="rounded-2xl border-l-4 border-brand bg-white p-5 shadow-soft"
+                  className="surface-card rounded-2xl border-l-4 border-brand p-5"
                 >
                   <p className="flex flex-wrap items-center gap-2 text-sm font-bold text-ink">
                     {announcement.title}
@@ -225,7 +243,7 @@ export default async function DashboardPage() {
           )}
 
           {/* Overall progress */}
-          <section className="rounded-2xl bg-white p-6 shadow-soft sm:p-8" aria-label="Overall progress">
+          <section className="surface-card rounded-2xl p-6 sm:p-8" aria-label="Overall progress">
             <div className="flex items-end justify-between gap-4">
               <h2 className="font-display text-lg font-bold tracking-tight text-ink">
                 Syllabus progress
@@ -233,7 +251,7 @@ export default async function DashboardPage() {
               <span className="font-mono text-sm font-semibold text-teal">{progress}%</span>
             </div>
             <div
-              className="mt-4 h-3 w-full overflow-hidden rounded-full bg-slate-100"
+              className="mt-4 h-3 w-full overflow-hidden rounded-full bg-slate-100/90"
               role="progressbar"
               aria-label="Syllabus progress"
               aria-valuemin={0}
@@ -253,7 +271,7 @@ export default async function DashboardPage() {
 
           {/* Quiz analysis — weak areas */}
           <section
-            className="rounded-2xl bg-white p-6 shadow-soft sm:p-8"
+            className="surface-card rounded-2xl p-6 sm:p-8"
             aria-label="Where to focus"
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
@@ -272,7 +290,7 @@ export default async function DashboardPage() {
                 </p>
                 <Link
                   href="/quizzes"
-                  className="mt-4 inline-flex h-10 items-center justify-center rounded-lg bg-brand px-5 text-sm font-semibold text-white transition-colors hover:bg-brand-strong"
+                  className="btn-primary mt-4 inline-flex h-10 items-center justify-center rounded-lg px-5 text-sm font-semibold transition-all"
                 >
                   Take a quiz
                 </Link>
@@ -285,7 +303,7 @@ export default async function DashboardPage() {
                       const unitSlug = unit.unitSlug;
                       const percent = Math.round((unit.accuracy ?? 0) * 100);
                       return (
-                        <li key={unitSlug} className="rounded-xl border border-zinc-200 p-4">
+                        <li key={unitSlug} className="surface-elevated rounded-xl p-4">
                           <div className="flex items-center justify-between gap-3">
                             <p className="text-sm font-semibold text-ink">
                               {unitName.get(unitSlug) ?? unitSlug}
@@ -379,7 +397,7 @@ export default async function DashboardPage() {
                   <Link
                     key={unit.slug}
                     href={`/chapters/${unit.slug}`}
-                    className="rounded-2xl bg-white p-5 shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-lift"
+                    className="surface-card rounded-2xl p-5 transition-all hover:-translate-y-0.5 hover:shadow-lift"
                   >
                     <div className="flex items-center justify-between gap-3">
                       <span className="font-mono text-xs font-semibold text-mist">
@@ -415,7 +433,7 @@ export default async function DashboardPage() {
 
           {/* Mission + activity */}
           <div className="grid gap-6 lg:grid-cols-2">
-            <section className="rounded-2xl bg-white p-6 shadow-soft" aria-label="Today's mission">
+            <section className="surface-card rounded-2xl p-6" aria-label="Today's mission">
               <div className="flex items-center justify-between gap-3">
                 <h2 className="font-display text-lg font-bold tracking-tight text-ink">
                   Today&rsquo;s Mission
@@ -447,7 +465,7 @@ export default async function DashboardPage() {
               </ul>
             </section>
 
-            <section className="rounded-2xl bg-white p-6 shadow-soft" aria-label="Recent activity">
+            <section className="surface-card rounded-2xl p-6" aria-label="Recent activity">
               <h2 className="font-display text-lg font-bold tracking-tight text-ink">
                 Recent activity
               </h2>

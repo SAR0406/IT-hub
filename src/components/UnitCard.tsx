@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ChevronRightIcon } from "@/components/icons";
 import {
   BookSketch,
   ChatSketch,
@@ -17,32 +18,62 @@ type UnitCardProps = {
   topicCount?: number;
 };
 
-const UNIT_ICONS: Record<string, { icon: typeof BookSketch; chip: string }> = {
-  "employability-skills": { icon: ChatSketch, chip: "bg-blush/30" },
-  "computer-organization": { icon: MonitorSketch, chip: "bg-aqua/30" },
-  "networking-internet": { icon: GlobeSketch, chip: "bg-mint/30" },
-  "office-automation-tools": { icon: PaperSketch, chip: "bg-sun/30" },
-  rdbms: { icon: DatabaseSketch, chip: "bg-mint/30" },
-  "fundamentals-of-java": { icon: JavaCupSketch, chip: "bg-sun/30" },
+/** One pastel accent per unit — chapters are color-coded at a glance. */
+const UNIT_ACCENTS: Record<
+  string,
+  { icon: typeof BookSketch; chip: string; hover: string }
+> = {
+  "employability-skills": {
+    icon: ChatSketch,
+    chip: "bg-blush/40",
+    hover: "hover:border-blush/70",
+  },
+  "computer-organization": {
+    icon: MonitorSketch,
+    chip: "bg-aqua/40",
+    hover: "hover:border-aqua/70",
+  },
+  "networking-internet": {
+    icon: GlobeSketch,
+    chip: "bg-mint/40",
+    hover: "hover:border-mint/70",
+  },
+  "office-automation-tools": {
+    icon: PaperSketch,
+    chip: "bg-sun/40",
+    hover: "hover:border-sun/80",
+  },
+  rdbms: {
+    icon: DatabaseSketch,
+    chip: "bg-lilac/45",
+    hover: "hover:border-lilac/80",
+  },
+  "fundamentals-of-java": {
+    icon: JavaCupSketch,
+    chip: "bg-peach/45",
+    hover: "hover:border-peach/80",
+  },
 };
 
 export function UnitCard({ unit, index, resourceCount, topicCount }: UnitCardProps) {
-  const { icon: UnitIcon, chip } = UNIT_ICONS[unit.slug] ?? {
+  const accent = UNIT_ACCENTS[unit.slug] ?? {
     icon: BookSketch,
-    chip: "bg-blush/30",
+    chip: "bg-blush/40",
+    hover: "hover:border-brand/40",
   };
+  const { icon: UnitIcon, chip, hover } = accent;
 
   const hasMaterial = (resourceCount ?? 0) > 0;
   const countLabel = hasMaterial
-    ? `${String(index).padStart(2, "0")} · ${resourceCount} ${resourceCount === 1 ? "resource" : "resources"} live`
+    ? `${resourceCount} ${resourceCount === 1 ? "resource" : "resources"} live`
     : topicCount !== undefined && topicCount > 0
-      ? `${String(index).padStart(2, "0")} · ${topicCount} ${topicCount === 1 ? "topic" : "topics"}`
-      : `${String(index).padStart(2, "0")} · material coming soon`;
+      ? `${topicCount} ${topicCount === 1 ? "topic" : "topics"}`
+      : "material coming soon";
 
   return (
     <Link
       href={`/chapters/${unit.slug}`}
-      className="group flex flex-col gap-3 rounded-2xl bg-white p-6 shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-lift"
+      className={`group flex flex-col gap-3 rounded-2xl border border-line bg-white p-6 transition-all hover:-translate-y-1 hover:shadow-soft ${hover}`}
     >
       <div className="flex items-center justify-between gap-3">
         <span
@@ -50,35 +81,31 @@ export function UnitCard({ unit, index, resourceCount, topicCount }: UnitCardPro
         >
           <UnitIcon width={24} height={24} />
         </span>
-        <span className="rounded-full bg-slate-100 px-2.5 py-1 font-mono text-[10px] font-semibold uppercase tracking-wide text-mist">
-          {unit.part === "A" ? "Employability" : "Subject skills"}
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="rounded-full border border-line bg-paper px-2 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+            Part {unit.part}
+          </span>
+          <span className="font-mono text-[11px] font-semibold text-slate-400">
+            UNIT/{String(index).padStart(2, "0")}
+          </span>
+        </div>
       </div>
+
       <h2 className="font-display text-lg font-bold tracking-tight text-ink">
         {unit.name}
       </h2>
       <p className="text-sm leading-relaxed text-mist">{unit.description}</p>
-      <div className="mt-auto">
-        <div
-          className="h-1.5 w-full overflow-hidden rounded-full bg-slate-100"
-          role="progressbar"
-          aria-label={`${unit.name} material`}
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-valuenow={hasMaterial ? 100 : 0}
-        >
-          <div
-            className={`h-full rounded-full bg-gradient-to-r from-teal to-emerald transition-all ${
-              hasMaterial ? "w-full" : "w-0"
-            }`}
+
+      <div className="mt-auto flex items-center justify-between gap-3 border-t border-line pt-4">
+        <span className="font-mono text-xs text-mist">{countLabel}</span>
+        <span className="flex items-center gap-1 text-sm font-semibold text-brand transition-colors group-hover:text-brand-strong">
+          Start
+          <ChevronRightIcon
+            width={14}
+            height={14}
+            className="transition-transform group-hover:translate-x-0.5"
           />
-        </div>
-        <div className="mt-3 flex items-center justify-between">
-          <span className="font-mono text-xs text-mist">{countLabel}</span>
-          <span className="rounded-lg bg-brand px-3.5 py-1.5 text-sm font-semibold text-white transition-colors group-hover:bg-brand-strong">
-            Start
-          </span>
-        </div>
+        </span>
       </div>
     </Link>
   );

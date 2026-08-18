@@ -2,11 +2,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { ChapterLadder, type ChapterLadderStep } from "@/components/ChapterLadder";
+import { PageHeader } from "@/components/PageHeader";
 import { ResourceList } from "@/components/ResourceList";
+import { ToolCard } from "@/components/ToolCard";
 import { ChevronRightIcon } from "@/components/icons";
 import { requireUser } from "@/lib/auth";
 import { getResourcesByUnit } from "@/lib/resources";
 import { getUnit } from "@/lib/syllabus";
+import { getToolsByUnit } from "@/lib/tools";
 import type { Metadata } from "next";
 
 export async function generateMetadata({
@@ -23,6 +26,8 @@ export default async function UnitPage({ params }: PageProps<"/chapters/[unit]">
   const unit = getUnit(unitSlug);
 
   if (!unit) notFound();
+
+  const unitTools = getToolsByUnit(unit.slug);
 
   const supabase = ctx.supabase;
 
@@ -129,20 +134,37 @@ export default async function UnitPage({ params }: PageProps<"/chapters/[unit]">
         ]}
       />
 
-      <div className="mb-10">
-        <p className="font-mono text-xs text-brand">~/it-hub-11/units/{unit.slug}</p>
-        <span className="mt-3 inline-flex rounded-full border border-zinc-200 bg-white px-2.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wide text-slate-500">
-          Part {unit.part} {unit.part === "A" ? "· Employability" : "· Subject skills"}
-        </span>
-        <h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-ink sm:text-4xl">
-          {unit.name}
-        </h1>
-        <p className="mt-3 max-w-2xl text-base text-slate-500">{unit.description}</p>
-      </div>
+            <PageHeader
+        path={`~/it-hub-11/units/${unit.slug}`}
+        title={unit.name}
+        description={unit.description}
+        meta={
+          <span className="inline-flex rounded-full border border-line bg-white px-2.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wide text-slate-500">
+            Part {unit.part} {unit.part === "A" ? "· Employability" : "· Subject skills"}
+          </span>
+        }
+      />
 
       <div className="mb-12">
         <ChapterLadder steps={steps} />
       </div>
+
+      {unitTools.length > 0 && (
+        <section id="tools" className="mb-12 scroll-mt-24">
+          <div className="mb-4 flex items-center gap-3">
+            <h2 className="font-mono text-xs font-bold uppercase tracking-widest text-slate-400">
+              Tools
+            </h2>
+            <span className="font-mono text-xs text-slate-400">({unitTools.length})</span>
+            <span className="h-px flex-1 bg-line" />
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {unitTools.map((tool) => (
+              <ToolCard key={tool.slug} tool={tool} />
+            ))}
+          </div>
+        </section>
+      )}
 
       {unit.topics.length > 0 && (
         <section id="topics" className="mb-12 scroll-mt-24">
@@ -150,14 +172,14 @@ export default async function UnitPage({ params }: PageProps<"/chapters/[unit]">
             <h2 className="font-mono text-xs font-bold uppercase tracking-widest text-slate-400">
               Topics
             </h2>
-            <span className="h-px flex-1 bg-zinc-200" />
+            <span className="h-px flex-1 bg-line" />
           </div>
           <ul className="grid gap-2 sm:grid-cols-2">
             {unit.topics.map((topic, index) => (
               <li key={topic.slug}>
                 <Link
                   href={`/chapters/${unit.slug}/${topic.slug}`}
-                  className="group flex items-center justify-between gap-2 rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm font-medium text-ink transition-colors hover:border-brand/40 hover:bg-brand-soft hover:text-brand"
+                  className="group flex items-center justify-between gap-2 rounded-xl border border-line bg-white px-4 py-3 text-sm font-medium text-ink transition-colors hover:border-brand/40 hover:bg-brand-soft hover:text-brand"
                 >
                   <span className="truncate">
                     <span className="mr-2 font-mono text-xs text-slate-400">{index + 1}.</span>
@@ -181,7 +203,7 @@ export default async function UnitPage({ params }: PageProps<"/chapters/[unit]">
             Resources
           </h2>
           <span className="font-mono text-xs text-slate-400">({resources.length})</span>
-          <span className="h-px flex-1 bg-zinc-200" />
+          <span className="h-px flex-1 bg-line" />
         </div>
         <ResourceList resources={resources} />
       </section>

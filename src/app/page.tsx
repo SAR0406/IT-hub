@@ -3,13 +3,12 @@ import { UnitCard } from "@/components/UnitCard";
 import {
   BookSketch,
   CapSketch,
-  CheckSketch,
   CodeSketch,
   FloatBook,
   FloatBulb,
   FloatPlant,
   HeroSketch,
-  PaperSketch,
+  QuizSketch,
   RobotSketch,
   SparkleSketch,
   StarSketch,
@@ -20,45 +19,43 @@ import { getSessionProfile } from "@/lib/auth";
 import { getResourceCountsByUnit } from "@/lib/resources";
 import { UNITS } from "@/lib/syllabus";
 
-const FEATURES = [
+/** The learning loop — every card is a real route into the product. */
+const MOVES = [
   {
     icon: BookSketch,
-    chip: "bg-aqua/30",
-    title: "Learn Anywhere",
-    text: "Every unit in one place — notes, worksheets, practicals and question papers, sorted exactly the way the CBSE syllabus is.",
+    chip: "bg-aqua/40",
+    number: "01",
+    title: "Learn",
+    text: "Notes, worksheets, practicals and question papers — every unit in one place, sorted by the CBSE syllabus.",
+    href: "/chapters",
+    cta: "Open chapters",
   },
   {
-    icon: CodeSketch,
-    chip: "bg-mint/30",
-    title: "Practice & Build",
-    text: "SQL, Java and networking practicals you can actually work through — download the worksheets and build the projects yourself.",
+    icon: QuizSketch,
+    chip: "bg-lilac/45",
+    number: "02",
+    title: "Practice",
+    text: "Unit-wise MCQ quizzes with instant scoring, explanations and unlimited retakes to beat your best.",
+    href: "/quizzes",
+    cta: "Take a quiz",
   },
   {
     icon: RobotSketch,
-    chip: "bg-blush/30",
-    title: "AI Help Anytime",
-    text: "Your teacher sees what you're working on, and an AI tutor is planned to help you out when you get stuck at night.",
-  },
-];
-
-const STEPS = [
-  {
-    icon: PaperSketch,
-    chip: "bg-sun/30",
-    title: "Create your account",
-    text: "Sign up with your name and class — it takes under a minute.",
+    chip: "bg-blush/40",
+    number: "03",
+    title: "Ask AI",
+    text: "A class chat with an AI tutor that answers from your own archive — with real file links and daily limits.",
+    href: "/chat",
+    cta: "Open the room",
   },
   {
-    icon: CheckSketch,
-    chip: "bg-mint/30",
-    title: "You’re in — instantly",
-    text: "No approvals, no waiting. Your account works the moment you create it.",
-  },
-  {
-    icon: BookSketch,
-    chip: "bg-aqua/30",
-    title: "Study anywhere",
-    text: "Open chapters, search topics, download worksheets — all in one hub.",
+    icon: CodeSketch,
+    chip: "bg-mint/40",
+    number: "04",
+    title: "Tools",
+    text: "Run SQL in your browser, calculate transfer times, check passwords — every tool tied to its chapter.",
+    href: "/tools",
+    cta: "Browse tools",
   },
 ];
 
@@ -93,31 +90,27 @@ export default async function HomePage() {
             <div className="rise-in rise-in-4 mt-8 flex flex-col gap-3 sm:flex-row">
               <Link
                 href={primaryHref}
-                className="flex h-12 items-center justify-center rounded-xl bg-brand px-7 text-base font-semibold text-white shadow-soft transition-all hover:-translate-y-0.5 hover:bg-brand-strong hover:shadow-lift"
+                className="btn-primary flex h-12 items-center justify-center rounded-xl px-7 text-base font-semibold"
               >
                 {primaryLabel}
               </Link>
               <Link
                 href="/chapters"
-                className="flex h-12 items-center justify-center rounded-xl bg-white px-7 text-base font-semibold text-ink shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-lift"
+                className="btn-secondary flex h-12 items-center justify-center rounded-xl px-7 text-base font-semibold"
               >
                 Explore chapters
               </Link>
             </div>
 
-            {/* Real numbers, right under the CTAs */}
             <dl className="rise-in rise-in-4 mt-8 flex flex-wrap gap-3">
               {[
                 { value: "6", label: "units — the full syllabus" },
-                {
-                  value: String(totalResources),
-                  label: "resources live",
-                },
+                { value: String(totalResources), label: "resources live" },
                 { value: "6", label: "formats — notes to QPs" },
               ].map((stat) => (
                 <div
                   key={stat.label}
-                  className="flex items-baseline gap-2 rounded-xl bg-white px-4 py-2.5 shadow-soft"
+                  className="flex items-baseline gap-2 rounded-xl border border-line bg-white px-4 py-2.5"
                 >
                   <dt className="sr-only">{stat.label}</dt>
                   <dd className="font-mono text-lg font-bold text-ink">{stat.value}</dd>
@@ -135,79 +128,45 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Features */}
-      <section id="features" className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-        <div className="mx-auto max-w-xl text-center">
-          <h2 className="text-2xl font-bold tracking-tight text-ink sm:text-3xl">
-            Why Learn With IT Hub 11
-          </h2>
-          <svg viewBox="0 0 240 14" fill="none" aria-hidden className="mx-auto mt-3 h-3.5 w-48">
-            <path
-              d="M6 9 C 60 3, 120 13, 234 6"
-              stroke="#db2777"
-              strokeWidth="3"
-              strokeLinecap="round"
-            />
-            <path
-              d="M24 12 C 90 8, 160 12, 210 8"
-              stroke="#0891b2"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-            />
-          </svg>
+      {/* The learning loop */}
+      <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+        <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="font-mono text-xs font-medium text-brand">the loop</p>
+            <h2 className="mt-1 text-2xl font-bold tracking-tight text-ink sm:text-3xl">
+              One path, four moves
+            </h2>
+          </div>
+          <p className="max-w-sm text-sm leading-relaxed text-mist">
+            Read, practise, ask and experiment — each step feeds the next.
+          </p>
         </div>
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {FEATURES.map((feature) => (
-            <div
-              key={feature.title}
-              className="rounded-2xl border-l-4 border-teal bg-white p-6 shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-lift"
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {MOVES.map((move) => (
+            <Link
+              key={move.number}
+              href={move.href}
+              className="group flex flex-col gap-4 rounded-2xl border border-line bg-white p-6 transition-all hover:-translate-y-1 hover:border-brand/40 hover:shadow-soft"
             >
-              <span
-                className={`flex h-11 w-11 items-center justify-center rounded-full ${feature.chip} transition-transform hover:-rotate-6`}
-              >
-                <feature.icon width={22} height={22} />
-              </span>
-              <h3 className="mt-4 font-display text-lg font-bold tracking-tight text-ink">
-                {feature.title}
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-mist">{feature.text}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Getting started */}
-      <section className="bg-white">
-        <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-          <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <p className="font-mono text-xs font-medium text-brand">three steps</p>
-              <h2 className="mt-1 text-2xl font-bold tracking-tight text-ink sm:text-3xl">
-                Getting started
-              </h2>
-            </div>
-          </div>
-          <div className="grid gap-6 sm:grid-cols-3">
-            {STEPS.map((step, index) => (
-              <div
-                key={step.title}
-                className="relative rounded-2xl bg-paper p-6 shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-lift"
-              >
-                <span className="absolute right-5 top-4 font-mono text-xs font-semibold text-slate-400">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
+              <div className="flex items-center justify-between gap-3">
                 <span
-                  className={`flex h-11 w-11 items-center justify-center rounded-full ${step.chip}`}
+                  className={`flex h-11 w-11 items-center justify-center rounded-full ${move.chip} transition-transform group-hover:-rotate-6`}
                 >
-                  <step.icon width={22} height={22} />
+                  <move.icon width={22} height={22} />
                 </span>
-                <h3 className="mt-4 font-display text-lg font-bold tracking-tight text-ink">
-                  {step.title}
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-mist">{step.text}</p>
+                <span className="font-mono text-xs font-bold text-slate-400">{move.number}</span>
               </div>
-            ))}
-          </div>
+              <div>
+                <h3 className="font-display text-lg font-bold tracking-tight text-ink">
+                  {move.title}
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-mist">{move.text}</p>
+              </div>
+              <span className="mt-auto text-sm font-semibold text-brand transition-colors group-hover:text-brand-strong">
+                {move.cta} →
+              </span>
+            </Link>
+          ))}
         </div>
       </section>
 
@@ -226,12 +185,12 @@ export default async function HomePage() {
           </div>
           <Link
             href="/chapters"
-            className="text-sm font-semibold text-teal transition-colors hover:text-ink"
+            className="text-sm font-semibold text-brand transition-colors hover:text-brand-strong"
           >
             View all chapters →
           </Link>
         </div>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {UNITS.map((unit, index) => (
             <UnitCard
               key={unit.slug}
@@ -245,43 +204,39 @@ export default async function HomePage() {
       </section>
 
       {/* Testimonial */}
-      <section className="relative overflow-hidden bg-sky-100">
-        <SparkleSketch className="absolute left-[6%] top-10 h-6 w-6 opacity-70" />
-        <SparkleSketch className="absolute bottom-10 right-[8%] h-5 w-5 opacity-60" />
-        <div className="mx-auto max-w-3xl px-4 py-16 text-center sm:px-6 sm:py-20">
-          <div className="flex justify-center gap-1.5" aria-hidden>
-            <StarSketch width={18} height={18} />
-            <StarSketch width={18} height={18} />
-            <StarSketch width={18} height={18} />
-            <StarSketch width={18} height={18} />
-            <StarSketch width={18} height={18} />
-          </div>
-          <figure className="mt-6 rounded-2xl bg-white p-8 shadow-soft sm:p-10">
-            <span
-              className="block leading-none text-blush"
-              style={{ fontFamily: "var(--font-instrument-serif)" }}
-              aria-hidden
-            >
-              &ldquo;
-            </span>
-            <blockquote className="-mt-3 text-lg leading-relaxed text-ink">
-              Everything for IT 402 in one place — notes, worksheets and practicals.
-              No more hunting across class groups when an exam is coming.
-            </blockquote>
-            <figcaption className="mt-6 flex items-center justify-center gap-3">
-              <TestimonialAvatar width={44} height={44} />
-              <span className="text-left">
-                <span className="block text-sm font-bold text-ink">A Class 11 student</span>
-                <span className="block text-xs text-mist">Information Technology (402)</span>
-              </span>
-            </figcaption>
-          </figure>
+      <section className="mx-auto max-w-3xl px-4 py-16 sm:px-6">
+        <div className="flex justify-center gap-1.5" aria-hidden>
+          <StarSketch width={18} height={18} />
+          <StarSketch width={18} height={18} />
+          <StarSketch width={18} height={18} />
+          <StarSketch width={18} height={18} />
+          <StarSketch width={18} height={18} />
         </div>
+        <figure className="mt-6 rounded-3xl border border-line bg-white p-8 text-center sm:p-10">
+          <span
+            className="block text-4xl leading-none text-blush"
+            style={{ fontFamily: "var(--font-instrument-serif)" }}
+            aria-hidden
+          >
+            &ldquo;
+          </span>
+          <blockquote className="mt-2 text-lg leading-relaxed text-ink">
+            Everything for IT 402 in one place — notes, worksheets and practicals.
+            No more hunting across class groups when an exam is coming.
+          </blockquote>
+          <figcaption className="mt-6 flex items-center justify-center gap-3">
+            <TestimonialAvatar width={44} height={44} />
+            <span className="text-left">
+              <span className="block text-sm font-bold text-ink">A Class 11 student</span>
+              <span className="block text-xs text-mist">Information Technology (402)</span>
+            </span>
+          </figcaption>
+        </figure>
       </section>
 
       {/* Teachers band */}
-      <section className="bg-white">
-        <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-16 sm:px-6 lg:grid-cols-2">
+      <section className="border-y border-line bg-white">
+        <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-14 sm:px-6 lg:grid-cols-2">
           <div className="order-2 lg:order-1">
             <TeacherSketch className="mx-auto w-full max-w-sm" />
           </div>
@@ -291,13 +246,13 @@ export default async function HomePage() {
               For teachers: one panel to manage it all
             </h2>
             <p className="mt-3 max-w-lg text-sm leading-relaxed text-mist">
-              Upload material, create or approve student accounts, and review
-              activity — every download, search and sign-in is logged, with flags
+              Upload material, create quizzes, review student records and read the
+              activity log — every download, search and sign-in tracked, with flags
               raised automatically for anything that looks off.
             </p>
             <Link
               href="/login"
-              className="mt-7 inline-flex h-11 items-center justify-center rounded-xl border-2 border-brand px-6 text-sm font-semibold text-brand transition-all hover:-translate-y-0.5 hover:bg-brand hover:text-white"
+              className="btn-secondary mt-7 inline-flex h-11 items-center justify-center rounded-xl px-6 text-sm font-semibold"
             >
               Teacher sign in
             </Link>

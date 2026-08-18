@@ -50,7 +50,7 @@ function parsePositive(value: string): number | null {
   return Number.isFinite(number) && number > 0 ? number : null;
 }
 
-export function CalculatorsClient() {
+export function NetworkCalculators() {
   const [transfer, setTransfer] = useState<TransferState>({
     size: "",
     sizeUnit: "Mb",

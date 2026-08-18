@@ -1,47 +1,54 @@
 @import "tailwindcss";
 
 :root {
-  --background: #faf8f6;
-  --foreground: #1e293b;
+  --background: #f6f6f3;
+  --foreground: #172033;
 
   /* Brand accent (pink) — the default hue. Each section overrides these
      three variables (see .accent-* below) so the site is multi-color while
      every component keeps using the single brand-* token family. */
-  --brand: #db2777;
-  --brand-strong: #be185d;
-  --brand-soft: #fce7f3;
+  --brand: #0f5fd6;
+  --brand-strong: #0b4cb0;
+  --brand-soft: #dbeafe;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 
-  /* Warm off-white paper */
-  --color-paper: #faf8f6;
+  /* Warm off-white paper — the page canvas */
+  --color-paper: #f7f6f2;
+  /* Hairline rule — cards, dividers, inputs (one border color site-wide) */
+  --color-line: #e7e4dc;
   /* Dark navy — headings and primary text */
-  --color-ink: #1e293b;
-  --color-ink-soft: #0f172a;
+  --color-ink: #191d26;
+  --color-ink-soft: #0d1422;
   /* Accent hue — inherits from the section scope (--brand etc.) */
   --color-brand: var(--brand, #db2777);
   --color-brand-strong: var(--brand-strong, #be185d);
   --color-brand-soft: var(--brand-soft, #fce7f3);
   /* Warm gray — secondary text (AA-safe on paper) */
-  --color-mist: #475569;
+  --color-mist: #4c5464;
   /* Secondary accents */
-  --color-teal: #0891b2;
-  --color-emerald: #10b981;
-  /* Pastel decorative accents */
-  --color-sun: #fcd34d;
-  --color-mint: #86efac;
-  --color-aqua: #7dd3d3;
-  --color-blush: #f4a4d4;
+  --color-teal: #0b8f86;
+  --color-emerald: #0e9f6e;
+  /* Pastel decorative accents — one per unit, so chapters are
+     distinguishable at a glance */
+  --color-sun: #f5cc58;
+  --color-mint: #9be5b4;
+  --color-aqua: #9fdfe4;
+  --color-blush: #efb4c6;
+  --color-lilac: #cfc3ee;
+  --color-peach: #f6cdab;
 
-  /* Soft shadows — never harsh */
-  --shadow-soft: 0 4px 12px rgba(30, 41, 59, 0.08);
-  --shadow-lift: 0 12px 24px rgba(30, 41, 59, 0.12);
+  /* Elevation: surfaces are flat by default. Shadows are reserved for
+     hover moments and floating layers (menus, modals) — never resting
+     cards. */
+  --shadow-soft: 0 1px 2px rgba(25, 29, 38, 0.04), 0 4px 12px rgba(25, 29, 38, 0.06);
+  --shadow-lift: 0 2px 4px rgba(25, 29, 38, 0.05), 0 16px 32px rgba(25, 29, 38, 0.12);
 
   --font-sans: var(--font-inter), system-ui, sans-serif;
-  --font-display: var(--font-inter), system-ui, sans-serif;
+  --font-display: var(--font-space-grotesk), var(--font-inter), system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 }
 
@@ -91,10 +98,61 @@
 }
 
 body {
-  background: var(--color-paper);
+  background:
+    radial-gradient(1200px 500px at 10% -10%, color-mix(in srgb, var(--color-aqua) 28%, transparent), transparent 65%),
+    radial-gradient(800px 400px at 95% 5%, color-mix(in srgb, var(--color-brand-soft) 80%, white 20%), transparent 70%),
+    var(--color-paper);
   color: var(--color-foreground);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+}
+
+/* Shared visual primitives — flat by default; elevation only on hover or
+   for floating layers. */
+.surface-card {
+  border: 1px solid var(--color-line);
+  background: color-mix(in srgb, white 96%, var(--color-brand-soft) 4%);
+}
+
+.surface-elevated {
+  border: 1px solid color-mix(in srgb, var(--color-brand) 18%, white);
+  background: white;
+  box-shadow: var(--shadow-lift);
+}
+
+.pill-muted {
+  border: 1px solid var(--color-line);
+  background: color-mix(in srgb, var(--color-paper) 72%, white 28%);
+}
+
+.btn-primary {
+  background: var(--color-brand);
+  color: white;
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--color-brand) 30%, transparent);
+  transition:
+    background-color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.btn-primary:hover {
+  background: var(--color-brand-strong);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  border: 1px solid var(--color-line);
+  background: white;
+  color: var(--color-ink);
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.btn-secondary:hover {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--color-brand) 45%, white);
+  color: var(--color-brand-strong);
 }
 
 /* Visible, consistent focus states for keyboard navigation */
@@ -105,8 +163,8 @@ body {
 }
 
 ::selection {
-  background: #fce7f3;
-  color: #831843;
+  background: var(--color-blush);
+  color: var(--color-ink);
 }
 
 /* Blinking block caret — the signature motif, borrowed from a terminal. */

@@ -11,7 +11,7 @@ const NAV_LINKS = [
   { href: "/", label: "Home" },
   { href: "/chapters", label: "Chapters" },
   { href: "/quizzes", label: "Quizzes" },
-  { href: "/lab/sql", label: "SQL Lab" },
+  { href: "/tools", label: "Tools" },
   { href: "/search", label: "Search" },
   { href: "/chat", label: "Chat" },
   { href: "/about", label: "About" },
@@ -40,30 +40,34 @@ export function Navbar({ profile }: { profile: Profile | null }) {
   const links = profile?.role === "admin" ? [...NAV_LINKS, { href: "/admin", label: "Admin" }] : NAV_LINKS;
 
   return (
-    <header className="sticky top-0 z-50 border-b border-zinc-200/80 bg-white/85 backdrop-blur">
+    <header className="sticky top-0 z-50 border-b border-line bg-paper/85 backdrop-blur-xl">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-brand/10 via-brand/70 to-teal/40"
+      />
       <nav
-        className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6"
+        className="mx-auto flex h-[72px] max-w-6xl items-center justify-between px-4 sm:px-6"
         aria-label="Main navigation"
       >
         <Link href="/" className="group flex items-center gap-2.5">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand font-mono text-sm font-bold text-white shadow-soft transition-transform group-hover:-translate-y-0.5">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-brand to-brand-strong font-mono text-sm font-bold text-white shadow-soft transition-transform group-hover:-translate-y-0.5">
             11
           </span>
-          <span className="font-display text-[15px] font-bold tracking-tight text-ink">
+          <span className="font-display text-base font-bold tracking-tight text-ink">
             IT Hub <span className="text-brand">11</span>
           </span>
         </Link>
 
-        <div className="hidden items-center gap-1 md:flex">
+        <div className="surface-card hidden items-center gap-1 rounded-2xl p-1 md:flex">
           {links.map((link) => (
             <Link
               key={link.href}
               href={link.href}
               aria-current={isActive(pathname, link.href) ? "page" : undefined}
-              className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+              className={`rounded-xl px-3.5 py-2 text-sm font-semibold transition-all ${
                 isActive(pathname, link.href)
-                  ? "bg-brand-soft text-brand-strong"
-                  : "text-slate-600 hover:bg-slate-100 hover:text-ink"
+                  ? "bg-white text-brand-strong shadow-soft"
+                  : "text-slate-600 hover:bg-white/85 hover:text-ink"
               }`}
             >
               {link.label}
@@ -76,16 +80,16 @@ export function Navbar({ profile }: { profile: Profile | null }) {
             <>
               <Link
                 href={homeHref}
-                className="flex items-center gap-2 rounded-full border border-zinc-200 bg-white py-1 pl-1 pr-3 transition-colors hover:border-brand/40"
+                className="surface-card flex items-center gap-2 rounded-full py-1 pl-1 pr-3 transition-colors hover:border-brand/40"
                 title={profile.full_name}
               >
-                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brand text-[11px] font-bold text-white">
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-strong text-[11px] font-bold text-white">
                   {initials(profile.full_name)}
                 </span>
                 <span className="text-sm font-semibold text-ink">
                   {profile.full_name.split(" ")[0]}
                 </span>
-                <span className="rounded-full bg-slate-100 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-slate-500">
+                <span className="pill-muted rounded-full px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-slate-500">
                   {profile.role === "admin" ? "Admin" : "Student"}
                 </span>
               </Link>
@@ -94,7 +98,7 @@ export function Navbar({ profile }: { profile: Profile | null }) {
           ) : (
             <Link
               href="/login"
-              className="flex h-9 items-center rounded-lg bg-brand px-4 text-sm font-semibold text-white shadow-soft transition-all hover:-translate-y-0.5 hover:bg-brand-strong hover:shadow-lift"
+              className="btn-primary flex h-10 items-center rounded-xl px-4 text-sm font-semibold transition-all"
             >
               Get Started
             </Link>
@@ -104,7 +108,7 @@ export function Navbar({ profile }: { profile: Profile | null }) {
         <button
           type="button"
           onClick={() => setMenuOpen((open) => !open)}
-          className="flex h-10 w-10 items-center justify-center rounded-lg text-ink hover:bg-slate-100 md:hidden"
+          className="surface-card flex h-10 w-10 items-center justify-center rounded-xl text-ink hover:bg-white md:hidden"
           aria-label={menuOpen ? "Close menu" : "Open menu"}
           aria-expanded={menuOpen}
         >
@@ -113,11 +117,11 @@ export function Navbar({ profile }: { profile: Profile | null }) {
       </nav>
 
       {menuOpen && (
-        <div className="border-t border-zinc-200 bg-white px-4 py-2 md:hidden">
+        <div className="border-t border-line bg-paper/95 px-4 py-3 backdrop-blur md:hidden">
           {profile && (
-            <div className="mb-2 flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2.5">
+            <div className="surface-card mb-2 flex items-center justify-between rounded-2xl px-3 py-2.5">
               <Link href={homeHref} className="flex min-w-0 items-center gap-2.5" onClick={() => setMenuOpen(false)}>
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand text-xs font-bold text-white">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-strong text-xs font-bold text-white">
                   {initials(profile.full_name)}
                 </span>
                 <span className="min-w-0">
@@ -156,7 +160,7 @@ export function Navbar({ profile }: { profile: Profile | null }) {
               href={link.href}
               onClick={() => setMenuOpen(false)}
               aria-current={isActive(pathname, link.href) ? "page" : undefined}
-              className={`block rounded-lg px-3 py-3 text-base font-medium ${
+              className={`mb-1 block rounded-xl px-3 py-3 text-base font-medium ${
                 isActive(pathname, link.href)
                   ? "bg-brand-soft text-brand-strong"
                   : "text-slate-700 hover:bg-slate-100"
@@ -169,7 +173,7 @@ export function Navbar({ profile }: { profile: Profile | null }) {
             <Link
               href="/login"
               onClick={() => setMenuOpen(false)}
-              className="mt-2 flex h-11 items-center justify-center rounded-lg bg-brand text-sm font-semibold text-white"
+              className="btn-primary mt-2 flex h-11 items-center justify-center rounded-xl text-sm font-semibold transition-all"
             >
               Sign in
             </Link>

@@ -38,16 +38,20 @@ export function AppChrome({
           ? "accent-scope-emerald"
           : pathname.startsWith("/admin")
             ? "accent-scope-indigo"
-            : pathname.startsWith("/lab")
+            : pathname.startsWith("/tools")
             ? "accent-scope-sky"
             : pathname === "/login" || pathname === "/register"
               ? "accent-scope-blue"
               : "";
 
   return (
-    <div className={`flex min-h-dvh flex-col ${accent}`}>
+    <div className={`relative flex min-h-dvh flex-col ${accent}`}>
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-white/85 via-white/35 to-transparent"
+      />
       <Navbar profile={profile} />
-      <main className="flex-1">{children}</main>
+      <main className="relative z-10 flex-1">{children}</main>
       <Footer />
       {profile && <ActivityTracker />}
     </div>

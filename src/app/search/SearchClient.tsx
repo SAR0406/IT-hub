@@ -55,21 +55,36 @@ export default function SearchClient() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
-      <p className="font-mono text-xs text-brand">~/it-hub-11/search</p>
-      <h1 className="mt-1 font-display text-3xl font-bold tracking-tight text-ink sm:text-4xl">
-        Search
-      </h1>
-      <p className="mt-3 text-base text-slate-500">
-        Find notes, worksheets, practicals and question papers across every unit.
-      </p>
+      <div className="surface-card rounded-3xl p-6 sm:p-8">
+        <p className="font-mono text-xs font-semibold uppercase tracking-[0.14em] text-brand">
+          ~/it-hub-11/search
+        </p>
+        <h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-ink sm:text-4xl">
+          Search
+        </h1>
+        <p className="mt-3 text-base text-slate-600">
+          Find notes, worksheets, practicals and question papers across every unit.
+        </p>
+        <div className="mt-5 flex flex-wrap gap-2">
+          <span className="pill-muted rounded-full px-3 py-1.5 font-mono text-[11px] font-semibold text-mist">
+            Instant filtering
+          </span>
+          <span className="pill-muted rounded-full px-3 py-1.5 font-mono text-[11px] font-semibold text-mist">
+            Unit-aware results
+          </span>
+          <span className="pill-muted rounded-full px-3 py-1.5 font-mono text-[11px] font-semibold text-mist">
+            Notes, practicals, papers
+          </span>
+        </div>
+      </div>
 
-      <div className="mt-8">
+      <div className="mt-7">
         <SearchBar value={query} onChange={setQuery} autoFocus />
       </div>
 
       <div className="mt-8" aria-live="polite">
         {!hasQuery && (
-          <p className="rounded-2xl border border-dashed border-zinc-300 bg-white px-6 py-10 text-center font-mono text-sm text-slate-500">
+          <p className="surface-card rounded-2xl border-dashed px-6 py-10 text-center font-mono text-sm text-slate-500">
             &gt; type at least two characters — try &ldquo;mysql&rdquo;, &ldquo;java&rdquo; or &ldquo;key&rdquo;
           </p>
         )}
@@ -83,7 +98,7 @@ export default function SearchClient() {
         )}
 
         {!loading && result?.error && (
-          <div className="rounded-2xl border border-red-200 bg-red-50 px-6 py-10 text-center">
+          <div className="rounded-2xl border border-red-200 bg-red-50/90 px-6 py-10 text-center">
             <p className="font-semibold text-red-700">Something went wrong.</p>
             <p className="mt-1 text-sm text-red-600">
               Could not search right now. Please try again.
@@ -97,7 +112,7 @@ export default function SearchClient() {
 
         {!loading && result && !result.error && result.resources.length > 0 && (
           <div>
-            <p className="mb-4 font-mono text-xs text-slate-500">
+            <p className="mb-4 font-mono text-xs font-semibold text-slate-500">
               &gt; {result.resources.length} result
               {result.resources.length === 1 ? "" : "s"} for{" "}
               <span className="font-semibold text-ink">“{result.query}”</span>

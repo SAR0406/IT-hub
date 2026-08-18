@@ -76,8 +76,8 @@ export default function SqlPlayground() {
     getDb()
       .then(() => setReady(true))
       .catch((err) => {
-        console.error("[lab] failed to boot PGlite:", err);
-        setError("The lab couldn't start in this browser. Try a newer browser or refresh.");
+        console.error("[sql-playground] failed to boot PGlite:", err);
+        setError("The playground couldn't start in this browser. Try a newer browser or refresh.");
       })
       .finally(() => setBooting(false));
     return () => {
@@ -132,7 +132,7 @@ export default function SqlPlayground() {
     <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-soft">
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-zinc-200 bg-ink px-4 py-3">
         <p className="font-mono text-[11px] text-slate-300">
-          <span className="text-blush">LAB / SQL-01</span> · postgres · wasm
+          <span className="text-blush">TOOL / SQL-01</span> · postgres · wasm
         </p>
         <div className="flex items-center gap-2">
           <button

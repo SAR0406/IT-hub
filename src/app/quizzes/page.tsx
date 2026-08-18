@@ -34,6 +34,7 @@ export default async function QuizzesPage() {
     unit,
     quizzes: (quizzes ?? []).filter((quiz) => quiz.unit_slug === unit.slug),
   })).filter((group) => group.quizzes.length > 0);
+  const quizCount = byUnit.reduce((sum, group) => sum + group.quizzes.length, 0);
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
@@ -44,19 +45,32 @@ export default async function QuizzesPage() {
         ]}
       />
 
-      <div className="mb-10">
-        <p className="font-mono text-xs text-brand">~/it-hub-11/quizzes</p>
-        <h1 className="mt-1 font-display text-3xl font-bold tracking-tight text-ink sm:text-4xl">
+      <div className="surface-card mb-10 rounded-3xl p-6 sm:p-8">
+        <p className="font-mono text-xs font-semibold uppercase tracking-[0.14em] text-brand">
+          ~/it-hub-11/quizzes
+        </p>
+        <h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-ink sm:text-4xl">
           Quizzes
         </h1>
-        <p className="mt-3 max-w-2xl text-base text-slate-500">
-          Practise each unit with multiple-choice quizzes. Instant scores, unlimited
-          retakes — your best score is saved.
+        <p className="mt-3 max-w-2xl text-base text-slate-600">
+          Practice unit-wise MCQs, track attempts over time, and improve with
+          repeatable quiz loops.
         </p>
+        <div className="mt-5 flex flex-wrap gap-2">
+          <span className="pill-muted rounded-full px-3 py-1.5 font-mono text-[11px] font-semibold text-mist">
+            {quizCount} live quizzes
+          </span>
+          <span className="pill-muted rounded-full px-3 py-1.5 font-mono text-[11px] font-semibold text-mist">
+            Best score is always saved
+          </span>
+          <span className="pill-muted rounded-full px-3 py-1.5 font-mono text-[11px] font-semibold text-mist">
+            Unlimited retakes
+          </span>
+        </div>
       </div>
 
       {byUnit.length === 0 ? (
-        <div className="flex flex-col items-center rounded-2xl border border-zinc-200 bg-white px-6 py-16 text-center">
+        <div className="surface-card flex flex-col items-center rounded-2xl px-6 py-16 text-center">
           <QuizSketch width={44} height={44} />
           <h2 className="mt-5 font-display text-xl font-bold tracking-tight text-ink">
             No quizzes yet
@@ -67,7 +81,7 @@ export default async function QuizzesPage() {
           </p>
           <Link
             href="/chapters"
-            className="mt-6 inline-flex h-11 items-center justify-center rounded-xl bg-brand px-6 text-sm font-semibold text-white shadow-soft transition-all hover:-translate-y-0.5 hover:bg-brand-strong"
+            className="btn-primary mt-6 inline-flex h-11 items-center justify-center rounded-xl px-6 text-sm font-semibold transition-all"
           >
             Go to chapters
           </Link>
@@ -77,10 +91,10 @@ export default async function QuizzesPage() {
           {byUnit.map(({ unit, quizzes: unitQuizzes }) => (
             <section key={unit.slug}>
               <div className="mb-4 flex items-center gap-3">
-                <h2 className="font-mono text-xs font-bold uppercase tracking-widest text-slate-400">
+                <h2 className="font-mono text-xs font-bold uppercase tracking-[0.16em] text-slate-500">
                   {unit.name}
                 </h2>
-                <span className="h-px flex-1 bg-zinc-200" />
+                <span className="h-px flex-1 bg-zinc-300" />
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
                 {unitQuizzes.map((quiz) => {
@@ -91,14 +105,14 @@ export default async function QuizzesPage() {
                     <Link
                       key={quiz.id}
                       href={`/quizzes/${quiz.id}`}
-                      className="group flex flex-col rounded-2xl bg-white p-6 shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-lift"
+                      className="group surface-card flex flex-col rounded-2xl p-6 transition-all hover:-translate-y-0.5 hover:shadow-lift"
                     >
                       <div className="flex items-center justify-between gap-3">
                         <span className="flex h-10 w-10 items-center justify-center rounded-full bg-sky-100 transition-transform group-hover:-rotate-6">
                           <QuizSketch width={22} height={22} />
                         </span>
                         {best && (
-                          <span className="rounded-full bg-mint/40 px-2.5 py-1 font-mono text-[11px] font-bold text-ink">
+                          <span className="rounded-full bg-mint/45 px-2.5 py-1 font-mono text-[11px] font-bold text-ink">
                             Best: {best.score}/{best.total}
                           </span>
                         )}
@@ -117,7 +131,7 @@ export default async function QuizzesPage() {
                           ? `${attempts} ${attempts === 1 ? "attempt" : "attempts"} so far`
                           : "not attempted yet"}
                       </p>
-                      <span className="mt-3 inline-flex h-10 items-center justify-center rounded-lg bg-brand px-4 text-sm font-semibold text-white transition-colors group-hover:bg-brand-strong">
+                      <span className="btn-primary mt-3 inline-flex h-10 items-center justify-center rounded-lg px-4 text-sm font-semibold transition-all">
                         {best ? "Retake quiz" : "Start quiz"}
                       </span>
                     </Link>

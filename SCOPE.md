@@ -156,7 +156,7 @@ Rationale: leaderboards in a classroom create losers, not learners. CUT stands.
 | Feature | Status |
 |---|---|
 | Concepts, keys, terminology, SQL/MySQL notes | SHIPPED (resources) |
-| **SQL playground: browser editor, client-side execution (PGlite), missions, error explanations** | **V2 — next build** |
+| **SQL playground: browser editor, client-side execution (PGlite), missions, error explanations** | **V2 — next build** (DONE; now the SQL Playground tool under `/tools`, owned by this chapter) |
 | Key visualizer | V3 |
 
 ## 15. Fundamentals of Java
@@ -267,6 +267,12 @@ Motivated by the actual school situation. Do this before any simulator work.
 11. **V2 — chapter ladder**: Learn → Practice → Quiz progression card on `/chapters/[unit]`.
     Status from real signals (resource_open / resource_download / quiz attempt in the
     unit), not self-reported. Ladder presentational only — nothing is locked. — DONE
+12. **V2 — Tools system**: the `/lab` section is restructured into `/tools`. Every tool
+    (SQL playground, network calculators, e-waste calculator, password checklist,
+    cybersecurity guide, utility walkthroughs) is registered in `src/lib/tools.ts` with
+    the chapter it belongs to, surfaced on `/tools` (grouped by chapter) and on the
+    owning chapter page. "SQL Lab" renamed to "Tools" in navigation; old `/lab/*` URLs
+    redirect permanently. — DONE
 
 Rule for anything after that: one feature at a time, marked V2 or higher in this
 doc before a line of code is written.

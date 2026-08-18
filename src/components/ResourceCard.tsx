@@ -23,7 +23,7 @@ export function ResourceCard({ resource }: { resource: ResourceWithLabels }) {
   const isDemo = resource.title.toLowerCase().startsWith("demo");
 
   return (
-    <article className="group flex flex-col gap-4 rounded-2xl border border-zinc-200 bg-white p-5 transition-all hover:border-brand/40 hover:shadow-lg hover:shadow-indigo-100/50">
+    <article className="group flex flex-col gap-4 rounded-2xl border border-line bg-white p-5 transition-all hover:-translate-y-0.5 hover:border-brand/40 hover:shadow-soft">
       <div className="flex items-start gap-4">
         <span
           className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl font-mono text-base font-bold ${styles.tile}`}
@@ -68,7 +68,7 @@ export function ResourceCard({ resource }: { resource: ResourceWithLabels }) {
         </Link>
         <Link
           href={`/api/files/${resource.id}/download`}
-          className="flex h-10 flex-1 items-center justify-center gap-2 rounded-lg border border-zinc-300 bg-white px-4 text-sm font-semibold text-ink transition-colors hover:border-brand/50 hover:text-brand"
+          className="flex h-10 flex-1 items-center justify-center gap-2 rounded-lg border border-line bg-white px-4 text-sm font-semibold text-ink transition-colors hover:border-brand/50 hover:text-brand"
         >
           <DownloadIcon width={15} height={15} />
           Download

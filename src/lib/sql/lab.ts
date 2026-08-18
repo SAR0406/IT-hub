@@ -1,5 +1,5 @@
 /**
- * SQL Lab — client-side sandbox data. Everything here runs inside the
+ * SQL Playground — client-side sandbox data. Everything here runs inside the
  * student's browser via PGlite (WebAssembly Postgres). The real database is
  * never touched.
  */

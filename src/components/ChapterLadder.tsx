@@ -64,7 +64,7 @@ export function ChapterLadder({ steps }: { steps: ChapterLadderStep[] }) {
 
   return (
     <section
-      className="rounded-2xl bg-white p-6 shadow-soft sm:p-8"
+      className="rounded-2xl border border-line bg-white p-6 sm:p-8"
       aria-label="Chapter ladder"
     >
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -78,14 +78,14 @@ export function ChapterLadder({ steps }: { steps: ChapterLadderStep[] }) {
 
       <div className="relative mt-5">
         <div
-          className="absolute left-1/2 top-[15px] hidden h-px w-[calc(100%-2rem)] -translate-x-1/2 border-t-2 border-dashed border-zinc-200 sm:block"
+          className="absolute left-1/2 top-[15px] hidden h-px w-[calc(100%-2rem)] -translate-x-1/2 border-t-2 border-dashed border-line sm:block"
           aria-hidden
         />
         <ol className="relative grid gap-3 sm:grid-cols-3">
           {steps.map((step) => (
             <li
               key={step.key}
-              className="flex flex-col rounded-xl border border-zinc-200 bg-paper p-4"
+              className="flex flex-col rounded-xl border border-line bg-paper p-4"
             >
               <div className="flex items-center gap-3">
                 {marker(step)}
@@ -106,7 +106,7 @@ export function ChapterLadder({ steps }: { steps: ChapterLadderStep[] }) {
                 )}
               </div>
               {step.meta && (
-                <p className="mt-3 border-t border-zinc-200 pt-2 font-mono text-[11px] text-mist">
+                <p className="mt-3 border-t border-line pt-2 font-mono text-[11px] text-mist">
                   {step.meta}
                 </p>
               )}
