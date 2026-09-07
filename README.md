@@ -60,6 +60,7 @@ These `NEXT_PUBLIC_*` values are public by design (browser-safe). `SUPABASE_SERV
    8. `20260816_create_resources_bucket.sql` — private `resources` bucket (25 MB limit)
    9. `20260816_seed_demo_students.sql` — optional demo students/activity/flags
    10. `20260816_fix_storage_insert_policy.sql` — storage insert allows unit-folder paths
+   11. `20260907_create_school_events.sql` — school memory wall table (`school_events`) for `/chapters`
 
    The storage policies in step 2 reference the bucket; the bucket-creation
    migration makes that a no-op risk by using `on conflict do nothing`, but if
@@ -85,6 +86,8 @@ These `NEXT_PUBLIC_*` values are public by design (browser-safe). `SUPABASE_SERV
   `open`/`reviewed`/`dismissed` status. Admins read and review; students can only raise
   their own.
 - `announcements` — teacher notices, shown at the top of the student dashboard.
+- `school_events` — non-academic school memories (photos, emoji, captions, event date), shown in the
+  warm Events section on `/chapters`.
 - `quizzes` / `quiz_attempts` — admin-built MCQ quizzes (questions stored as JSONB, answers
   revealed only to the server) with per-student attempt history and best scores.
 - `chat_messages` — real-time class chat (rooms: `general` + one per unit). RLS: signed-in
@@ -208,6 +211,7 @@ src/
   lib/
     syllabus.ts           # Hardcoded CBSE syllabus hierarchy (the source of truth)
     resources.ts          # Resource queries (search included)
+    events.ts             # School memory wall queries for /chapters events section
     auth.ts               # getSessionProfile, requireUser, requireAdmin guards
     activity.ts           # logActivity + misbehavior rules + admin log queries
     students.ts           # Admin CRUD for student accounts (service role)

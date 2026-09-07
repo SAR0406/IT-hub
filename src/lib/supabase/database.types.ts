@@ -371,6 +371,42 @@ resources: {
         }
         Relationships: []
       }
+      school_events: {
+        Row: {
+          created_at: string
+          description: string | null
+          display_order: number
+          emoji: string
+          event_date: string | null
+          id: string
+          is_published: boolean
+          photo_url: string | null
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          emoji?: string
+          event_date?: string | null
+          id?: string
+          is_published?: boolean
+          photo_url?: string | null
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          emoji?: string
+          event_date?: string | null
+          id?: string
+          is_published?: boolean
+          photo_url?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
