@@ -24,7 +24,7 @@ CI is `.github/workflows/ci.yml` (`lint → typecheck → build` on push/PR, Nod
 
 ## Environment gotchas
 
-- Use `npm` (`package-lock.json` is npm, not pnpm/yarn) — `npm ci` then `npm run dev`. Requires Node 18.17+ / 20.9+ for Next 16.
+- Use `npm` (`package-lock.json` is npm, not pnpm/yarn) — `npm ci` then `npm run dev`. Requires Node 22+ (`engines >=22`, CI uses 22; Supabase `2.112` + `openai 7.4` warn on 20).
 - No `.env.local` is committed. Without `NEXT_PUBLIC_SUPABASE_URL` + `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `src/lib/supabase/server.ts` throws and signed-in server pages crash (`getSessionProfile` degrades to null). The other keys degrade gracefully: `SUPABASE_SERVICE_ROLE_KEY` (student CRUD returns 501), `NVIDIA_API_KEY` (Ask AI room off), `TAVILY_API_KEY` (no web search).
 
 ## Architecture you'd otherwise get wrong
