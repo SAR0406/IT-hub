@@ -110,12 +110,12 @@ profile in one request: `student:profiles(full_name, email)`.
 
 ### Auth + session wiring
 
-- Session refresh + cookie rotation happens in `src/middleware.ts` (`updateSession`), so an
+- Session refresh + cookie rotation happens in `src/proxy.ts` (`updateSession` from `src/lib/supabase/middleware.ts`), so an
   auth cookie is refreshed on every navigation — not only when a page queries Supabase.
   Route guards live in the server components (`requireUser` / `requireAdmin`), not in
-  middleware, so redirect logic is not duplicated.
+  the proxy, so redirect logic is not duplicated.
 - Every Supabase client is typed with the generated `Database` type from
-  `src/lib/supabase/database.types.ts` (server, browser, middleware, and the
+  `src/lib/supabase/database.types.ts` (server, client, middleware, and the
   service-role client used only for admin student CRUD).
 
 ### Storage bucket
@@ -173,8 +173,7 @@ Seed the site with demo resources (clearly marked, tiny text files) and demo stu
 accounts:
 
 ```bash
-node --env-file=.env.local scripts/seed-demo.mjs   # demo resources (V1)
-node --env-file=.env.local supabase/seed/          # not used — students seeded via SQL migration
+node --env-file=.env.local scripts/seed-demo.mjs   # demo resources (V1) — students are seeded via SQL migration, not a script
 ```
 
 Delete demo resources from `/admin/resources` once real material is uploaded.
@@ -182,14 +181,10 @@ Delete demo resources from `/admin/resources` once real material is uploaded.
 ## Testing
 
 ```bash
-npm run lint     # ESLint
-npx tsc --noEmit # TypeScript
-npm run build    # Production build
+npm run lint        # ESLint
+npm run typecheck   # TypeScript (or npx tsc --noEmit)
+npm run build       # Production build
 ```
-
-End-to-end suite (Playwright/Python, against `npm run start`): see
-`C:\Users\abnup\AppData\Local\Temp\opencode\e2e_v2.py` — covers guest redirects, student
-sign-in/search/download, flag raising, and the admin panel flows.
 
 ## Production deployment
 
@@ -214,9 +209,9 @@ src/
     flags.ts              # Flag queries + status updates
     stats.ts              # Admin dashboard queries
     fileStream.ts         # Session-checked file streaming from the private bucket
-    supabase/             # Server & browser Supabase clients
+    supabase/             # Server & client Supabase clients
     supabase/database.types.ts  # Generated types (Supabase CLI / MCP typegen) — Database generic wired into all clients
-    supabase/middleware.ts      # Session cookie refresh (used by src/middleware.ts)
+    supabase/middleware.ts      # Session cookie refresh (used by src/proxy.ts)
 supabase/migrations/      # SQL: tables, bucket, RLS policies, rules, demo seed
 scripts/seed-demo.mjs     # V1 demo resource seed
 ```

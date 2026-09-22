@@ -65,8 +65,21 @@ export default function SqlPlayground() {
 
   async function getDb(): Promise<PGlite> {
     if (!dbRef.current) {
-      const db = new PGlite();
-      await db.exec(LAB_SEED_SQL);
+      // Persist to IndexedDB so students keep tables across reloads. Falls back to
+      // in-memory if IDB is unavailable (private mode / quota). Seed only once.
+      let db: PGlite;
+      try {
+        db = new PGlite("idb://it-hub-sql-v1");
+        // Probe whether seed already exists; if query fails, fresh DB → seed.
+        try {
+          await db.query("SELECT 1 FROM students LIMIT 1;");
+        } catch {
+          await db.exec(LAB_SEED_SQL);
+        }
+      } catch {
+        db = new PGlite();
+        await db.exec(LAB_SEED_SQL);
+      }
       dbRef.current = db;
     }
     return dbRef.current;
@@ -110,6 +123,20 @@ export default function SqlPlayground() {
       await dbRef.current?.close();
     } catch {
       /* ignore */
+    }
+    // For IDB we need to drop tables explicitly; IDB persists across close().
+    // Re-create fresh instance and re-seed from scratch.
+    if (dbRef.current) {
+      try {
+        // Try to wipe IDB store by deleting tables if persist succeeded
+        const db = dbRef.current;
+        await db.exec("DROP TABLE IF EXISTS marks; DROP TABLE IF EXISTS students; DROP TABLE IF EXISTS subjects;");
+        await db.exec(LAB_SEED_SQL);
+        setBooting(false);
+        return;
+      } catch {
+        /* fall through to full re-init */
+      }
     }
     dbRef.current = null;
     setBooting(true);
