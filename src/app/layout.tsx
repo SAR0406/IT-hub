@@ -59,7 +59,7 @@ export const metadata: Metadata = {
     "All your Class 11 Information Technology study material in one place. Notes, worksheets, question papers and practicals.",
 };
 
-export default async function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const profile = await getSessionProfile();
 
   return (

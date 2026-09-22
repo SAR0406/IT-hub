@@ -8,7 +8,7 @@ function error(message: string, status: number) {
 
 export async function PATCH(
   request: Request,
-  context: RouteContext<"/api/resources/[id]">
+  context: { params: Promise<{ id: string }> }
 ) {
   const { id } = await context.params;
 
@@ -54,7 +54,7 @@ export async function PATCH(
 
 export async function DELETE(
   _request: Request,
-  context: RouteContext<"/api/resources/[id]">
+  context: { params: Promise<{ id: string }> }
 ) {
   const { id } = await context.params;
 

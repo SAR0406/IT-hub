@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   // Guests see the admin sign-in form right on /admin. Students are
   // flagged and redirected by requireAdmin below.
   const profile = await getSessionProfile();

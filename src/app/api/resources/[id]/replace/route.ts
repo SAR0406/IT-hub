@@ -14,7 +14,7 @@ function sanitizeFileName(fileName: string): string {
 
 export async function POST(
   request: Request,
-  context: RouteContext<"/api/resources/[id]/replace">
+  context: { params: Promise<{ id: string }> }
 ) {
   const { id } = await context.params;
 

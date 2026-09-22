@@ -8,7 +8,7 @@ function error(message: string, status: number) {
   return NextResponse.json({ error: message }, { status });
 }
 
-export async function PATCH(request: Request, context: RouteContext<"/api/admin/students/[id]">) {
+export async function PATCH(request: Request, context: { params: Promise<{ id: string }> }) {
   const ctx = await requireAdmin();
   const { id } = await context.params;
 
@@ -61,7 +61,7 @@ export async function PATCH(request: Request, context: RouteContext<"/api/admin/
   return NextResponse.json({ ok: true });
 }
 
-export async function DELETE(request: Request, context: RouteContext<"/api/admin/students/[id]">) {
+export async function DELETE(request: Request, context: { params: Promise<{ id: string }> }) {
   const ctx = await requireAdmin();
   const { id } = await context.params;
 

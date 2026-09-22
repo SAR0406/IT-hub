@@ -8,7 +8,7 @@ import type { Metadata } from "next";
 
 export async function generateMetadata({
   params,
-}: PageProps<"/chapters/[unit]/[topic]">): Promise<Metadata> {
+}: { params: Promise<{ unit: string; topic: string }> }): Promise<Metadata> {
   const { unit: unitSlug, topic: topicSlug } = await params;
   const unit = getUnit(unitSlug);
   const topic = getTopic(unitSlug, topicSlug);
@@ -17,7 +17,7 @@ export async function generateMetadata({
 
 export default async function TopicPage({
   params,
-}: PageProps<"/chapters/[unit]/[topic]">) {
+}: { params: Promise<{ unit: string; topic: string }> }) {
   const { unit: unitSlug, topic: topicSlug } = await params;
   await requireUser();
   const unit = getUnit(unitSlug);

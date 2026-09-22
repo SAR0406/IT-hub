@@ -14,13 +14,13 @@ import type { Metadata } from "next";
 
 export async function generateMetadata({
   params,
-}: PageProps<"/chapters/[unit]">): Promise<Metadata> {
+}: { params: Promise<{ unit: string }> }): Promise<Metadata> {
   const { unit: unitSlug } = await params;
   const unit = getUnit(unitSlug);
   return { title: unit ? unit.name : "Unit not found" };
 }
 
-export default async function UnitPage({ params }: PageProps<"/chapters/[unit]">) {
+export default async function UnitPage({ params }: { params: Promise<{ unit: string }> }) {
   const { unit: unitSlug } = await params;
   const ctx = await requireUser();
   const unit = getUnit(unitSlug);

@@ -8,7 +8,7 @@ import { FLAG_STATUS_LABELS, type FlagStatus } from "@/lib/types";
  * PATCH /api/admin/flags/[id] — marks a misbehavior flag as reviewed or
  * dismissed. Only admins can change flag status (RLS enforces this too).
  */
-export async function PATCH(request: Request, context: RouteContext<"/api/admin/flags/[id]">) {
+export async function PATCH(request: Request, context: { params: Promise<{ id: string }> }) {
   const ctx = await requireAdmin();
   const { id } = await context.params;
 
