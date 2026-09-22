@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // React Compiler is stable in Next 16 + React 19.2 — auto-memoizes, no manual useMemo needed.
+  reactCompiler: true,
   // The old "lab" section was restructured into /tools — keep old URLs alive
   // so bookmarks and the AI assistant don't break.
   redirects: async () => [
