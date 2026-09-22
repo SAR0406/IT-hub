@@ -8,6 +8,7 @@ import "./premium.css";
 
 export const metadata: Metadata = {
   title: "Design System Preview | IT Hub 11",
+  robots: { index: false, follow: false },
 };
 
 function SectionTitle({
