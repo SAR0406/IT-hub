@@ -13,8 +13,8 @@ const nextConfig: NextConfig = {
   // Security headers per Next.js production checklist
   headers: async () => [
     {
-      source: "/:path*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$",
-      headers: [{ key: "Cache-Control", value: "public, max-age=604800, stale-while-revalidate=86400" }],
+      source: "/_next/image",
+      headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
     },
     {
       source: "/(.*)",
