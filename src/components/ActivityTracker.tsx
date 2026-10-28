@@ -17,12 +17,31 @@ export function ActivityTracker() {
     lastPath.current = pathname;
     if (pathname.startsWith("/api/")) return;
 
-    fetch("/api/track", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action: "page_view", details: { path: pathname } }),
-      keepalive: true,
-    }).catch(() => {});
+    const connection = (navigator as Navigator & { connection?: unknown }).connection as
+      | { saveData?: boolean; effectiveType?: string }
+      | undefined;
+    const saveData = Boolean(connection?.saveData);
+    const effectiveType = connection?.effectiveType ?? "";
+    const isVerySlow = effectiveType === "slow-2g" || effectiveType === "2g";
+    if (saveData || isVerySlow) return;
+
+    const payload = JSON.stringify({ action: "page_view", details: { path: pathname } });
+    const send = () =>
+      fetch("/api/track", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: payload,
+        keepalive: true,
+      }).catch(() => {});
+
+    const idle = window.requestIdleCallback;
+    if (idle) {
+      const id = idle(send, { timeout: 2000 });
+      return () => window.cancelIdleCallback(id);
+    }
+
+    const timeout = window.setTimeout(send, 600);
+    return () => window.clearTimeout(timeout);
   }, [pathname]);
 
   return null;
