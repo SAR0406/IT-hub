@@ -1,4 +1,5 @@
 ﻿import { redirect } from "next/navigation";
+import { cache } from "react";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
 import { logActivity } from "@/lib/activity";
@@ -27,7 +28,7 @@ export async function getProfileForUser(
  * Session info for the navbar and layout: null when signed out, a profile
  * when signed in. Never redirects.
  */
-export async function getSessionProfile(): Promise<Profile | null> {
+export const getSessionProfile = cache(async (): Promise<Profile | null> => {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     return null;
   }
@@ -39,7 +40,7 @@ export async function getSessionProfile(): Promise<Profile | null> {
   const profile = await getProfileForUser(supabase, user.id);
   if (!profile || !profile.is_active) return null;
   return profile;
-}
+});
 
 /**
  * Guard for content pages: signed-in users only. Guests are sent to /login.
