@@ -36,6 +36,18 @@ export type ResourceWithLabels = Resource & {
   topic_name: string | null;
 };
 
+export type SchoolEvent = {
+  id: string;
+  title: string;
+  description: string | null;
+  photo_url: string | null;
+  emoji: string;
+  event_date: string | null;
+  is_published: boolean;
+  display_order: number;
+  created_at: string;
+};
+
 export const MAX_FILE_SIZE_BYTES = 25 * 1024 * 1024; // 25 MB
 
 export type Role = "student" | "admin";
