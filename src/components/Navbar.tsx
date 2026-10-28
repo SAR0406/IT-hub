@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CloseIcon, LogoutIcon, MenuIcon } from "@/components/icons";
 import { LogoutButton } from "@/components/LogoutButton";
 import type { Profile } from "@/lib/types";
@@ -35,6 +35,26 @@ export function Navbar({ profile }: { profile: Profile | null }) {
   const pathname = usePathname();
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [prefetchEnabled, setPrefetchEnabled] = useState(false);
+
+  useEffect(() => {
+    if (typeof navigator === "undefined") return;
+
+    const connection = (navigator as Navigator & { connection?: unknown }).connection as
+      | { saveData?: boolean; effectiveType?: string; addEventListener?: (type: string, listener: () => void) => void; removeEventListener?: (type: string, listener: () => void) => void }
+      | undefined;
+
+    const updatePrefetch = () => {
+      const saveData = Boolean(connection?.saveData);
+      const effectiveType = connection?.effectiveType ?? "";
+      const isVerySlow = effectiveType === "slow-2g" || effectiveType === "2g";
+      setPrefetchEnabled(!saveData && !isVerySlow);
+    };
+
+    updatePrefetch();
+    connection?.addEventListener?.("change", updatePrefetch);
+    return () => connection?.removeEventListener?.("change", updatePrefetch);
+  }, []);
 
   const homeHref = profile?.role === "admin" ? "/admin" : "/chapters";
   const links = profile?.role === "admin" ? [...NAV_LINKS, { href: "/admin", label: "Admin" }] : NAV_LINKS;
@@ -49,7 +69,7 @@ export function Navbar({ profile }: { profile: Profile | null }) {
         className="mx-auto flex h-[72px] max-w-6xl items-center justify-between px-4 sm:px-6"
         aria-label="Main navigation"
       >
-        <Link href="/" className="group flex items-center gap-2.5">
+        <Link href="/" prefetch={prefetchEnabled} className="group flex items-center gap-2.5">
           <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-brand to-brand-strong font-mono text-sm font-bold text-white shadow-soft transition-transform group-hover:-translate-y-0.5">
             11
           </span>
@@ -63,6 +83,7 @@ export function Navbar({ profile }: { profile: Profile | null }) {
             <Link
               key={link.href}
               href={link.href}
+              prefetch={prefetchEnabled}
               aria-current={isActive(pathname, link.href) ? "page" : undefined}
               className={`rounded-xl px-3.5 py-2 text-sm font-semibold transition-all ${
                 isActive(pathname, link.href)
@@ -80,6 +101,7 @@ export function Navbar({ profile }: { profile: Profile | null }) {
             <>
               <Link
                 href={homeHref}
+                prefetch={prefetchEnabled}
                 className="surface-card flex items-center gap-2 rounded-full py-1 pl-1 pr-3 transition-colors hover:border-brand/40"
                 title={profile.full_name}
               >
@@ -98,6 +120,7 @@ export function Navbar({ profile }: { profile: Profile | null }) {
           ) : (
             <Link
               href="/login"
+              prefetch={prefetchEnabled}
               className="btn-primary flex h-10 items-center rounded-xl px-4 text-sm font-semibold transition-all"
             >
               Get Started
@@ -120,7 +143,12 @@ export function Navbar({ profile }: { profile: Profile | null }) {
         <div className="border-t border-line bg-paper/95 px-4 py-3 backdrop-blur md:hidden">
           {profile && (
             <div className="surface-card mb-2 flex items-center justify-between rounded-2xl px-3 py-2.5">
-              <Link href={homeHref} className="flex min-w-0 items-center gap-2.5" onClick={() => setMenuOpen(false)}>
+              <Link
+                href={homeHref}
+                prefetch={prefetchEnabled}
+                className="flex min-w-0 items-center gap-2.5"
+                onClick={() => setMenuOpen(false)}
+              >
                 <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-strong text-xs font-bold text-white">
                   {initials(profile.full_name)}
                 </span>
@@ -158,6 +186,7 @@ export function Navbar({ profile }: { profile: Profile | null }) {
             <Link
               key={link.href}
               href={link.href}
+              prefetch={prefetchEnabled}
               onClick={() => setMenuOpen(false)}
               aria-current={isActive(pathname, link.href) ? "page" : undefined}
               className={`mb-1 block rounded-xl px-3 py-3 text-base font-medium ${
@@ -172,6 +201,7 @@ export function Navbar({ profile }: { profile: Profile | null }) {
           {!profile && (
             <Link
               href="/login"
+              prefetch={prefetchEnabled}
               onClick={() => setMenuOpen(false)}
               className="btn-primary mt-2 flex h-11 items-center justify-center rounded-xl text-sm font-semibold transition-all"
             >

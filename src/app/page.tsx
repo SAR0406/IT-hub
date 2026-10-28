@@ -60,8 +60,7 @@ const MOVES = [
 ];
 
 export default async function HomePage() {
-  const profile = await getSessionProfile();
-  const counts = await getResourceCountsByUnit();
+  const [profile, counts] = await Promise.all([getSessionProfile(), getResourceCountsByUnit()]);
   const totalResources = Object.values(counts).reduce((sum, n) => sum + n, 0);
 
   const primaryHref = profile ? "/chapters" : "/login";

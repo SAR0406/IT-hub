@@ -223,3 +223,25 @@ body {
     animation: none;
   }
 }
+
+@media (prefers-reduced-data: reduce) {
+  body {
+    background: var(--color-paper);
+  }
+
+  .surface-elevated,
+  .btn-primary,
+  .btn-secondary,
+  .surface-card {
+    box-shadow: none;
+    transition: none;
+  }
+}
+
+/* Mobile-first performance: keep decorative motion off on small screens. */
+@media (max-width: 640px) {
+  .float-y, .float-y-1, .float-y-2,
+  .rise-in, .rise-in-1, .rise-in-2, .rise-in-3, .rise-in-4 {
+    animation: none;
+  }
+}

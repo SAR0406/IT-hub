@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import {
-  Geist,
   Geist_Mono,
-  IBM_Plex_Mono,
   Instrument_Serif,
   Inter,
   Space_Grotesk,
@@ -29,23 +27,10 @@ const geistMono = Geist_Mono({
   display: "swap",
 });
 
-const geist = Geist({
-  variable: "--font-geist",
-  subsets: ["latin"],
-  display: "swap",
-});
-
 const instrumentSerif = Instrument_Serif({
   variable: "--font-instrument-serif",
   weight: "400",
   style: ["normal", "italic"],
-  subsets: ["latin"],
-  display: "swap",
-});
-
-const ibmPlexMono = IBM_Plex_Mono({
-  variable: "--font-ibm-plex-mono",
-  weight: ["400", "500", "600"],
   subsets: ["latin"],
   display: "swap",
 });
@@ -65,7 +50,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${spaceGrotesk.variable} ${geistMono.variable} ${geist.variable} ${instrumentSerif.variable} ${ibmPlexMono.variable} h-full antialiased`}
+      className={`${inter.variable} ${spaceGrotesk.variable} ${geistMono.variable} ${instrumentSerif.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col antialiased">
         <AppChrome profile={profile}>{children}</AppChrome>

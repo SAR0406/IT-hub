@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { UNITS } from "@/lib/syllabus";
 import type { Resource, ResourceWithLabels } from "@/lib/types";
@@ -17,7 +18,7 @@ function toLabels(row: ResourceRow): ResourceWithLabels {
   };
 }
 
-export async function getResourceCountsByUnit(): Promise<Record<string, number>> {
+export const getResourceCountsByUnit = cache(async (): Promise<Record<string, number>> => {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     return {};
   }
@@ -33,7 +34,7 @@ export async function getResourceCountsByUnit(): Promise<Record<string, number>>
     counts[row.unit_slug] = (counts[row.unit_slug] ?? 0) + 1;
   }
   return counts;
-}
+});
 
 export async function getResourcesByUnit(unitSlug: string): Promise<ResourceWithLabels[]> {
   const supabase = await createClient();
